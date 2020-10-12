@@ -1,6 +1,6 @@
 # Life @ UBC
 
-### Installation
+### Installation (if you don't have these already)
 - Node from https://nodejs.org/en/
 - Git https://git-scm.com/downloads
 - VS Code (Optional) https://code.visualstudio.com/
