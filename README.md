@@ -10,7 +10,7 @@
 - `npm install` to install all dependencies 
 - `npm start` to build & start the React app
 
-#### Backend
+#### Server
 - `cd server`
 - `npm install` in the root directory to install all dependencies
 - `npm start` to start the Node.js server
