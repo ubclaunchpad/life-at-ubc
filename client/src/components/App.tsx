@@ -2,7 +2,12 @@ import React from 'react';
 
 function App() {
   return (
-    <h1>:)</h1>
+    <div>
+      <h1>:)</h1>
+      <ul>
+        <li>Feng has submitted his PR!</li>
+      </ul>
+    </div>
   );
 }
 
