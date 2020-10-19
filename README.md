@@ -24,5 +24,4 @@
 ##### Local Database Setup
 - open `pgAdmin` -> `PostgreSQL 12` -> `Databases`
 - Right click `Databases` and `Create` -> `Database`
-- name it `'postgres'` and the owner should be `'postgres'`
--  password is `123456` 
+- name:`'postgres', owner: `'postgres'`, password: `123456` (This is the current hard coded config defined in server file) 
