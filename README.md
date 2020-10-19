@@ -19,7 +19,7 @@
 
 ##### Installation
 - Install PostgreSQL 12.4 (untick pgAdmin installation, we'll install this separately) https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-- pgAdmin October 2020 release https://www.pgadmin.org/download/pgadmin-4-windows/
+- pgAdmin version 4.27 release https://www.pgadmin.org/download/
 
 ##### Local Database Setup
 - open `pgAdmin` -> `PostgreSQL 12` -> `Databases`
