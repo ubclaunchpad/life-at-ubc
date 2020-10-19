@@ -18,8 +18,8 @@
 #### Database (Local Setup while we don't have Docker)
 
 ##### Installation
-- Install PostgreSQL 12.2 (untick pgAdmin installation, we'll install this separately) https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-- pgAdmin February 2020 release https://www.pgadmin.org/download/pgadmin-4-windows/
+- Install PostgreSQL 12.4 (untick pgAdmin installation, we'll install this separately) https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+- pgAdmin October 2020 release https://www.pgadmin.org/download/pgadmin-4-windows/
 
 ##### Local Database Setup
 - open `pgAdmin` -> `PostgreSQL 12` -> `Databases`
