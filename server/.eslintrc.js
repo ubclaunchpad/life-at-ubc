@@ -6,7 +6,8 @@ module.exports = {
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.json",
+        "tsconfigRootDir": __dirname,
+        "project": "./tsconfig.json",
         "sourceType": "module"
     },
     "plugins": [
@@ -27,6 +28,9 @@ module.exports = {
                 "no-console": "off"
             }
         }
+    ],
+    "ignorePatterns": [
+        ".eslintrc.js"
     ],
     "rules": {
         "@typescript-eslint/adjacent-overload-signatures": "error",
