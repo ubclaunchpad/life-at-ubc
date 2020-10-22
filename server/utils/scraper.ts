@@ -77,7 +77,7 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
 
 /**
  * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
- * @param {string} url URL string to a UBC SSC course page 
+ * @param {string} url URL string to a UBC Course Schedule course page 
  * @param {Browser} browser the working (top-level) browser instance
  * @returns {Promise<Course>} a promise for a Course object
  */
@@ -92,7 +92,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
     // prereq is USUALLY found as '.content.expand > p:nth-of-type(3)' then a list of its a children but we must validate it first 
-    // TODO: check if it starts with Pre-reqs: or Co-reqs:? (might not be necessary)
+    // TODO: check if it starts with Pre-reqs: or Co-reqs:?
     // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
     let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", p => p.innerHTML)
         .catch( async (err) => {
@@ -167,8 +167,8 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
 }
 
 /**
- * Returns professor name for a section. [Example found here](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=AANB&course=504&section=002)
- * @param {string} url url string to a UBC SSC section page
+ * Returns professor name for a section. [Example URL found here](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=AANB&course=504&section=002)
+ * @param {string} url url string to a UBC Course Schedule section page
  * @param {boolean} isCourse true if activity is of type "Web-Oriented Course" or "Lecture"
  * @param {Browser} browser working browser instance
  * @returns {string} the name of the professor teaching the section or an empty string if !isCourse
@@ -191,7 +191,7 @@ let getSpecificSectionInfo = async (url: string, isCourse: boolean, browser: Bro
 
 /**
  * Scrapes a table row for a section's information
- * @param {ElementHandle} elmHandle the ElementHandle representing a UBC SSC course row
+ * @param {ElementHandle} elmHandle the ElementHandle representing a UBC Course Schedule course row
  * @param {Browser} browser the working (top-level) browser instance
  * @returns the section's title, page url, activity type, and prof
  */
@@ -229,7 +229,7 @@ let handleSectionUrl = async (elmHandle: ElementHandle, browser: Browser) => {
 
 /**
  * Returns an object that holds all of the information for a given course's section
- * @param {ElementHandle} elmHandle ElementHandle instance of a UBC SSC course table row
+ * @param {ElementHandle} elmHandle ElementHandle instance of a UBC Course Schedule course table row
  * @param {Browser} browser the working (top-level) browser instance
  * @returns {Section} section information including title, status, activity, prof, and time-related information
  */
@@ -257,6 +257,11 @@ let formatSectionInfo = async (elmHandle: ElementHandle, browser: Browser): Prom
     }
 }
 
+
+/**
+ * Configures a page to disable network asset requests to improve performance
+ * @param {Page} page The Page to be configured 
+ */
 let pageConfig = async (page: Page) => {
     await page.setRequestInterception(true);
     page.on('request', (req) => {
@@ -270,21 +275,22 @@ let pageConfig = async (page: Page) => {
     })
 }
 
-// main scraper function
+
+/**
+ * Scrapes the entire UBC Course Schedule and writes the information of all course sections to disk.
+ * @param {number} [subjectTest] (optional) The row index of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
+ */
 let scraper = async (subjectTest?: number) => {
 
     let puppeteerOptions: LaunchOptions  = {
+        // args should help reduce load on CPU, since we're running headless Chromium
         args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu'
+            '--disable-accelerated-2d-canvas',          // disables gpu-accel 2d <canvas>
+            '--no-first-run',                           // disables first run options
+            '--disable-gpu'                             // yes
         ],
-        headless: true,
-        userDataDir: __dirname + "./pptr_userDataDir"
+        headless: true,                                 // set to false for graphical debugging 
+        userDataDir: __dirname + "./pptr_userDataDir"   // stores cookies, localStorage, cache to improve performance
     }
 
     try {
@@ -296,9 +302,9 @@ let scraper = async (subjectTest?: number) => {
         await page.goto("https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments")
         let subjectUrls: string[] = await getSubjectUrls(page);
         let data: Course[] = []
-        let outputPath = (subjectTest != undefined && subjectTest < 237) ? "output_test.json" : "output.json"; 
+        let outputPath = (subjectTest != undefined && subjectTest < 237 && subjectTest >= 0) ? "output_test.json" : "output.json"; 
 
-        if (subjectTest != undefined && subjectTest < 237) {
+        if (subjectTest != undefined && subjectTest < 237 && subjectTest >= 0) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
             for (let i = 0; i < courseUrls.length; i++) {
                 console.time("[getCourseInfo] Build course information");
@@ -317,7 +323,7 @@ let scraper = async (subjectTest?: number) => {
                     console.timeEnd("[getCourseInfo] Build course information");
                     console.log(`Pushed ${courseInfo.courseCode} (${j+1} of ${courseUrls.length} sections)`);
                 }
-                console.log(`Pushed ${data[i].courseCode.substr(0,4)} (${i+1} of ${subjectUrls.length} course)`);
+                console.log(`Pushed ${data[i].courseCode.substr(0,4)} (${i+1} of ${subjectUrls.length} courses)`);
             }
         }
         
