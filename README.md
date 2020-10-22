@@ -3,8 +3,9 @@
 ### Installation (if you don't have these already)
 - Node from https://nodejs.org/en/
 - Git https://git-scm.com/downloads
-- VS Code (Optional) https://code.visualstudio.com/
+- VS Code (Optional - but highly recommended) https://code.visualstudio.com/
 
+### Setup Without Docker
 #### Client
 - `cd client`
 - `npm install` to install all dependencies 
@@ -15,13 +16,9 @@
 - `npm install` in the root directory to install all dependencies
 - `npm start` to start the Node.js server
 
-#### Database (Local Setup while we don't have Docker)
-
-##### Installation
+#### Database
 - Install PostgreSQL 12.4 (untick pgAdmin installation, we'll install this separately) https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 - pgAdmin version 4.27 release https://www.pgadmin.org/download/
-
-##### Local Database Setup
 - open `pgAdmin` -> `PostgreSQL 12` -> `Databases`
 - Right click `Databases` and `Create` -> `Database`
 - name:`'postgres'`, owner: `'postgres'`, password: `123456` (This is the current hard coded config defined in server file)
@@ -29,9 +26,12 @@
 
 ![Alt text](./pgconnected.png)
 
-##### Docker Compose
-- Make sure that you have `.env` file on the root directory (ask one of us!). This file defines `DB_DATABASE`, `DB_PASSWORD`, `DB_USER`, and `DB_HOST`
-- `npm install` in the root directory to install all dependencies
+### Setup With Docker Compose
+
+#### Server
+- Make sure that you have `.env` file on the root directory of server (ask one of us!). This file defines `DB_DATABASE`, `DB_PASSWORD`, `DB_USER`, and `DB_HOST`
+- `npm install` in the root directory of server to install all dependencies
+- run `docker-compose up`
 - The output of `docker-compose up` should look similar to:
 ```bash
 $ docker-compose up
