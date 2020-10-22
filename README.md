@@ -63,3 +63,8 @@ server    | Postgresql connected Wed Oct 21 2020 05:08:53 GMT+0000 (Coordinated 
     - [Docker Compose](https://docs.docker.com/compose/)
     - [Why use alpine packages?](https://nickjanetakis.com/blog/the-3-biggest-wins-when-using-alpine-as-a-base-docker-image)
     - [Postgresql documentation](https://www.notion.so/Docker-Compose-07fabb20ed224a37b9eeb83dd18dfabc#f22154ebf6e245ca88ce650d706785b5)
+
+### Docker Installation For Windows
+- WSL2 install Windows 10 https://docs.microsoft.com/en-us/windows/wsl/install-win10
+- Docker Windows https://docs.docker.com/docker-for-windows/wsl/ - there’s a tidbit here on using VSCode’s Remote-WSL extension that easily allows you to work with a remote server in the Linux distro and your IDE client still on Windows
+
