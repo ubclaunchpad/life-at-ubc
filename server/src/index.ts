@@ -15,7 +15,7 @@ async function testDb() {
     try {
         const { rows } = await db.query('SELECT NOW()');
         console.log(`Postgresql connected ${rows[0].now}`);
-    } catch(e){
+    } catch (e) {
         console.log(`error ${e}`);
     }
 }
