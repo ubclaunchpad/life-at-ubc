@@ -1,6 +1,6 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import db from './database/db';
+import express from "express";
+import bodyParser from "body-parser";
+import db from "./database/db";
 
 const PORT = process.env.PORT || 5000;
 
@@ -13,9 +13,9 @@ app.listen(PORT, () => {
 
 async function testDb() {
     try {
-        const { rows } = await db.query('SELECT NOW()');
+        const { rows } = await db.query("SELECT NOW()");
         console.log(`Postgresql connected ${rows[0].now}`);
-    } catch(e){
+    } catch (e) {
         console.log(`error ${e}`);
     }
 }
