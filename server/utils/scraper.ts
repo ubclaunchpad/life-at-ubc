@@ -271,7 +271,7 @@ let pageConfig = async (page: Page) => {
 }
 
 // main scraper function
-let scraper = async () => {
+let scraper = async (subjectTest?: number) => {
 
     let puppeteerOptions: LaunchOptions  = {
         args: [
@@ -293,29 +293,42 @@ let scraper = async () => {
         const browser: Browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
         await pageConfig(page);
-        await page.goto('https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments')
+        await page.goto("https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments")
         let subjectUrls: string[] = await getSubjectUrls(page);
         let data: Course[] = []
+        let outputPath = (subjectTest != undefined && subjectTest < 237) ? "output_test.json" : "output.json"; 
 
-        for (let i = 0; i < subjectUrls.length; i++) {
-            let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
-            for (let j = 0; j < courseUrls.length; j++) {
+        if (subjectTest != undefined && subjectTest < 237) {
+            let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
+            for (let i = 0; i < courseUrls.length; i++) {
                 console.time("[getCourseInfo] Build course information");
-                let courseInfo = await getCourseInfo(courseUrls[j], browser);
+                let courseInfo = await getCourseInfo(courseUrls[i], browser);
                 data.push(courseInfo);
-                console.log(`Pushed ${courseInfo.courseCode}`)
                 console.timeEnd("[getCourseInfo] Build course information");
+                console.log(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
+            }
+        } else {
+            for (let i = 0; i < subjectUrls.length; i++) {
+                let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
+                for (let j = 0; j < courseUrls.length; j++) {
+                    console.time("[getCourseInfo] Build course information");
+                    let courseInfo = await getCourseInfo(courseUrls[j], browser);
+                    data.push(courseInfo);
+                    console.timeEnd("[getCourseInfo] Build course information");
+                    console.log(`Pushed ${courseInfo.courseCode} (${j+1} of ${courseUrls.length} sections)`);
+                }
+                console.log(`Pushed ${data[i].courseCode.substr(0,4)} (${i+1} of ${subjectUrls.length} course)`);
             }
         }
-
-        fs.writeFile('output.json', JSON.stringify(data), (err: any) => {
-            if (err) return console.error(err);
-            console.log("scraper: Finished scraping, wrote to output.json.");
-        });
         
+        fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
+            if (err) return console.error(err);
+            console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
+        });
+
         // update db
         // axios.post('webhook url', data); <-- post request to trigger front-end build script
-        console.timeEnd('scraper'); // latest version: 27850683.808ms or uh... 7 hours lol
+        console.timeEnd('scraper'); // latest version: 13684777.998ms or uh... 3.8 hours lol
         await browser.close();
     } catch (err) {
         console.error(err);
@@ -323,3 +336,7 @@ let scraper = async () => {
 }
 
 scraper();
+// run one of these functions instead to see the outputs of separate courses, or put in a random number
+// scraper(145); // KORN courses, tests multi-term courses
+// scraper(67); // COMM courses, has a lot of courses w/ prereqs 
+// scraper(118); // FIST courses, multiple day/times
