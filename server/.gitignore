@@ -4,3 +4,4 @@
 # util temp files
 /utils/output_test.json
 /utils/scraper.js
+/utils/pptr_userDataDir

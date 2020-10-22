@@ -1,4 +1,4 @@
-import { Browser, ElementHandle, JSHandle, Page } from "puppeteer"; // types for TS
+import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer"; // types for TS
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
@@ -24,6 +24,8 @@ interface Course {
     coReqs: string[],
     sections: Section[]
 }
+
+const courseCodeRegex = /([A-Z][A-Z][A-Z][A-Z]?\s\d\d\d[A-Z]?)/g;
 
 // helper function
 let getInnerHTML = async (element: ElementHandle | Page, selector: string): Promise<string> => {
@@ -66,6 +68,7 @@ let getSubjectUrls = async (page: Page): Promise<string[]> => {
  */
 let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => {
     let subjectPage: Page = await browser.newPage();
+    await pageConfig(subjectPage);
     await subjectPage.goto(url);
     let hrefs: string[] = await getSubjectUrls(subjectPage); // borrowing this function because it does the same thing anyway lol
     await subjectPage.close();
@@ -79,22 +82,26 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
  * @returns {Promise<Course>} a promise for a Course object
  */
 let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
+    console.time("[getCourseInfo] Opening course page")
+
     let coursePage: Page = await browser.newPage();
+    await pageConfig(coursePage);
     await coursePage.goto(url);
-    let courseCode: string = await getInnerHTML(coursePage, '.breadcrumb.expand > li:nth-child(4)');
-    let courseTitle: string = await getInnerHTML(coursePage, '.content.expand > h4');
+    console.timeEnd("[getCourseInfo] Opening course page")
+    let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
+    let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
     // prereq is USUALLY found as '.content.expand > p:nth-of-type(3)' then a list of its a children but we must validate it first 
     // TODO: check if it starts with Pre-reqs: or Co-reqs:? (might not be necessary)
     // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
-    let preReqHTML: string = await coursePage.$eval('.content.expand > p:nth-of-type(3)', p => p.innerHTML)
+    let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", p => p.innerHTML)
         .catch( async (err) => {
             return "";
         });
-    let re = /([A-Z][A-Z][A-Z][A-Z]\s\d\d\d)/g;
-    let preReq: string[] | null = preReqHTML.match(re) // gets course codes from prereqs, doesn't care if optional/required yet
+
+    let preReq: string[] | null = preReqHTML.match(courseCodeRegex) // gets course codes from prereqs, doesn't care if optional/required yet
     if (preReq == null) preReq = [];
-    let coReq: string[] = await coursePage.$('.content.expand > p:nth-of-type(4)')
+    let coReq: string[] = await coursePage.$(".content.expand > p:nth-of-type(4)")
         .then( (p: any) => p.$$eval('a', (a: any) => a.innerHTML))
         .catch( async (err) => {
             return [];
@@ -140,7 +147,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
             });
         
         isMultiRow = (nextRowTitle == null);
-        if (thisRowTitle) courseData.sections.push(await formatSectionInfo(tableRows[i], browser));
+        if (thisRowTitle) { courseData.sections.push(await formatSectionInfo(tableRows[i], browser)) }
     }
     if (!isMultiRow) {
         courseData.sections.push(await formatSectionInfo(tableRows[tableRows.length-1], browser))
@@ -169,8 +176,8 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
 let getSpecificSectionInfo = async (url: string, isCourse: boolean, browser: Browser) => {
     if (!isCourse) return "";
     let sectionPage: Page = await browser.newPage();
+    await pageConfig(sectionPage);
     await sectionPage.goto(url)
-        .then(() => console.log('getCourseInfo: opened new page'));
     let sectionProf: string = await sectionPage.$('.content.expand > table:nth-of-type(3)')
         .then((table: any) => table.$('tbody > tr > td:nth-of-type(2)'))
         .then((td: any) => getInnerHTML(td, 'a'))
@@ -250,13 +257,42 @@ let formatSectionInfo = async (elmHandle: ElementHandle, browser: Browser): Prom
     }
 }
 
+let pageConfig = async (page: Page) => {
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+        if (req.resourceType() === "image" || 
+            req.resourceType() === "stylesheet" ||
+            req.resourceType() === "font") {
+            req.abort();
+        } else {
+            req.continue();
+        }
+    })
+}
+
 // main scraper function
 let scraper = async () => {
+
+    let puppeteerOptions: LaunchOptions  = {
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu'
+        ],
+        headless: true,
+        userDataDir: __dirname + "./pptr_userDataDir"
+    }
+
     try {
         console.time('scraper');
         console.log('scraper: Started scraping.')
-        const browser = await puppeteer.launch();
+        const browser: Browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
+        await pageConfig(page);
         await page.goto('https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments')
         let subjectUrls: string[] = await getSubjectUrls(page);
         let data: Course[] = []
@@ -264,8 +300,11 @@ let scraper = async () => {
         for (let i = 0; i < subjectUrls.length; i++) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
             for (let j = 0; j < courseUrls.length; j++) {
-                let sectionInfo = await getCourseInfo(courseUrls[j], browser);
-                data.push(sectionInfo);
+                console.time("[getCourseInfo] Build course information");
+                let courseInfo = await getCourseInfo(courseUrls[j], browser);
+                data.push(courseInfo);
+                console.log(`Pushed ${courseInfo.courseCode}`)
+                console.timeEnd("[getCourseInfo] Build course information");
             }
         }
 
@@ -282,3 +321,5 @@ let scraper = async () => {
         console.error(err);
     }
 }
+
+scraper();
