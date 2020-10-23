@@ -1,28 +1,28 @@
 import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer"; // types for TS
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 interface TermTime {
-    term: string,
-    day: string,
-    start: string,
-    end: string
+    term: string;
+    day: string;
+    start: string;
+    end: string;
 }
 
 interface Section {
-    sectionTitle: string,
-    status: string,
-    activity: string,
-    prof: string,
-    timeInfo: TermTime[]
+    sectionTitle: string;
+    status: string;
+    activity: string;
+    prof: string;
+    timeInfo: TermTime[];
 }
 
 interface Course {
-    courseTitle: string,
-    courseCode: string,
-    preReqs: string[],
-    coReqs: string[],
-    sections: Section[]
+    courseTitle: string;
+    courseCode: string;
+    preReqs: string[];
+    coReqs: string[];
+    sections: Section[];
 }
 
 const courseCodeRegex = /([A-Z][A-Z][A-Z][A-Z]?\s\d\d\d[A-Z]?)/g;
@@ -30,7 +30,7 @@ const courseCodeRegex = /([A-Z][A-Z][A-Z][A-Z]?\s\d\d\d[A-Z]?)/g;
 // helper function
 let getInnerHTML = async (element: ElementHandle | Page, selector: string): Promise<string> => {
     return await element.$eval(selector, (elm: any) => elm.innerHTML.trim());
-}
+};
 
 /**
  * Scrapes all the links in a table from the [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments)
@@ -39,30 +39,30 @@ let getInnerHTML = async (element: ElementHandle | Page, selector: string): Prom
  */
 let getSubjectUrls = async (page: Page): Promise<string[]> => {
     // get <table id="#mainTable">
-    let table: any = await page.$('#mainTable'); 
+    let table: any = await page.$("#mainTable");
 
     // get the first <td> in each row (contains the link)
-    let tds: ElementHandle[] = await table.$$("tbody > tr > td:nth-child(1)"); 
+    let tds: ElementHandle[] = await table.$$("tbody > tr > td:nth-child(1)");
     let aElms: any[] = await Promise.all(
-        tds.map(td => td.$('a'))
-    )
+        tds.map((td: ElementHandle) => td.$("a"))
+    );
 
     // take out subjects without course listings this term
-    aElms = aElms.filter(a => (a != null && a != undefined)) 
+    aElms = aElms.filter((a: ElementHandle) => (a !== null && a !== undefined));
 
     // get href string
     let propertyJsHandles: JSHandle[] = await Promise.all(
-        aElms.map(handle => handle.getProperty('href'))
+        aElms.map((handle: ElementHandle) => handle.getProperty("href"))
     );
     let hrefs: string[] = await Promise.all(
-        propertyJsHandles.map(handle=>(handle.jsonValue() as Promise<string>))
-    ); 
+        propertyJsHandles.map((handle: JSHandle) => (handle.jsonValue() as Promise<string>))
+    );
     return hrefs;
- }
+};
 
 /**
  * Takes in a subject URL and returns all the course URLs within it. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-department&dept=AANB)
- * @param {string} url URL string for a subject  
+ * @param {string} url URL string for a subject
  * @param {Browser} browser the working (top-level) browser instance
  * @returns {Promise<string[]>} array of urls
  */
@@ -72,99 +72,102 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
     await subjectPage.goto(url);
     let hrefs: string[] = await getSubjectUrls(subjectPage); // borrowing this function because it does the same thing anyway lol
     await subjectPage.close();
-    return hrefs
-}
+    return hrefs;
+};
 
 /**
  * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
- * @param {string} url URL string to a UBC Course Schedule course page 
+ * @param {string} url URL string to a UBC Course Schedule course page
  * @param {Browser} browser the working (top-level) browser instance
  * @returns {Promise<Course>} a promise for a Course object
  */
 let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
-    console.time("[getCourseInfo] Opening course page")
+    console.time("[getCourseInfo] Opening course page");
 
     let coursePage: Page = await browser.newPage();
     await pageConfig(coursePage);
     await coursePage.goto(url);
-    console.timeEnd("[getCourseInfo] Opening course page")
+    console.timeEnd("[getCourseInfo] Opening course page");
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
-    // prereq is USUALLY found as '.content.expand > p:nth-of-type(3)' then a list of its a children but we must validate it first 
+    // prereq is USUALLY found as ".content.expand > p:nth-of-type(3)" then a list of its a children but we must validate it first
     // TODO: check if it starts with Pre-reqs: or Co-reqs:?
     // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
-    let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", p => p.innerHTML)
-        .catch( async (err) => {
+    let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerHTML)
+        .catch( async (err: any) => {
             return "";
         });
 
-    let preReq: string[] | null = preReqHTML.match(courseCodeRegex) // gets course codes from prereqs, doesn't care if optional/required yet
+    let preReq: string[] | null = preReqHTML.match(courseCodeRegex); // gets course codes from prereqs, doesn't care if optional/required yet
     if (preReq == null) preReq = [];
     let coReq: string[] = await coursePage.$(".content.expand > p:nth-of-type(4)")
-        .then( (p: any) => p.$$eval('a', (a: any) => a.innerHTML))
-        .catch( async (err) => {
+        .then( (p: any) => p.$$eval("a", (a: any) => a.innerHTML))
+        .catch( async (err: any) => {
             return [];
         });
-    
+
     let courseData: Course = {
         courseTitle: courseTitle,
         courseCode: courseCode,
         preReqs: preReq,
         coReqs: coReq,
         sections: []
-    }
+    };
 
-    let tableRows: ElementHandle[] = await coursePage.$$('.table.table-striped.section-summary > tbody > tr'); 
+    let tableRows: ElementHandle[] = await coursePage.$$(".table.table-striped.section-summary > tbody > tr");
     let isMultiRow = false;
-    for (let i = 0; i < tableRows.length-1; i++) {
+    for (let i = 0; i < tableRows.length - 1; i++) {
         // pushes new section information every time the current <tr> has a non-null title column
-        // for every <tr> with a null title, we just add a new TermTime to the last section pushed 
+        // for every <tr> with a null title, we just add a new TermTime to the last section pushed
 
         if (isMultiRow) {
             let rowTimeInfo = {
-                term: await getInnerHTML(tableRows[i], 'td:nth-child(4)'),
-                day: await getInnerHTML(tableRows[i], 'td:nth-child(6)'),
-                start: await getInnerHTML(tableRows[i],'td:nth-child(7)'),
-                end: await getInnerHTML(tableRows[i],'td:nth-child(8)')
-            }
+                term: await getInnerHTML(tableRows[i], "td:nth-child(4)"),
+                day: await getInnerHTML(tableRows[i], "td:nth-child(6)"),
+                start: await getInnerHTML(tableRows[i], "td:nth-child(7)"),
+                end: await getInnerHTML(tableRows[i], "td:nth-child(8)")
+            };
 
-            courseData.sections[courseData.sections.length-1].timeInfo.push(rowTimeInfo);
+            courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
         }
 
-        let nextRowTitle: string | null = await tableRows[i+1].$('td:nth-child(2)')
-            .then((elm: any) => elm.$eval('a', (elm: any) => elm.innerHTML))
-            .catch((err) => {
+        let nextRowTitle: string | null = await tableRows[i + 1].$("td:nth-child(2)")
+            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
+            .catch((err: any) => {
                 // unable to find a title in the next row
                 return null;
             });
 
-        let thisRowTitle: string | null = await tableRows[i].$('td:nth-child(2)')
-            .then((elm: any) => elm.$eval('a', (elm: any) => elm.innerHTML))
-            .catch((err) => {
+        let thisRowTitle: string | null = await tableRows[i].$("td:nth-child(2)")
+            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
+            .catch((err: any) => {
                 // unable to find a title in the next row
                 return null;
             });
-        
+
         isMultiRow = (nextRowTitle == null);
-        if (thisRowTitle) { courseData.sections.push(await formatSectionInfo(tableRows[i], browser)) }
+
+        if (thisRowTitle) {
+            courseData.sections.push(await formatSectionInfo(tableRows[i], browser));
+        }
     }
     if (!isMultiRow) {
-        courseData.sections.push(await formatSectionInfo(tableRows[tableRows.length-1], browser))
+        courseData.sections.push(await formatSectionInfo(tableRows[tableRows.length - 1], browser));
     } else {
         let rowTimeInfo = {
-            term: await getInnerHTML(tableRows[tableRows.length-1], 'td:nth-child(4)'),
-            day: await getInnerHTML(tableRows[tableRows.length-1], 'td:nth-child(6)'),
-            start: await getInnerHTML(tableRows[tableRows.length-1],'td:nth-child(7)'),
-            end: await getInnerHTML(tableRows[tableRows.length-1],'td:nth-child(8)')
-        }
+            term: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(4)"),
+            day: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(6)"),
+            start: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(7)"),
+            end: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(8)")
+        };
 
-        courseData.sections[courseData.sections.length-1].timeInfo.push(rowTimeInfo);
+        courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
     }
 
     await coursePage.close();
     return courseData;
-}
+};
 
 /**
  * Returns professor name for a section. [Example URL found here](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=AANB&course=504&section=002)
@@ -177,17 +180,17 @@ let getSpecificSectionInfo = async (url: string, isCourse: boolean, browser: Bro
     if (!isCourse) return "";
     let sectionPage: Page = await browser.newPage();
     await pageConfig(sectionPage);
-    await sectionPage.goto(url)
-    let sectionProf: string = await sectionPage.$('.content.expand > table:nth-of-type(3)')
-        .then((table: any) => table.$('tbody > tr > td:nth-of-type(2)'))
-        .then((td: any) => getInnerHTML(td, 'a'))
+    await sectionPage.goto(url);
+    let sectionProf: string = await sectionPage.$(".content.expand > table:nth-of-type(3)")
+        .then((table: any) => table.$("tbody > tr > td:nth-of-type(2)"))
+        .then((td: any) => getInnerHTML(td, "a"))
         .catch((err) => {
             // there is no prof yet
             return "TBA";
         });
     await sectionPage.close();
     return sectionProf;
-} 
+};
 
 /**
  * Scrapes a table row for a section's information
@@ -197,35 +200,36 @@ let getSpecificSectionInfo = async (url: string, isCourse: boolean, browser: Bro
  */
 let handleSectionUrl = async (elmHandle: ElementHandle, browser: Browser) => {
     interface returnType {
-        sTitle: string,
-        sectionUrl: string,
-        sActivity: string,
-        prof: string
+        sTitle: string;
+        sectionUrl: string;
+        sActivity: string;
+        prof: string;
     }
-    
+
     let ret: returnType = {
         sTitle: "",
         sectionUrl: "",
         sActivity: "",
         prof: ""
-    }
-    await elmHandle.$('td:nth-child(2)')
-        .then((elm: any) => elm.$('a'))
+    };
+
+    await elmHandle.$("td:nth-child(2)")
+        .then((elm: any) => elm.$("a"))
         .then(async (a: any) => {
             ret.sectionUrl = await a.evaluate((elm: any) => elm.href)!;
             ret.sTitle = await a.evaluate((elm: any) => elm.innerHTML.trim())!;
-            ret.sActivity = await getInnerHTML(elmHandle, 'td:nth-child(3)');
+            ret.sActivity = await getInnerHTML(elmHandle, "td:nth-child(3)");
         })
         .catch((err: any) => {
-            return ""
+            return "";
         })
         .then(async () => {
-            let isCourse = (typeof ret.sActivity == 'string' && (ret.sActivity == "Lecture" || ret.sActivity == "Web-Oriented Course"))
-            ret.prof = await getSpecificSectionInfo(ret.sectionUrl, isCourse, browser)
-        })
+            let isCourse = (typeof ret.sActivity === "string" && (ret.sActivity === "Lecture" || ret.sActivity === "Web-Oriented Course"));
+            ret.prof = await getSpecificSectionInfo(ret.sectionUrl, isCourse, browser);
+        });
 
-    return ret
-}
+    return ret;
+};
 
 /**
  * Returns an object that holds all of the information for a given course's section
@@ -234,13 +238,13 @@ let handleSectionUrl = async (elmHandle: ElementHandle, browser: Browser) => {
  * @returns {Section} section information including title, status, activity, prof, and time-related information
  */
 let formatSectionInfo = async (elmHandle: ElementHandle, browser: Browser): Promise<Section> => {
-    let sStatus: string = await getInnerHTML(elmHandle, 'td:first-child');
-    let { prof, sTitle } = await handleSectionUrl(elmHandle, browser)
-    let sActivity: string = await getInnerHTML(elmHandle, 'td:nth-child(3)')
-    let sTerm: string = await getInnerHTML(elmHandle, 'td:nth-child(4)');
-    let sDays: string = await getInnerHTML(elmHandle, 'td:nth-child(6)');
-    let timeStart: string = await getInnerHTML(elmHandle,'td:nth-child(7)');
-    let timeEnd: string = await getInnerHTML(elmHandle,'td:nth-child(8)');
+    let sStatus: string = await getInnerHTML(elmHandle, "td:first-child");
+    let { prof, sTitle } = await handleSectionUrl(elmHandle, browser);
+    let sActivity: string = await getInnerHTML(elmHandle, "td:nth-child(3)");
+    let sTerm: string = await getInnerHTML(elmHandle, "td:nth-child(4)");
+    let sDays: string = await getInnerHTML(elmHandle, "td:nth-child(6)");
+    let timeStart: string = await getInnerHTML(elmHandle, "td:nth-child(7)");
+    let timeEnd: string = await getInnerHTML(elmHandle, "td:nth-child(8)");
     return {
         sectionTitle: sTitle,
         status: sStatus,
@@ -254,26 +258,26 @@ let formatSectionInfo = async (elmHandle: ElementHandle, browser: Browser): Prom
                 end: timeEnd
             }
         ]
-    }
-}
+    };
+};
 
 
 /**
  * Configures a page to disable network asset requests to improve performance
- * @param {Page} page The Page to be configured 
+ * @param {Page} page The Page to be configured
  */
 let pageConfig = async (page: Page) => {
     await page.setRequestInterception(true);
-    page.on('request', (req) => {
-        if (req.resourceType() === "image" || 
+    page.on("request", (req) => {
+        if (req.resourceType() === "image" ||
             req.resourceType() === "stylesheet" ||
             req.resourceType() === "font") {
             req.abort();
         } else {
             req.continue();
         }
-    })
-}
+    });
+};
 
 
 /**
@@ -285,26 +289,26 @@ let scraper = async (subjectTest?: number) => {
     let puppeteerOptions: LaunchOptions  = {
         // args should help reduce load on CPU, since we're running headless Chromium
         args: [
-            '--disable-accelerated-2d-canvas',          // disables gpu-accel 2d <canvas>
-            '--no-first-run',                           // disables first run options
-            '--disable-gpu'                             // yes
+            "--disable-accelerated-2d-canvas",          // disables gpu-accel 2d <canvas>
+            "--no-first-run",                           // disables first run options
+            "--disable-gpu"                             // yes
         ],
-        headless: true,                                 // set to false for graphical debugging 
+        headless: true,                                 // set to false for graphical debugging
         userDataDir: __dirname + "./pptr_userDataDir"   // stores cookies, localStorage, cache to improve performance
-    }
+    };
 
     try {
-        console.time('scraper');
-        console.log('scraper: Started scraping.')
+        console.time("scraper");
+        console.log("scraper: Started scraping.");
         const browser: Browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
         await pageConfig(page);
-        await page.goto("https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments")
+        await page.goto("https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments");
         let subjectUrls: string[] = await getSubjectUrls(page);
-        let data: Course[] = []
-        let outputPath = (subjectTest != undefined && subjectTest < 237 && subjectTest >= 0) ? "output_test.json" : "output.json"; 
+        let data: Course[] = [];
+        let outputPath = (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) ? "output_test.json" : "output.json";
 
-        if (subjectTest != undefined && subjectTest < 237 && subjectTest >= 0) {
+        if (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
             for (let i = 0; i < courseUrls.length; i++) {
                 console.time("[getCourseInfo] Build course information");
@@ -321,28 +325,28 @@ let scraper = async (subjectTest?: number) => {
                     let courseInfo = await getCourseInfo(courseUrls[j], browser);
                     data.push(courseInfo);
                     console.timeEnd("[getCourseInfo] Build course information");
-                    console.log(`Pushed ${courseInfo.courseCode} (${j+1} of ${courseUrls.length} sections)`);
+                    console.log(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
                 }
-                console.log(`Pushed ${data[i].courseCode.substr(0,4)} (${i+1} of ${subjectUrls.length} courses)`);
+                console.log(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
         }
-        
+
         fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
             if (err) return console.error(err);
             console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
         });
 
         // update db
-        // axios.post('webhook url', data); <-- post request to trigger front-end build script
-        console.timeEnd('scraper'); // latest version: 13684777.998ms or uh... 3.8 hours lol
+        // axios.post("webhook url", data); <-- post request to trigger front-end build script
+        console.timeEnd("scraper"); // latest version: 13684777.998ms or uh... 3.8 hours lol
         await browser.close();
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 scraper();
 // run one of these functions instead to see the outputs of separate courses, or put in a random number
 // scraper(145); // KORN courses, tests multi-term courses
-// scraper(67); // COMM courses, has a lot of courses w/ prereqs 
+// scraper(67); // COMM courses, has a lot of courses w/ prereqs
 // scraper(118); // FIST courses, multiple day/times
