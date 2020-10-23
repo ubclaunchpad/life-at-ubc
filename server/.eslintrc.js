@@ -104,7 +104,7 @@ module.exports = {
             "error",
             {
                 "rulesDirectory": [
-                    require("path").dirname(require.resolve("./node_modules/tslint-microsoft-contrib"))
+                    "./node_modules/tslint-microsoft-contrib"
                 ],
                 "rules": {
                     "align": [
