@@ -4,6 +4,6 @@ const dbconfig = {
     password: process.env.POSTGRES_PASSWORD,
     host: process.env.POSTGRES_HOST,
     port: Number(process.env.POSTGRES_PORT),
-}
+};
 
 export default dbconfig;
