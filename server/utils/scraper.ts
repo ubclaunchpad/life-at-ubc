@@ -1,6 +1,6 @@
 import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer"; // types for TS
-const puppeteer = require("puppeteer");
-const fs = require("fs");
+import puppeteer from "puppeteer";
+import fs from "fs";
 
 interface TermTime {
     term: string;
@@ -282,7 +282,12 @@ let pageConfig = async (page: Page) => {
 
 /**
  * Scrapes the entire UBC Course Schedule and writes the information of all course sections to disk.
- * @param {number} [subjectTest] (optional) The row index of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
+ * 
+ * If given an argument, it scrapes the information of a specific course and outputs that to ./utils/output_test.json
+ * 
+ * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), and **118** (tests courses that have different day/times)
+ * 
+ * @param {number} [subjectTest] (optional) The row index (between [0, 237] inclusive) of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
  */
 let scraper = async (subjectTest?: number) => {
 
@@ -306,7 +311,7 @@ let scraper = async (subjectTest?: number) => {
         await page.goto("https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments");
         let subjectUrls: string[] = await getSubjectUrls(page);
         let data: Course[] = [];
-        let outputPath = (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) ? "output_test.json" : "output.json";
+        let outputPath = (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) ? "./utils/output_test.json" : "./utils/output.json";
 
         if (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
@@ -317,7 +322,7 @@ let scraper = async (subjectTest?: number) => {
                 console.timeEnd("[getCourseInfo] Build course information");
                 console.log(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
             }
-        } else {
+        } else if (subjectTest === undefined) {
             for (let i = 0; i < subjectUrls.length; i++) {
                 let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
                 for (let j = 0; j < courseUrls.length; j++) {
@@ -329,15 +334,22 @@ let scraper = async (subjectTest?: number) => {
                 }
                 console.log(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
+        } else {
+            console.error("scraper: Input must be a number in the range [0, 237] inclusive.");
         }
 
-        fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
-            if (err) return console.error(err);
-            console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
-        });
+        if (data) {  
+            fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
+                if (err) return console.error(err);
+                console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
+            });
+        
+            // update db
+            // axios.post("webhook url", data); <-- post request to trigger front-end build script
+        } else {
+            console.log("scraper: Possible error, nothing written to disk.")
+        }
 
-        // update db
-        // axios.post("webhook url", data); <-- post request to trigger front-end build script
         console.timeEnd("scraper"); // latest version: 13684777.998ms or uh... 3.8 hours lol
         await browser.close();
     } catch (err) {
@@ -345,8 +357,4 @@ let scraper = async (subjectTest?: number) => {
     }
 };
 
-scraper();
-// run one of these functions instead to see the outputs of separate courses, or put in a random number
-// scraper(145); // KORN courses, tests multi-term courses
-// scraper(67); // COMM courses, has a lot of courses w/ prereqs
-// scraper(118); // FIST courses, multiple day/times
+export default scraper;
