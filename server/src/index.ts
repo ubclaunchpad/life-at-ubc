@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import db from "./database/db";
+import db from "./database/db"
 import scraper from "../utils/scraper";
 
 const PORT = process.env.PORT || 5000;
