@@ -33,10 +33,10 @@ jobs:
       run: cd client && npm ci
 
     - name: Run lint for /client
-      run: npm run lint && cd ..
+      run: cd client && npm run lint
 
     - name: Install dependencies for /server
       run: cd server && npm ci
 
     - name: Run lint for /server
-      run: npm run lint && cd ..
+      run: cd server && npm run lint
