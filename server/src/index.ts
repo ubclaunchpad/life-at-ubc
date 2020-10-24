@@ -23,7 +23,3 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 testDb();
-
-// this should run and eventually output a single course's information at ../utils/output_test.json
-// feel free to play around with the numbers here! (check documentation for usage)
-scraper(145);

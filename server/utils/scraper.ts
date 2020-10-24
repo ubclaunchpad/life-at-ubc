@@ -285,7 +285,7 @@ let pageConfig = async (page: Page) => {
  * 
  * If given an argument, it scrapes the information of a specific course and outputs that to ./utils/output_test.json
  * 
- * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), and **118** (tests courses that have different day/times)
+ * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs & scraper speed), and **118** (tests courses that have different day/times)
  * 
  * @param {number} [subjectTest] (optional) The row index (between [0, 237] inclusive) of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
  */
