@@ -1,0 +1,7 @@
+{
+    "eslint.validate": [
+        "typescript", 
+        "typescriptreact"
+    ],
+    "eslint.workingDirectories": ["./client", "./server"]
+}
