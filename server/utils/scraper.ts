@@ -282,11 +282,11 @@ let pageConfig = async (page: Page) => {
 
 /**
  * Scrapes the entire UBC Course Schedule and writes the information of all course sections to disk.
- * 
+ *
  * If given an argument, it scrapes the information of a specific course and outputs that to ./utils/output_test.json
- * 
+ *
  * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), and **118** (tests courses that have different day/times)
- * 
+ *
  * @param {number} [subjectTest] (optional) The row index (between [0, 237] inclusive) of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
  */
 let scraper = async (subjectTest?: number) => {
@@ -338,16 +338,16 @@ let scraper = async (subjectTest?: number) => {
             console.error("scraper: Input must be a number in the range [0, 237] inclusive.");
         }
 
-        if (data) {  
+        if (data) {
             fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
                 if (err) return console.error(err);
                 console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
             });
-        
+
             // update db
             // axios.post("webhook url", data); <-- post request to trigger front-end build script
         } else {
-            console.log("scraper: Possible error, nothing written to disk.")
+            console.log("scraper: Possible error, nothing written to disk.");
         }
 
         console.timeEnd("scraper"); // latest version: 13684777.998ms or uh... 3.8 hours lol
