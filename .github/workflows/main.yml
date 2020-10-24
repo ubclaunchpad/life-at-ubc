@@ -1,13 +1,14 @@
-name: pr_CI
+name: main_CI
 
-# Controls when the action will run. Triggers the workflow on pull request
-on: pull_request
+# Controls when the action will run. Triggers the workflow on push to `main` branch
+on:
+  push:
+    branches: [ main ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "lint_pr"
-  lint_pr:
-    name: RunLintOnPR
+  # This workflow contains a single job called "lint_main"
+  lint_main:
+    name: RunLintOnMainBranch
 
     runs-on: ubuntu-latest
 
