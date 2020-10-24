@@ -29,12 +29,14 @@ jobs:
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
 
-    - name: Install dependencies
-      run: npm ci
+    - name: Install dependencies for /client
+      run: cd client && npm ci
 
     - name: Run lint for /client
-      run: cd client && npm run lint && cd ..
+      run: npm run lint && cd ..
+
+    - name: Install dependencies for /server
+      run: cd server && npm ci
 
     - name: Run lint for /server
-      run: cd server && npm run lint && cd ..
-
+      run: npm run lint && cd ..
