@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const StyledSlidesContainer = styled.div`
   a {
@@ -7,25 +7,12 @@ const StyledSlidesContainer = styled.div`
   }
 `;
 
-type controllerProps = {
-  a: boolean;
-  setA: any;
-};
-
-function SlidesContainer({ a, setA }: controllerProps) {
+function SlidesContainer() {
   return (
     <StyledSlidesContainer>
-      <div
-        onClick={() => {
-          setA(!a);
-          console.log(a);
-        }}
-      >
-        change parent RC state
-      </div>
-      <a href='/'>Go to home</a>
-      <a href='/page1'>Go to page 1</a>
-      <a href='/page2'>Go to page 2</a>
+      <a href="/">Go to home</a>
+      <a href="/page1">Go to page 1</a>
+      <a href="/page2">Go to page 2</a>
     </StyledSlidesContainer>
   );
 }
