@@ -1,10 +1,12 @@
 import { Pool, QueryResult } from "pg";
 import config from "./config";
+import localconfig from "./localconfig";
 
 class Database {
     private pool: Pool;
 
     constructor() {
+        // If on docker pool should take config, if on local database pool should take localconfig
         this.pool = new Pool(config);
         this.pool.on("error", (err, client) => {
             console.error("Unexpected error on idle PostgreSQL client.", err);
