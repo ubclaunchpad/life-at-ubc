@@ -27,9 +27,6 @@
     "lint": "eslint . --ext .tsx",
     "fix": "eslint . --ext .tsx --fix"
   },
-  "prettier": {
-    "singleQuote": false
-  },
   "eslintConfig": {
     "extends": "react-app"
   },
