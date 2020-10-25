@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import db from "./database/db";
+import scraper from "../utils/scraper";
 
 const PORT = process.env.PORT || 5000;
 
@@ -22,3 +23,4 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 testDb();
+
