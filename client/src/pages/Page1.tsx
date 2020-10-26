@@ -3,7 +3,7 @@ import { addNumber } from "../components/store/ActionCreator";
 import { connect } from "react-redux";
 
 interface Page1Props {
-  num: string;
+  num: number;
   handelAddBtnClick: any;
 }
 function Page1({ num, handelAddBtnClick }: Page1Props) {
