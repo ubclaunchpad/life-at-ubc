@@ -1,7 +1,22 @@
 import React from "react";
+import { connect } from "react-redux";
 
-function Page1() {
-  return <div>This is page1</div>;
+interface Page1Props {
+  num?: string;
+}
+function Page1({ num }: Page1Props) {
+  return (
+    <div>
+      <div>Global state: {num}</div>
+      <div>This is page1</div>
+    </div>
+  );
 }
 
-export default Page1;
+const mapState = (state: any) => {
+  return {
+    num: state.getIn(["reducer", "number"]),
+  };
+};
+
+export default connect(mapState, null)(Page1);
