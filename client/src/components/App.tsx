@@ -11,9 +11,9 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <Route path="/" exact component={() => <Home />}></Route>
-        <Route path="/page1" exact component={() => <Page1 />}></Route>
-        <Route path="/page2" exact component={() => <Page2 />}></Route>
+        <Route path="/" exact component={() => <Home></Home>}></Route>
+        <Route path="/page1" exact component={() => <Page1></Page1>}></Route>
+        <Route path="/page2" exact component={() => <Page2></Page2>}></Route>
       </BrowserRouter>
       <SlidesController></SlidesController>
     </Provider>
