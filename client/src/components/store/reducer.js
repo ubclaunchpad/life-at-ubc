@@ -1,5 +1,5 @@
 const defaultState = {
-  number: "test",
+  number: 0,
 };
 
 export default (state = defaultState, action) => {

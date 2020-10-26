@@ -9,6 +9,8 @@ function Page1({ num }: Page1Props) {
     <div>
       <div>Global state: {num}</div>
       <div>This is page1</div>
+      <div>Add one</div>
+      <div>Minus one</div>
     </div>
   );
 }
