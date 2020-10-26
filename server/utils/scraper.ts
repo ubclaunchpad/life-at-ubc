@@ -1,6 +1,8 @@
 import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer"; // types for TS
 import puppeteer from "puppeteer";
 import fs from "fs";
+import parentLogger from "./logger";
+import { start } from "repl";
 
 interface TermTime {
     term: string;
@@ -25,7 +27,13 @@ interface Course {
     sections: Section[];
 }
 
+const log = parentLogger.child({ module: "scraper" });
 const courseCodeRegex = /([A-Z][A-Z][A-Z][A-Z]?\s\d\d\d[A-Z]?)/g;
+
+let parseHrtimeToSeconds = (hrtime: number[]) => {
+    let seconds = (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
+    return seconds;
+};
 
 // helper function
 let getInnerHTML = async (element: ElementHandle | Page, selector: string): Promise<string> => {
@@ -82,12 +90,16 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
  * @returns {Promise<Course>} a promise for a Course object
  */
 let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
-    console.time("[getCourseInfo] Opening course page");
+    // to benchmark page opening times
+    const startTime = process.hrtime();
 
     let coursePage: Page = await browser.newPage();
     await pageConfig(coursePage);
     await coursePage.goto(url);
-    console.timeEnd("[getCourseInfo] Opening course page");
+
+    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+    log.info("Opening course page: " + elapsedSeconds);
+
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
@@ -294,6 +306,9 @@ let scraper = async (subjectTest?: number) => {
     let puppeteerOptions: LaunchOptions  = {
         // args should help reduce load on CPU, since we're running headless Chromium
         args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--no-zygote",
             "--disable-accelerated-2d-canvas",          // disables gpu-accel 2d <canvas>
             "--no-first-run",                           // disables first run options
             "--disable-gpu"                             // yes
@@ -303,8 +318,8 @@ let scraper = async (subjectTest?: number) => {
     };
 
     try {
-        console.time("scraper");
-        console.log("scraper: Started scraping.");
+        let startTime = process.hrtime();
+        log.info("Started scraping.");
         const browser: Browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
         await pageConfig(page);
@@ -316,44 +331,47 @@ let scraper = async (subjectTest?: number) => {
         if (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
             for (let i = 0; i < courseUrls.length; i++) {
-                console.time("[getCourseInfo] Build course information");
+                const courseStartTime = process.hrtime();
                 let courseInfo = await getCourseInfo(courseUrls[i], browser);
                 data.push(courseInfo);
-                console.timeEnd("[getCourseInfo] Build course information");
-                console.log(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
+                const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
+                log.info(`getCourseInfo: build ${elapsedSeconds}s`);
+                log.info(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
             }
         } else if (subjectTest === undefined) {
             for (let i = 0; i < subjectUrls.length; i++) {
                 let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
                 for (let j = 0; j < courseUrls.length; j++) {
-                    console.time("[getCourseInfo] Build course information");
+                    const courseStartTime = process.hrtime();
                     let courseInfo = await getCourseInfo(courseUrls[j], browser);
                     data.push(courseInfo);
-                    console.timeEnd("[getCourseInfo] Build course information");
-                    console.log(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
+                    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
+                    log.info("getCourseInfo: build " + elapsedSeconds);
+                    log.info(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
                 }
-                console.log(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
+                log.info(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
         } else {
-            console.error("scraper: Input must be a number in the range [0, 237] inclusive.");
+            log.error("scraper: Input must be a number in the range [0, 237] inclusive.");
         }
 
         if (data) {
             fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
-                if (err) return console.error(err);
-                console.log(`scraper: Finished scraping, wrote to ${outputPath}.`);
+                if (err) return log.error(err);
+                log.info(`scraper: Finished scraping, wrote to ${outputPath}.`);
             });
 
             // update db
             // axios.post("webhook url", data); <-- post request to trigger front-end build script
         } else {
-            console.log("scraper: Possible error, nothing written to disk.");
+            log.warn("scraper: Possible error, nothing written to disk.");
         }
 
-        console.timeEnd("scraper"); // latest version: 13684777.998ms or uh... 3.8 hours lol
+        let scraperElapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+        log.info("scraper: elapsed time " + scraperElapsedSeconds);
         await browser.close();
     } catch (err) {
-        console.error(err);
+        log.error(err);
     }
 };
 

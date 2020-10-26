@@ -21,12 +21,6 @@ module.exports = {
                 "max-lines": "off",
                 "max-nested-callbacks": "off",
             }
-        },
-        {
-            "files": ["src/Util.ts"],
-            "rules": {
-                "no-console": "off"
-            }
         }
     ],
     "ignorePatterns": [
@@ -80,6 +74,7 @@ module.exports = {
         "no-bitwise": "error",
         "no-caller": "error",
         "no-cond-assign": "error",
+        "no-console": "error",
         "no-empty": "error",
         "no-empty-function": "off",
         "no-eval": "error",
