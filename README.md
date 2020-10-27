@@ -1,5 +1,7 @@
 # Life @ UBC
 
+[![Main Branch Build](https://github.com/ubclaunchpad/life-at-ubc/workflows/main_CI/badge.svg)](https://github.com/ubclaunchpad/life-at-ubc/actions)
+
 ### Installation (if you don't have these already)
 - Node from https://nodejs.org/en/
 - Git https://git-scm.com/downloads
