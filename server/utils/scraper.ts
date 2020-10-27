@@ -2,7 +2,6 @@ import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer
 import puppeteer from "puppeteer";
 import fs from "fs";
 import parentLogger from "./logger";
-import { start } from "repl";
 
 interface TermTime {
     term: string;
@@ -90,7 +89,7 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
  * @returns {Promise<Course>} a promise for a Course object
  */
 let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
-    // to benchmark page opening times
+    // to benchmark page opening times, since it's the biggest bottleneck for scraper currently
     const startTime = process.hrtime();
 
     let coursePage: Page = await browser.newPage();
@@ -98,7 +97,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     await coursePage.goto(url);
 
     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-    log.info("Opening course page: " + elapsedSeconds);
+    log.info(`Opening course page: ${elapsedSeconds}s`);
 
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
@@ -306,9 +305,9 @@ let scraper = async (subjectTest?: number) => {
     let puppeteerOptions: LaunchOptions  = {
         // args should help reduce load on CPU, since we're running headless Chromium
         args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--no-zygote",
+            "--no-sandbox",                             // disabled for docker container
+            "--disable-setuid-sandbox",                 // a sandbox dependent
+            "--no-zygote",                              // sandbox dependent
             "--disable-accelerated-2d-canvas",          // disables gpu-accel 2d <canvas>
             "--no-first-run",                           // disables first run options
             "--disable-gpu"                             // yes
@@ -346,29 +345,29 @@ let scraper = async (subjectTest?: number) => {
                     let courseInfo = await getCourseInfo(courseUrls[j], browser);
                     data.push(courseInfo);
                     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                    log.info("getCourseInfo: build " + elapsedSeconds);
+                    log.info(`getCourseInfo: build ${elapsedSeconds}s`);
                     log.info(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
                 }
                 log.info(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
         } else {
-            log.error("scraper: Input must be a number in the range [0, 237] inclusive.");
+            log.error("Input must be a number in the range [0, 237] inclusive.");
         }
 
         if (data) {
             fs.writeFile(outputPath, JSON.stringify(data), (err: any) => {
                 if (err) return log.error(err);
-                log.info(`scraper: Finished scraping, wrote to ${outputPath}.`);
+                log.info(`Finished scraping, wrote to ${outputPath}.`);
             });
 
             // update db
             // axios.post("webhook url", data); <-- post request to trigger front-end build script
         } else {
-            log.warn("scraper: Possible error, nothing written to disk.");
+            log.warn("Possible error, nothing written to disk.");
         }
 
         let scraperElapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-        log.info("scraper: elapsed time " + scraperElapsedSeconds);
+        log.info(`scraper: elapsed time ${scraperElapsedSeconds}s`);
         await browser.close();
     } catch (err) {
         log.error(err);
