@@ -9,4 +9,4 @@ RUN chown -R node:node /app
 USER node
 
 EXPOSE ${DB_HOST}
-CMD npm start
+CMD ["npm", "run", "dev"]
