@@ -24,7 +24,7 @@ class Database {
             client.release();
             return queryRes;
         } catch (e) {
-            log.info("async query error");
+            log.error("async query error");
             client.release();
             throw (e);
         }
