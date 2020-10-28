@@ -5,7 +5,7 @@ import expressPino from "express-pino-logger";
 import parentLogger from "../utils/logger";
 import scraper from "../utils/scraper";
 
-const log = parentLogger.child({ module: "express" });
+const log = parentLogger.child({ module: "router" });
 const expressLogger = expressPino(log);
 const PORT = process.env.PORT || 5000;
 
