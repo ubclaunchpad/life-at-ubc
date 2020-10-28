@@ -9,7 +9,7 @@ import { store } from "../reducers/index";
 
 function App() {
   return (
-    <Provider store = {store}>
+    <Provider store={store}>
       <BrowserRouter>
         <Route path="/" exact component={() => <Home />}></Route>
         <Route path="/page1" exact component={() => <Page1 />}></Route>
