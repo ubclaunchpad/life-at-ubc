@@ -1,5 +1,5 @@
-export const INCREMENT = 'increment';
-export const DECREMENT = 'decrement';
+export const INCREMENT = "increment";
+export const DECREMENT = "decrement";
 
 export interface IncrementAction {
   type: typeof INCREMENT;

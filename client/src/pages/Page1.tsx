@@ -1,7 +1,7 @@
 import React from "react";
-import {useDispatch, useSelector} from 'react-redux';
-import { Page1StateProps } from '../reducers/Page1Reducer'
-import { INCREMENT, DECREMENT } from '../actions/Page1Actions';
+import {useDispatch, useSelector} from "react-redux";
+import { Page1StateProps } from "../reducers/Page1Reducer";
+import { INCREMENT, DECREMENT } from "../actions/Page1Actions";
 
 function Page1() {
   const number = useSelector<Page1StateProps, Page1StateProps['number']>((state) => state.number);

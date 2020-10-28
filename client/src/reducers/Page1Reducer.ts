@@ -1,4 +1,4 @@
-import { Page1Actions, INCREMENT, DECREMENT } from '../actions/Page1Actions';
+import { Page1Actions, INCREMENT, DECREMENT } from "../actions/Page1Actions";
 
 export interface Page1StateProps {
    number: number;
