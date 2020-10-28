@@ -4,7 +4,7 @@
     "main": "index.js",
     "scripts": {
         "start": "ts-node-dev --respawn src/index.ts",
-        "dev": "nodemon --exec ts-node src/index.ts",
+        "dev": "nodemon -L --exec ts-node src/index.ts",
         "build": "tsc",
         "lint": "eslint . --ext .ts",
         "fix": "eslint . --ext .ts --fix"
