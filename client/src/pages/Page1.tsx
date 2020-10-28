@@ -18,10 +18,8 @@ function Page1() {
   return (
   <div>
     <div>{number}</div>
-    <div>
-      <div style = {{display: 'inline-block', marginRight: 10, cursor: 'pointer'}} onClick = {handleAddBtnPress}>Add</div>
-      <div style = {{display: 'inline-block', cursor: 'pointer'}} onClick = {handleMinusBtnPress}>Minus</div>
-    </div>
+      <button style = {{marginRight: 10}} onClick = {handleAddBtnPress}>Add</button>
+      <button onClick = {handleMinusBtnPress}>Minus</button>
   </div>
   );
 }
