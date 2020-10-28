@@ -1,14 +1,14 @@
-import { Page1ActionTypes, INCREMENT, DECREMENT } from '../actions/page1Actions';
+import { Page1Actions, INCREMENT, DECREMENT } from '../actions/Page1Actions';
 
-interface StateProps {
+export interface Page1StateProps {
    number: number;
 }
 
-const initialState: StateProps = {
+const initialState: Page1StateProps = {
   number: 0,
 }
 
-export const Page1Reducer = (state: StateProps = initialState, action: Page1ActionTypes) => {
+export const Page1Reducer = (state: Page1StateProps = initialState, action: Page1Actions): Page1StateProps => {
   switch (action.type) {
     case INCREMENT: {
       return {...state, number: state.number + 1}
