@@ -1,17 +1,17 @@
 import { Page1Actions, INCREMENT, DECREMENT } from "../actions/Page1Actions";
 
-export interface Page1StateProps {
+export interface ReducerProps {
   number: number;
 }
 
-const initialState: Page1StateProps = {
+const initialState: ReducerProps = {
   number: 0,
 };
 
-export const Page1Reducer = (
-  state: Page1StateProps = initialState,
+export const reducer = (
+  state: ReducerProps = initialState,
   action: Page1Actions
-): Page1StateProps => {
+): ReducerProps => {
   switch (action.type) {
     case INCREMENT: {
       return { ...state, number: state.number + 1 };

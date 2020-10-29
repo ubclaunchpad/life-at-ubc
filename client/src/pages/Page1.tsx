@@ -1,10 +1,10 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Page1StateProps } from "../reducers/Page1Reducer";
+import { ReducerProps } from "../reducers/Reducer";
 import { INCREMENT, DECREMENT } from "../actions/Page1Actions";
 
 function Page1() {
-  const num = useSelector<Page1StateProps, Page1StateProps["number"]>(
+  const num = useSelector<ReducerProps, ReducerProps["number"]>(
     (state) => state.number
   );
   const dispatch = useDispatch();
