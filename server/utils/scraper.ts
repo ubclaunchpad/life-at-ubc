@@ -83,9 +83,18 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
     return hrefs;
 };
 
-let getReqs = async (page: Page): Promise<any> => {
+/**
+ * Produces a list of pre-reqs and co-reqs a course has, if any. If pre-reqs or co-reqs don't exist, it passes an empty array.
+ *
+ * For example, if a course has co-reqs but no pre-reqs: `[[], coreqs]`
+ * @param {Page} page Page object for a course listing page
+ * @returns {Promise<[string[], string[]]} the tuple containing an array of pre-reqs and an array of co-reqs.
+ */
+let getReqs = async (page: Page): Promise<[string[], string[]]> => {
     // preReq <p> may not exist, so .content.expand > p:nth-of-type(3) might be coreq.
     // .content.expand > p:nth-of-type(4) is always a coreq
+
+    // TODO: more nuanced output, see issue #33 on the github
     let preReqs: string[];
     let coReqs: string[];
 
@@ -99,7 +108,7 @@ let getReqs = async (page: Page): Promise<any> => {
         });
 
     // regex to determine if the html contains pre-req or coreq
-    // this is kind of ugly and i'm sure it can be rewritten to be more readable lol
+    // this is kind of ugly and i'm sure it can be rewritten to be more readable
     if (/Pre-req/.test(thirdChildHTML)) {
         preReqs = thirdChildHTML.match(courseCodeRegex);
 
@@ -137,9 +146,6 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
-    // prereq is USUALLY found as ".content.expand > p:nth-of-type(3)" then a list of its a children but we must validate it first
-    // TODO: check if it starts with Pre-reqs: or Co-reqs:?
-    // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
     let [ preReq, coReq ] = await getReqs(coursePage);
 
     let courseData: Course = {
