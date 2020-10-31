@@ -1,37 +1,45 @@
 import React from "react";
-import { Breadcrumb } from "antd";
 import styled from "styled-components";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Link from "@material-ui/core/Link";
 
-const StyledBreadcrumb = styled(Breadcrumb)`
-  margin-top: 30px;
-  text-align: center;
+const StyledBreadcrumbesWrapper = styled.div`
+  width: 465px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 46px;
+  margin-bottom: 46px;
 `;
 
-const Item = styled(Breadcrumb.Item)`
-  font-size: 20px;
-  color: "#eee";
-  margin-left: 10px;
-  margin-right: 10px;
-`;
+function handleClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  event.preventDefault();
+}
 
-function BreadCrumb() {
+function Breadcrumb() {
   return (
-    <StyledBreadcrumb separator=">">
-      <Item>Home </Item>
-      <Item href="">Application Center </Item>
-      <Item href="">Application List</Item>
-      <span
-        style={{
-          marginLeft: 10,
-          fontSize: 20,
-          color: "rgba(0, 0, 0, 0.45)",
-          cursor: "pointer",
-        }}
-      >
-        Application
-      </span>
-    </StyledBreadcrumb>
+    <StyledBreadcrumbesWrapper>
+      <Breadcrumbs separator="›" aria-label="breadcrumb">
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Home
+        </Link>
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Courses
+        </Link>
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Restrictions
+        </Link>
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Lectures
+        </Link>
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Labs
+        </Link>
+        <Link color="inherit" href="/" onClick={handleClick}>
+          Generate
+        </Link>
+      </Breadcrumbs>
+    </StyledBreadcrumbesWrapper>
   );
 }
 
-export default BreadCrumb;
+export default Breadcrumb;
