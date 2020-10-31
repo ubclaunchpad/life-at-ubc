@@ -15,6 +15,9 @@ services:
     server:
         build: .
         container_name: server
+        volumes: 
+            - ./:/app
+            - /app/node_modules
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - POSTGRES_USER=${DB_USER}

@@ -1,0 +1,43 @@
+name: main_CI
+
+# Controls when the action will run. Triggers the workflow on push to `main` branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # This workflow contains a single job called "lint_main"
+  lint_main:
+    name: RunLintOnMainBranch
+
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Use Node.js 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+
+    - name: Cache Node.js modules
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          ${{ runner.OS }}-
+
+    - name: Install dependencies for /client
+      run: cd client && npm ci
+
+    - name: Run lint for /client
+      run: cd client && npm run lint
+
+    - name: Install dependencies for /server
+      run: cd server && npm ci
+
+    - name: Run lint for /server
+      run: cd server && npm run lint
