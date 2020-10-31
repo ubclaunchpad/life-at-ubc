@@ -4,6 +4,7 @@ import db from "./database/db";
 import expressPino from "express-pino-logger";
 import parentLogger from "../utils/logger";
 import scraper from "../utils/scraper";
+import { setupDb } from "./database/setup";
 
 const log = parentLogger.child({ module: "router" });
 const expressLogger = expressPino(log);
@@ -28,3 +29,4 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 testDb();
+setupDb();
