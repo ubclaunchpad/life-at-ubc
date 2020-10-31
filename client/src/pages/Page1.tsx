@@ -1,22 +1,16 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { ReducerProps } from "../reducers/Reducer";
 import { INCREMENT, DECREMENT } from "../actions/Page1Actions";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 
-function Page1() {
-  const num = useSelector<ReducerProps, ReducerProps["number"]>(
-    (state) => state.number
-  );
-  const dispatch = useDispatch();
+interface Page1Props {
+  num?: number;
+  handleAddBtnPress?: any;
+  handleMinusBtnPress?: any;
+}
 
-  const handleAddBtnPress = () => {
-    dispatch({ type: INCREMENT });
-  };
-
-  const handleMinusBtnPress = () => {
-    dispatch({ type: DECREMENT });
-  };
-
+function Page1({ num, handleAddBtnPress, handleMinusBtnPress }: Page1Props) {
   return (
     <div>
       <div>{num}</div>
@@ -28,4 +22,23 @@ function Page1() {
   );
 }
 
-export default Page1;
+const mapState = (state: RootState) => {
+  return {
+    num: state.reducer.number,
+  };
+};
+
+const mapDispatch = (dispatch: Dispatch) => {
+  return {
+    handleAddBtnPress() {
+      const action = { type: INCREMENT };
+      dispatch(action);
+    },
+    handleMinusBtnPress() {
+      const action = { type: DECREMENT };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapState, mapDispatch)(Page1);
