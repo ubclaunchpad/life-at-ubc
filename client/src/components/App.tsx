@@ -5,7 +5,9 @@ import Page2 from "../pages/Page2";
 import SlidesController from "../components/SlidesController";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "../reducers/index";
+import { configureStore } from "../reducers/index";
+
+const store = configureStore();
 
 function App() {
   return (
