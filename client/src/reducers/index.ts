@@ -3,6 +3,7 @@ import {
   combineReducers,
   createStore,
   Middleware,
+  Store
 } from "redux";
 import { reducer, ReducerProps } from "./Reducer";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -15,8 +16,7 @@ const rootReducer = combineReducers({
   reducer,
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-const configureStore = () => {
+export const configureStore = (): Store<RootState> => {
   const middlewares: Middleware[] = [];
   const middleWareEnhancer = applyMiddleware(...middlewares);
   const createdStore = createStore(
@@ -26,4 +26,3 @@ const configureStore = () => {
   return createdStore;
 };
 
-export const store = configureStore();
