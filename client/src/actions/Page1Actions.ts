@@ -9,5 +9,5 @@ export interface DecrementAction {
   type: typeof DECREMENT;
 }
 
-//aggregation of all actions in the component
+// aggregation of all actions in the component
 export type Page1Actions = IncrementAction | DecrementAction;
