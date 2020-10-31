@@ -19,11 +19,11 @@ const rootReducer = combineReducers({
 const configureStore = () => {
   const middlewares: Middleware[] = [];
   const middleWareEnhancer = applyMiddleware(...middlewares);
-  const store = createStore(
+  const createdStore = createStore(
     rootReducer,
     composeWithDevTools(middleWareEnhancer)
   );
-  return store;
+  return createdStore;
 };
 
 export const store = configureStore();
