@@ -1,5 +1,8 @@
 import React from "react";
 import Home from "../pages/Home";
+import Header from "./Header";
+import BreadCrumb from "./BreadCrumb";
+import LandingPage from "../pages/LandingPage";
 import Page1 from "../pages/Page1";
 import Page2 from "../pages/Page2";
 import SlidesController from "../components/SlidesController";
@@ -10,12 +13,11 @@ import { store } from "../reducers/index";
 function App() {
   return (
     <Provider store={store}>
+      <Header></Header>
+      <BreadCrumb></BreadCrumb>
       <BrowserRouter>
-        <Route path="/" exact component={() => <Home />}></Route>
-        <Route path="/page1" exact component={() => <Page1 />}></Route>
-        <Route path="/page2" exact component={() => <Page2 />}></Route>
+        <Route path="/" exact component={() => <LandingPage />}></Route>
       </BrowserRouter>
-      <SlidesController></SlidesController>
     </Provider>
   );
 }
