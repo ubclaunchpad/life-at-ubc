@@ -2,6 +2,7 @@ import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer
 import puppeteer from "puppeteer";
 import fs from "fs";
 import parentLogger from "./logger";
+import logger from "./logger";
 
 interface TermTime {
     term: string;
@@ -82,6 +83,40 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
     return hrefs;
 };
 
+let getReqs = async (page: Page): Promise<any> => {
+    // preReq <p> may not exist, so .content.expand > p:nth-of-type(3) might be coreq.
+    // .content.expand > p:nth-of-type(4) is always a coreq
+    let preReqs: string[];
+    let coReqs: string[];
+
+    let thirdChildHTML = await page.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerHTML)
+        .catch((err: any) => {
+            return [];
+        });
+    let fourthChildHTML = await page.$eval(".content.expand > p:nth-of-type(4)", (p: any) => p.innerHTML)
+        .catch( async (err: any) => {
+            return [];
+        });
+
+    // regex to determine if the html contains pre-req or coreq
+    // this is kind of ugly and i'm sure it can be rewritten to be more readable lol
+    if (/Pre-req/.test(thirdChildHTML)) {
+        preReqs = thirdChildHTML.match(courseCodeRegex);
+
+        if (/Co-req/.test(fourthChildHTML)) {
+            coReqs = fourthChildHTML.match(courseCodeRegex);
+            return [(preReqs || []), (coReqs || [])];
+        }
+
+        return [(preReqs || []), []];
+    } else if (/Co-req/.test(thirdChildHTML)) {
+        coReqs = thirdChildHTML.match(courseCodeRegex);
+        return [[], (coReqs || [])];
+    } else {
+        return [[], []];
+    }
+};
+
 /**
  * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
  * @param {string} url URL string to a UBC Course Schedule course page
@@ -105,18 +140,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     // prereq is USUALLY found as ".content.expand > p:nth-of-type(3)" then a list of its a children but we must validate it first
     // TODO: check if it starts with Pre-reqs: or Co-reqs:?
     // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
-    let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerHTML)
-        .catch( async (err: any) => {
-            return "";
-        });
-
-    let preReq: string[] | null = preReqHTML.match(courseCodeRegex); // gets course codes from prereqs, doesn't care if optional/required yet
-    if (preReq == null) preReq = [];
-    let coReq: string[] = await coursePage.$(".content.expand > p:nth-of-type(4)")
-        .then( (p: any) => p.$$eval("a", (a: any) => a.innerHTML))
-        .catch( async (err: any) => {
-            return [];
-        });
+    let [ preReq, coReq ] = await getReqs(coursePage);
 
     let courseData: Course = {
         courseTitle: courseTitle,
@@ -334,8 +358,8 @@ let scraper = async (subjectTest?: number) => {
                 let courseInfo = await getCourseInfo(courseUrls[i], browser);
                 data.push(courseInfo);
                 const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                log.info(`getCourseInfo: build ${elapsedSeconds}s`);
-                log.info(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
+                log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
+                log.debug(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
             }
         } else if (subjectTest === undefined) {
             for (let i = 0; i < subjectUrls.length; i++) {
@@ -345,10 +369,10 @@ let scraper = async (subjectTest?: number) => {
                     let courseInfo = await getCourseInfo(courseUrls[j], browser);
                     data.push(courseInfo);
                     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                    log.info(`getCourseInfo: build ${elapsedSeconds}s`);
-                    log.info(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
+                    log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
+                    log.debug(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
                 }
-                log.info(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
+                log.debug(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
         } else {
             log.error("Input must be a number in the range [0, 237] inclusive.");
