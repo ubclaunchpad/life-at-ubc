@@ -5,7 +5,9 @@ import HomePage from "../pages/HomePage";
 import NextPrevSwitcher from "./NextPrevSwitcher";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "../reducers/index";
+import { configureStore } from "../reducers/index";
+
+const store = configureStore();
 
 function App() {
   return (

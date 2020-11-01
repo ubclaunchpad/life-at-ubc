@@ -80,6 +80,7 @@ module.exports = {
         "no-bitwise": "error",
         "no-caller": "error",
         "no-cond-assign": "error",
+        "no-console": "error",
         "no-empty": "error",
         "no-empty-function": "off",
         "no-eval": "error",

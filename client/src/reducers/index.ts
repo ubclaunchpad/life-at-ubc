@@ -3,6 +3,7 @@ import {
   combineReducers,
   createStore,
   Middleware,
+  Store
 } from "redux";
 import { reducer, ReducerProps } from "./Reducer";
 import { HomeReducer, HomeReducerProps } from "./HomeReducer";
@@ -18,8 +19,7 @@ const rootReducer = combineReducers({
   HomeReducer,
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-const configureStore = () => {
+export const configureStore = (): Store<RootState> => {
   const middlewares: Middleware[] = [];
   const middleWareEnhancer = applyMiddleware(...middlewares);
   const store = createStore(
@@ -29,4 +29,3 @@ const configureStore = () => {
   return store;
 };
 
-export const store = configureStore();
