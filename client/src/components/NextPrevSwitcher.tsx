@@ -24,15 +24,10 @@ const SectionWrapper = styled.div`
 
 interface SwitcherProps {
   index?: number;
-  handlePrevBtnClick?: any;
-  handleNextBtnClick?: any;
+  handleBtnClick?: any;
 }
 
-function NextPrevSwitcher({
-  index,
-  handlePrevBtnClick,
-  handleNextBtnClick,
-}: SwitcherProps) {
+function NextPrevSwitcher({ index, handleBtnClick }: SwitcherProps) {
   const classes = useStyles();
   return (
     <SectionWrapper>
@@ -44,7 +39,7 @@ function NextPrevSwitcher({
           className={classes.button}
           startIcon={<ArrowBack />}
           onClick={() => {
-            handlePrevBtnClick((index as number) - 1);
+            handleBtnClick((index as number) - 1);
           }}
         ></Button>
       )}
@@ -56,7 +51,7 @@ function NextPrevSwitcher({
           className={classes.button}
           endIcon={<ArrowForward />}
           onClick={() => {
-            handlePrevBtnClick((index as number) + 1);
+            handleBtnClick((index as number) + 1);
           }}
         ></Button>
       )}
@@ -72,11 +67,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    handlePrevBtnClick(index: any) {
-      const action: Switch = { type: SWITCHCOMPONENT, index };
-      dispatch(action);
-    },
-    handleNextBtnClick(index: any) {
+    handleBtnClick(index: any) {
       const action: Switch = { type: SWITCHCOMPONENT, index };
       dispatch(action);
     },
