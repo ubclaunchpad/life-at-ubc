@@ -1,4 +1,4 @@
-import { HomeActions, SWITCHCOMPONENT } from "../actions/HomePageActions";
+import { HomeActions, SWITCHCOMPONENT } from "../actions/HomeActions";
 
 export interface HomeReducerProps {
   componentIndex: number;
