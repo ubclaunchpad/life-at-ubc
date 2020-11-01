@@ -1,11 +1,11 @@
 import { HomeActions, SWITCHCOMPONENT } from "../actions/HomePageActions";
 
 export interface HomeReducerProps {
-  index: number;
+  componentIndex: number;
 }
 
 const initialState: HomeReducerProps = {
-  index: 0,
+  componentIndex: 0,
 };
 
 export const HomeReducer = (
@@ -14,7 +14,7 @@ export const HomeReducer = (
 ): HomeReducerProps => {
   switch (action.type) {
     case SWITCHCOMPONENT: {
-      return { ...state, index: action.index };
+      return { ...state, componentIndex: action.index };
     }
     default:
       return state;

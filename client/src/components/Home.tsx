@@ -98,7 +98,11 @@ function Home() {
           input={<BootstrapInput />}
         >
           {sessions.map((session, index) => {
-            return <MenuItem value={index}>{session}</MenuItem>;
+            return (
+              <MenuItem value={index} key={index}>
+                {session}
+              </MenuItem>
+            );
           })}
         </Select>
       </FormControl>
@@ -113,7 +117,11 @@ function Home() {
             input={<BootstrapInput />}
           >
             {terms.map((term, index) => {
-              return <MenuItem value={index}>{term}</MenuItem>;
+              return (
+                <MenuItem value={index} key={index}>
+                  {term}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
