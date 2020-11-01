@@ -22,6 +22,8 @@ interface Section {
 interface Course {
     courseTitle: string;
     courseCode: string;
+    description: string;
+    credits: string;
     preReqs: string[];
     coReqs: string[];
     sections: Section[];
@@ -127,6 +129,28 @@ let getReqs = async (page: Page): Promise<[string[], string[]]> => {
 };
 
 /**
+ * Helper function to retrieve the description and number of credits for a course.
+ * @param {Page} page Page object for a course listing page
+ * @returns {Promise<[string, string]>} a tuple that holds the description of a course and the number of credits it gives
+ */
+let getDescCreds = async (page: Page): Promise<[string, string]> => {
+    let desc: string = await getInnerHTML(page, ".content.expand > p:first-of-type");
+    let creds: string = await getInnerHTML(page, ".content.expand > p:nth-of-type(2)");
+
+    let regexedCreds = creds.match(/[0-9]+/);
+
+    if (regexedCreds != null) {
+        creds = regexedCreds[0];
+    }
+
+    if (desc === "") {
+        desc = "No description provided.";
+    }
+
+    return [desc, creds];
+};
+
+/**
  * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
  * @param {string} url URL string to a UBC Course Schedule course page
  * @param {Browser} browser the working (top-level) browser instance
@@ -141,16 +165,20 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     await coursePage.goto(url);
 
     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-    log.info(`Opening course page: ${elapsedSeconds}s`);
+    log.debug(`Opening course page: ${elapsedSeconds}s`);
 
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
+
+    let [ desc, creds ] = await getDescCreds(coursePage);
 
     let [ preReq, coReq ] = await getReqs(coursePage);
 
     let courseData: Course = {
         courseTitle: courseTitle,
         courseCode: courseCode,
+        description: desc,
+        credits: creds,
         preReqs: preReq,
         coReqs: coReq,
         sections: []
