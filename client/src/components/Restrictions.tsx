@@ -25,6 +25,7 @@ const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 function Restrictions() {
   const [days, setDays] = useState<number[]>([]);
 
+  //when a day is not selected, it becomes selected after being clicked. Vice versa.
   const handleBtnClick = (index: number) => {
     if (!days.includes(index)) {
       setDays([...days, index]);

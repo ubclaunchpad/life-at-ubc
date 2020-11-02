@@ -16,6 +16,9 @@
     "styled-components": "^5.2.0",
     "typescript": "~3.7.2"
   },
+  "prettier": {
+    "singleQuote": false
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

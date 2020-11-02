@@ -13,11 +13,11 @@ const StyledButton = styled.div<ButtonProps>`
   flex: 1;
   background: ${(props) => (props.selected ? "#747474" : "#fff")};
   color: ${(props) => (props.selected ? "#fff" : "black")};
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 `;
 
