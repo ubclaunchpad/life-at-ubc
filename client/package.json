@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "pino": "^6.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -10,6 +12,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "styled-components": "^5.2.0",
     "typescript": "~3.7.2"
   },
@@ -18,8 +21,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint . --ext .tsx",
-    "fix": "eslint . --ext .tsx --fix"
+    "lint": "eslint . --ext .tsx,.ts",
+    "fix": "eslint . --ext .tsx,.ts --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,7 +43,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^24.9.1",
     "@types/node": "^12.0.0",
     "@types/pino": "^6.3.3",
     "@types/react": "^16.9.0",
