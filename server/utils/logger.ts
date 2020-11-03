@@ -1,4 +1,6 @@
 import pino from "pino";
+import dotenv from "dotenv";
+dotenv.config();
 
 let environment = (process.env.NODE_ENV) || "development";
 
