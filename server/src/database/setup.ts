@@ -21,9 +21,12 @@ const createDb = async () => {
     await db.query(CourseSection);
 };
 
-const populateDb = async () => {
+const populateDb = () => {
     readFile(src, { encoding: "utf8" }, async (err: any, data: any) => {
-        if (err) return;
+        if (err) {
+            log.error(`error ${err}`);
+            return;
+        }
         const courses = JSON.parse(data);
         log.info(`${courses.length} courses`);
         const coReqsToStore: any[] = [];
@@ -32,20 +35,9 @@ const populateDb = async () => {
         courses.forEach((course: any) => {
             const { courseTitle, courseCode, preReqs = [], coReqs = [], sections = [] } = course;
             const [courseDept, courseNumber] = courseCode.split(" ");
-            coReqs.forEach((coReq: any) => {
-                const [coReqCourseDept, coReqCourseNumber] = coReq.split(" ");
-                coReqsToStore.push([courseDept, courseNumber, coReqCourseDept, coReqCourseNumber]);
-            });
-            preReqs.forEach(async (preReq: any) => {
-                const [preReqCourseDept, preReqCourseNumber] = preReq.split(" ");
-                preReqsToStore.push([courseDept, courseNumber, preReqCourseDept, preReqCourseNumber]);
-            });
-            sections.forEach(async (section: any) => {
-                const { sectionTitle, status, activity, prof, timeInfo } = section;
-                const { term, day, start, end } = timeInfo;
-                // TODO: handle cases where start or end is an empty string
-                sectionsToStore.push([courseTitle, courseDept, courseNumber, sectionTitle, status, activity, prof, term, day]);
-            });
+            coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqsToStore));
+            preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqsToStore));
+            sections.forEach((section: any) => handleSection(courseTitle, courseDept, courseNumber, section, sectionsToStore));
         });
         try {
             log.info(`Found ${coReqsToStore.length} co-requisites.`);
@@ -56,7 +48,7 @@ const populateDb = async () => {
                 await db.query("INSERT INTO CourseCode VALUES ($1, $2) ON CONFLICT DO NOTHING", [preReqCourseDept, preReqCourseNumber]);
                 await db.query("INSERT INTO PreReq VALUES ($1, $2, $3, $4)", [courseDept, courseNumber, preReqCourseDept, preReqCourseNumber]);
             });
-            sectionsToStore.forEach((section) => db.query("INSERT INTO CourseSection VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)", section));
+            sectionsToStore.forEach((section) => db.query("INSERT INTO CourseSection VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", section));
             const { rows: coReqs } = await db.query(`SELECT * FROM CoReq`);
             const { rows: preReqs } = await db.query(`SELECT * FROM PreReq`);
             const { rows: sections } = await db.query(`SELECT * FROM CourseSection`);
@@ -67,4 +59,19 @@ const populateDb = async () => {
             log.error(`error ${e}`);
         }
     });
+};
+
+const handleReq = (courseDept: string, courseNumber: string, req: any, store: any[]) => {
+    const [reqCourseDept, reqCourseNumber] = req.split(" ");
+    store.push([courseDept, courseNumber, reqCourseDept, reqCourseNumber]);
+};
+
+const handleSection = (courseTitle: string, courseDept: string, courseNumber: string, section: any, store: any[]) => {
+    const { sectionTitle, status, activity, prof, timeInfo } = section;
+    const { term, day, start, end } = timeInfo;
+    store.push([
+        courseTitle, courseDept, courseNumber,
+        sectionTitle, status, activity, prof,
+        term, day, start, end,
+    ]);
 };
