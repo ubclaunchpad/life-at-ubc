@@ -68,10 +68,12 @@ const handleReq = (courseDept: string, courseNumber: string, req: any, store: an
 
 const handleSection = (courseTitle: string, courseDept: string, courseNumber: string, section: any, store: any[]) => {
     const { sectionTitle, status, activity, prof, timeInfo } = section;
-    const { term, day, start, end } = timeInfo;
-    store.push([
-        courseTitle, courseDept, courseNumber,
-        sectionTitle, status, activity, prof,
-        term, day, start, end,
-    ]);
+    timeInfo.forEach((time: any) => {
+        const { term, day, start, end } = time;
+        store.push([
+            courseTitle, courseDept, courseNumber,
+            sectionTitle, status, activity, prof,
+            term, day, start, end,
+        ]);
+    });
 };
