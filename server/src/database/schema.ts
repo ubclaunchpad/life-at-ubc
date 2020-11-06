@@ -1,9 +1,3 @@
-export const CourseCode = `CREATE TABLE CourseCode (
-    CourseDept VARCHAR(255),
-    CourseNumber VARCHAR(255),
-    PRIMARY KEY(CourseDept, CourseNumber)
-);`;
-
 export const PreReq = `CREATE TABLE PreReq (
     CourseDept VARCHAR(255),
     CourseNumber VARCHAR(255),
