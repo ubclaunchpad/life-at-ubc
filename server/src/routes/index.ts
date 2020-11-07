@@ -1,14 +1,12 @@
 import express from "express";
-import parentLogger from "../../utils/logger";
+import prereq from "./prereq";
 
-const log = parentLogger.child({ module: "router" });
 const router = express.Router();
 
-router.get("/api", (req, res) => {
-    log.info("GET /api");
-    let sampleresponse = { test: "test", route: "/api" };
-    res.json(sampleresponse);
-});
+router.use("/api", prereq);
+/**
+ * TODO: Add route for coursesections
+ */
 
 export default router;
 
