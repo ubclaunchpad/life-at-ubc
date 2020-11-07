@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { SectionWrapper } from "./Home";
 import TimePicker from "./TimePicker";
@@ -20,17 +20,37 @@ const TimePickerGroup = styled.div`
   justify-content: center;
 `;
 
+const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
 function Restrictions() {
+  const [days, setDays] = useState<number[]>([]);
+
+  // when a day is not selected, it becomes selected after being clicked. Vice versa.
+  const handleBtnClick = (index: number) => {
+    if (!days.includes(index)) {
+      setDays([...days, index]);
+    } else {
+      const daysAfterRemoval = days.filter((day) => day !== index);
+      setDays(daysAfterRemoval);
+    }
+  };
+
   return (
     <SectionWrapper>
       <Title title="3. Add Restrictions"></Title>
       <Title title="What days do you want to go to school?"></Title>
       <ButtonGroup>
-        <Button content="Monday"></Button>
-        <Button content="Tuesday"></Button>
-        <Button content="Tuesday"></Button>
-        <Button content="Tuesday"></Button>
-        <Button content="Tuesday"></Button>
+        {weekDays.map((weekday, index) => {
+          return (
+            <Button
+              content={weekday}
+              selected={days.includes(index)}
+              onClick={() => {
+                handleBtnClick(index);
+              }}
+            ></Button>
+          );
+        })}
       </ButtonGroup>
       <Title title="What time?"></Title>
       <TimePickerGroup>
