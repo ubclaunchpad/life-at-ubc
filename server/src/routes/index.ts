@@ -1,12 +1,11 @@
 import express from "express";
 import prereq from "./prereq";
+import section from "./coursesection";
 
 const router = express.Router();
 
 router.use("/api", prereq);
-/**
- * TODO: Add route for coursesections
- */
+router.use("/api", section);
 
 export default router;
 
