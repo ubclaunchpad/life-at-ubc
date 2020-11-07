@@ -1,15 +1,21 @@
 # Contributing
+- [Issues](#Issues)
+- [Development Guide](#Development)
+    - [Local Setup](#-Setup-Without-Docker)
+    - [Docker Setup](#-Setup-With-Docker-Compose)
+- [Pull Requests](#Pull-Requests)
 
-- [Local Setup](#-Setup-Without-Docker)
-- [Docker Setup](#-Setup-With-Docker-Compose)
+## Issues
+If you notice any bugs or features that can be added, please open an issue! If you'd like to work on an issue, please assign yourself to it.
 
-## ⚙ Setup Without Docker
-### Client
+## Development 
+### ⚙ Setup Without Docker
+#### Client
 - `cd client`
 - `npm install` to install all dependencies 
 - `npm start` to build & start the React app
 
-### Server
+#### Server
 - `cd server`
 - `npm install` in the root directory to install all dependencies
 - `npm start` to start the Node.js server
@@ -24,35 +30,12 @@
 
 ![Alt text](./pgconnected.png)
 
-## 🐳 Setup With Docker Compose
+### 🐳 Setup With Docker Compose
 
-### Server
-- Make sure that you have `.env` file on the root directory of server (ask one of us!). This file defines `DB_DATABASE`, `DB_PASSWORD`, `DB_USER`, and `DB_HOST`
+#### Server
+- Make sure that you have `.env` file on the root directory of server (ask one of us!). This file defines `DB_DATABASE`, `DB_PASSWORD`, `DB_USER`, `DB_PORT`, and `DB_HOST`
 - `npm install` in the root directory of server to install all dependencies
 - run `docker-compose up`
-- The output of `docker-compose up` should look similar to:
-```bash
-$ docker-compose up
-Starting db ... done
-Recreating server ... done
-Attaching to db, server
-db        |
-db        | PostgreSQL Database directory appears to contain a database; Skipping initialization
-db        |
-db        | 2020-10-21 05:08:47.377 UTC [1] LOG:  starting PostgreSQL 13.0 on x86_64-pc-linux-musl, compiled by gcc (Alpine 9.3.0) 9.3.0, 64-bit
-db        | 2020-10-21 05:08:47.377 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-db        | 2020-10-21 05:08:47.378 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-db        | 2020-10-21 05:08:47.388 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-db        | 2020-10-21 05:08:47.394 UTC [20] LOG:  database system was shut down at 2020-10-21 05:02:17 UTC
-db        | 2020-10-21 05:08:47.401 UTC [1] LOG:  database system is ready to accept connections
-server    |
-server    | > server@1.0.0 start /app
-server    | > ts-node-dev --respawn src/index.ts
-server    |
-server    | [INFO] 05:08:49 ts-node-dev ver. 1.0.0 (using ts-node ver. 8.10.2, typescript ver. 4.0.3)
-server    | Server running on port 5000
-server    | Postgresql connected Wed Oct 21 2020 05:08:53 GMT+0000 (Coordinated Universal Time)
-```
 - `docker-compose up` builds, (re)creates, starts, and attaches to containers for a service
 - `docker-compose build --no-cache` does not use cache when building the image
 - `docker-compose ps` lists containers
@@ -62,6 +45,14 @@ server    | Postgresql connected Wed Oct 21 2020 05:08:53 GMT+0000 (Coordinated 
     - [Why use alpine packages?](https://nickjanetakis.com/blog/the-3-biggest-wins-when-using-alpine-as-a-base-docker-image)
     - [Postgresql documentation](https://www.notion.so/Docker-Compose-07fabb20ed224a37b9eeb83dd18dfabc#f22154ebf6e245ca88ce650d706785b5)
 
-### Docker Installation For Windows
+#### Docker Installation For Windows
 - WSL2 install Windows 10 https://docs.microsoft.com/en-us/windows/wsl/install-win10
 - Docker Windows https://docs.docker.com/docker-for-windows/wsl/ - there’s a tidbit here on using VSCode’s Remote-WSL extension that easily allows you to work with a remote server in the Linux distro and your IDE client still on Windows
+
+## Pull Requests
+Before making a pull request, please ensure the following:
+1. Your branch is up-to-date with the `main` branch
+    - If it is out-of-date, please run `git pull` on your working branch
+2. All checks pass (currently this is a linting check)
+3. Your pull request changes under 1000 lines (recommended)
+4. Your pull request has been reviewed by at least one other person.
