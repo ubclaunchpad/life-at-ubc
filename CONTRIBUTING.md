@@ -1,7 +1,7 @@
 # Contributing
 
-- [Local Setup](#Setup-Without-Docker)
-- [Docker Setup](#Setup-With-Docker-Compose)
+- [Local Setup](#-Setup-Without-Docker)
+- [Docker Setup](#-Setup-With-Docker-Compose)
 
 ## ⚙ Setup Without Docker
 ### Client
