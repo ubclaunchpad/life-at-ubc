@@ -1,9 +1,9 @@
 # Contributing
 
-- Local Setup
-- Docker Setup
+- [Local Setup](#⚙-Setup-Without-Docker)
+- [Docker Setup](#🐳-Setup-With-Docker-Compose)
 
-## ⚙ [Setup Without Docker](#local-setup)
+## ⚙ Setup Without Docker
 ### Client
 - `cd client`
 - `npm install` to install all dependencies 
@@ -24,7 +24,7 @@
 
 ![Alt text](./pgconnected.png)
 
-## 🐳 [Setup With Docker Compose](#docker-setup)
+## 🐳 Setup With Docker Compose
 
 ### Server
 - Make sure that you have `.env` file on the root directory of server (ask one of us!). This file defines `DB_DATABASE`, `DB_PASSWORD`, `DB_USER`, and `DB_HOST`
