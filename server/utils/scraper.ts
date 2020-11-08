@@ -2,7 +2,6 @@ import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer
 import puppeteer from "puppeteer";
 import fs from "fs";
 import parentLogger from "./logger";
-import logger from "./logger";
 
 interface TermTime {
     term: string;
@@ -25,9 +24,9 @@ interface Course {
     description: string;
     credits: string;
     preReqs: string[];
-    preReq_text: string;
+    preReqText: string;
     coReqs: string[];
-    coReq_text: string;
+    coReqText: string;
     sections: Section[];
 }
 
@@ -120,33 +119,33 @@ let getReqs = async (page: Page): Promise<any> => {
             coReqs = fourthChildHTML.match(courseCodeRegex);
             return {
                 preReq: preReqs || [],
-                preReq_text: thirdChildHTML,
+                preReqText: thirdChildHTML,
                 coReq: coReqs || [],
-                coReq_text: fourthChildHTML,
+                coReqText: fourthChildHTML,
             };
         }
 
         return {
             preReq: preReqs || [],
-            preReq_text: thirdChildHTML,
+            preReqText: thirdChildHTML,
             coReq: [],
-            coReq_text: "",
+            coReqText: "",
         };
     } else if (/Co-req/.test(thirdChildHTML)) {
         coReqs = thirdChildHTML.match(courseCodeRegex);
 
         return {
             preReq: [],
-            preReq_text: "",
+            preReqText: "",
             coReq: coReqs || [],
-            coReq_text: thirdChildHTML,
+            coReqText: thirdChildHTML,
         };
     } else {
         return {
             preReq: [],
-            preReq_text: "",
+            preReqText: "",
             coReq: [],
-            coReq_text: "",
+            coReqText: "",
         };
     }
 };
@@ -195,7 +194,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
 
     let [ desc, creds ] = await getDescCreds(coursePage);
 
-    let { preReq, preReq_text, coReq, coReq_text} = await getReqs(coursePage);
+    let { preReq, preReqText, coReq, coReq_text} = await getReqs(coursePage);
 
     let courseData: Course = {
         courseTitle: courseTitle,
@@ -203,9 +202,9 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
         description: desc,
         credits: creds,
         preReqs: preReq,
-        preReq_text: preReq_text,
+        preReqText: preReqText,
         coReqs: coReq,
-        coReq_text: coReq_text,
+        coReqText: coReq_text,
         sections: []
     };
 

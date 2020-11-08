@@ -32,10 +32,10 @@ const populateDb = () => {
         const preReqsToStore: any[] = [];
         const sectionsToStore: any[] = [];
         courses.forEach((course: any) => {
-            const { courseTitle, courseCode, preReqs = [], coReqs = [], sections = [] } = course;
+            const { courseTitle, courseCode, preReqs = [], coReqs = [], sections = [], preReqText, coReqText } = course;
             const [courseDept, courseNumber] = courseCode.split(" ");
-            coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqsToStore));
-            preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqsToStore));
+            coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqText, coReqsToStore));
+            preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqText, preReqsToStore));
             sections.forEach((section: any) => handleSection(courseTitle, courseDept, courseNumber, section, sectionsToStore));
         });
         try {
@@ -57,9 +57,9 @@ const populateDb = () => {
     });
 };
 
-const handleReq = (courseDept: string, courseNumber: string, req: any, store: any[]) => {
+const handleReq = (courseDept: string, courseNumber: string, req: any, plaintext: string, store: any[]) => {
     const [reqCourseDept, reqCourseNumber] = req.split(" ");
-    store.push([courseDept, courseNumber, reqCourseDept, reqCourseNumber]);
+    store.push([courseDept, courseNumber, reqCourseDept, reqCourseNumber, plaintext]);
 };
 
 const handleSection = (courseTitle: string, courseDept: string, courseNumber: string, section: any, store: any[]) => {
@@ -78,7 +78,7 @@ const insertCoReq = (req: []) => insertReq("CoReq", req);
 const insertPreReq = (req: []) => insertReq("PreReq", req);
 
 const insertReq = (table: string, req: []) => {
-    db.query(`INSERT INTO ${table} VALUES ($1, $2, $3, $4)`, req);
+    db.query(`INSERT INTO ${table} VALUES ($1, $2, $3, $4, $5)`, req);
 };
 
 const insertSection = (section: []) => {
