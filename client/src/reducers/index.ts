@@ -3,7 +3,7 @@ import {
   combineReducers,
   createStore,
   Middleware,
-  Store
+  Store,
 } from "redux";
 import { reducer, ReducerProps } from "./Reducer";
 import { HomeReducer, HomeReducerProps } from "./HomeReducer";
@@ -28,4 +28,3 @@ export const configureStore = (): Store<RootState> => {
   );
   return store;
 };
-

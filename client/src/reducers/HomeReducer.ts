@@ -2,7 +2,7 @@ import {
   HomeActions,
   SWITCHCOMPONENT,
   ADDCOURSE,
-} from '../actions/HomeActions';
+} from "../actions/HomeActions";
 
 export interface HomeReducerProps {
   componentIndex: number;

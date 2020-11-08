@@ -1,5 +1,5 @@
-export const SWITCHCOMPONENT = 'switch_component';
-export const ADDCOURSE = 'add_course';
+export const SWITCHCOMPONENT = "switch_component";
+export const ADDCOURSE = "add_course";
 
 export interface Switch {
   type: typeof SWITCHCOMPONENT;

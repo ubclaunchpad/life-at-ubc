@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import Title from './Title';
-import styled from 'styled-components';
-import axios from 'axios';
-import Button from '@material-ui/core/Button';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { SectionWrapper } from './Home';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
+import React, { useState, useEffect } from "react";
+import CourseItem from "./CouseItem";
+import Title from "./Title";
+import styled from "styled-components";
+import axios from "axios";
+import Button from "@material-ui/core/Button";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { SectionWrapper } from "./Home";
+import { AddCourse, ADDCOURSE } from "../actions/HomeActions";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@material-ui/core/TextField";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,7 +28,7 @@ const Wrapper = styled.div`
   margin-right: auto;
 `;
 
-const AddCourse = styled.div`
+const AddCourseSection = styled.div`
   display: inline-block;
   height: 300px;
   flex: 1;
@@ -38,20 +43,40 @@ const CourseList = styled.div`
   flex: 1.4;
 `;
 
-function Courses() {
+interface CoursesProps {
+  courseSelected?: string[];
+  addCourseToRedux?: any;
+}
+
+function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
   const classes = useStyles();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [courses, setCourses] = useState<string[]>([]);
-  const [curr, setCurr] = useState('');
+  const [coursesPool, setCoursesPool] = useState<string[]>([]);
+  const [currCoursesSelected, setCurrCoursesSelected] = useState<string[]>(
+    courseSelected ? courseSelected : []
+  );
+  const [curr, setCurr] = useState("");
 
   const fetchAllCourses = async () => {
-    const coursesFetched = await axios.get('http://localhost:3000/courses');
+    const coursesFetched = await axios.get("http://localhost:3000/courses");
     let courseList: string[] = [];
     for (let course of coursesFetched.data) {
       courseList.push(course.coursename);
     }
-    setCourses(courseList);
+    setCoursesPool(courseList);
     setIsLoaded(true);
+  };
+
+  const handleChange = (event: object, value: any) => {
+    setCurr(value);
+  };
+
+  const handelAddBtnClick = () => {
+    if (curr && !currCoursesSelected.includes(curr)) {
+      setCurrCoursesSelected([...currCoursesSelected, curr]);
+      setCurr("");
+      addCourseToRedux(currCoursesSelected);
+    }
   };
 
   useEffect(() => {
@@ -60,34 +85,58 @@ function Courses() {
 
   return (
     <SectionWrapper>
-      <Title title='2. Add Courses'></Title>
+      <Title title="2. Add Courses"></Title>
       <Wrapper>
-        <AddCourse>
+        <AddCourseSection>
           <Autocomplete
-            options={isLoaded ? courses : []}
+            options={isLoaded ? coursesPool : []}
             getOptionLabel={(option) => option}
             style={{ width: 300, marginLeft: 100 }}
+            onChange={handleChange}
             renderInput={(params) => (
-              <TextField {...params} label='Select Course' variant='outlined' />
+              <TextField {...params} label="Select Course" variant="outlined" />
             )}
           ></Autocomplete>
           <Button
-            variant='contained'
+            variant="contained"
             style={{
-              backgroundColor: 'black',
+              backgroundColor: "black",
               marginTop: 160,
               marginLeft: 250,
             }}
-            color='primary'
+            color="primary"
             className={classes.button}
+            onClick={handelAddBtnClick}
           >
             Add
           </Button>
-        </AddCourse>
-        <CourseList></CourseList>
+        </AddCourseSection>
+        <CourseList>
+          {currCoursesSelected.map((course, index) => {
+            return <CourseItem courseName={course} key={index}></CourseItem>;
+          })}
+        </CourseList>
       </Wrapper>
     </SectionWrapper>
   );
 }
 
-export default Courses;
+const mapStateToProps = (state: RootState) => {
+  return {
+    courseSelected: state.HomeReducer.courseSelected,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    addCourseToRedux(currCoursesSelected: string[]) {
+      const action: AddCourse = {
+        type: ADDCOURSE,
+        courses: currCoursesSelected,
+      };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Courses);
