@@ -1,0 +1,37 @@
+{
+  "courses": [
+    {
+      "coursename": "CPSC 100"
+    },
+    {
+      "coursename": "CPSC 110"
+    },
+    {
+      "coursename": "CPSC 121"
+    },
+    {
+      "coursename": "CPSC 210"
+    },
+    {
+      "coursename": "CPSC 213"
+    },
+    {
+      "coursename": "CPSC 221"
+    },
+    {
+      "coursename": "CPSC 310"
+    },
+    {
+      "coursename": "CPSC 313"
+    },
+    {
+      "coursename": "CPSC 317"
+    },
+    {
+      "coursename": "CPSC 320"
+    },
+    {
+      "coursename": "CPSC 340"
+    }
+  ]
+}

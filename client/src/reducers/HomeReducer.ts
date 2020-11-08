@@ -1,11 +1,17 @@
-import { HomeActions, SWITCHCOMPONENT } from "../actions/HomeActions";
+import {
+  HomeActions,
+  SWITCHCOMPONENT,
+  ADDCOURSE,
+} from '../actions/HomeActions';
 
 export interface HomeReducerProps {
   componentIndex: number;
+  courseSelected: string[];
 }
 
 const initialState: HomeReducerProps = {
-  componentIndex: 2,
+  componentIndex: 1,
+  courseSelected: [],
 };
 
 export const HomeReducer = (
@@ -15,6 +21,9 @@ export const HomeReducer = (
   switch (action.type) {
     case SWITCHCOMPONENT: {
       return { ...state, componentIndex: action.index };
+    }
+    case ADDCOURSE: {
+      return { ...state, courseSelected: action.courses };
     }
     default:
       return state;
