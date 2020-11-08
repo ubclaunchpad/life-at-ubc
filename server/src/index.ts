@@ -5,14 +5,22 @@ import expressPino from "express-pino-logger";
 import parentLogger from "../utils/logger";
 import scraper from "../utils/scraper";
 import { setupDb } from "./database/setup";
+import baseRouter from "./routes/index";
 
-const log = parentLogger.child({ module: "router" });
+const log = parentLogger.child({ module: "express" });
 const expressLogger = expressPino(log);
 const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.urlencoded({extended: false}));
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use(expressLogger);
+app.use("/", baseRouter);
 
 app.listen(PORT, () => {
     log.info(`Server running on port ${PORT}`);
