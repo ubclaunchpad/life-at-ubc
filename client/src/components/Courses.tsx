@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import CourseItem from "./CouseItem";
-import Title from "./Title";
-import styled from "styled-components";
-import axios from "axios";
-import Button from "@material-ui/core/Button";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { SectionWrapper } from "./Home";
-import { AddCourse, ADDCOURSE } from "../actions/HomeActions";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import { RootState } from "../reducers/index";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import React, { useState, useEffect } from 'react';
+import CourseItem from './CouseItem';
+import Title from './Title';
+import styled from 'styled-components';
+import axios from 'axios';
+import Button from '@material-ui/core/Button';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { SectionWrapper } from './Home';
+import { AddCourse, ADDCOURSE } from '../actions/HomeActions';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import { RootState } from '../reducers/index';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +48,20 @@ interface CoursesProps {
   addCourseToRedux?: any;
 }
 
+interface Section {
+  coursetitle: string;
+  coursedept: string;
+  coursenumber: string;
+  sectiontitle: string;
+  status: string;
+  activity: string;
+  prof: string;
+  term: string;
+  day: string;
+  starttime: string;
+  endtime: string;
+}
+
 function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
   const classes = useStyles();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -55,13 +69,17 @@ function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
   const [currCoursesSelected, setCurrCoursesSelected] = useState<string[]>(
     courseSelected ? courseSelected : []
   );
-  const [curr, setCurr] = useState("");
+  const [curr, setCurr] = useState('');
 
   const fetchAllCourses = async () => {
-    const coursesFetched = await axios.get("http://localhost:3000/courses");
+    const coursesFetched = await axios.get(
+      'http://localhost:5000/api/sections'
+    );
+    const sectionLists: Section[] = coursesFetched.data;
     let courseList: string[] = [];
-    for (let course of coursesFetched.data) {
-      courseList.push(course.coursename);
+    for (let course of sectionLists) {
+      const fullName = course.coursedept + ' ' + course.coursenumber;
+      courseList.push(fullName);
     }
     setCoursesPool(courseList);
     setIsLoaded(true);
@@ -75,7 +93,7 @@ function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
     if (curr && !currCoursesSelected.includes(curr)) {
       setCurrCoursesSelected([...currCoursesSelected, curr]);
       addCourseToRedux([...currCoursesSelected, curr]);
-      setCurr("");
+      setCurr('');
     }
   };
 
@@ -85,7 +103,7 @@ function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
 
   return (
     <SectionWrapper>
-      <Title title="2. Add Courses"></Title>
+      <Title title='2. Add Courses'></Title>
       <Wrapper>
         <AddCourseSection>
           <Autocomplete
@@ -94,17 +112,17 @@ function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
             style={{ width: 300, marginLeft: 100 }}
             onChange={handleChange}
             renderInput={(params) => (
-              <TextField {...params} label="Select Course" variant="outlined" />
+              <TextField {...params} label='Select Course' variant='outlined' />
             )}
           ></Autocomplete>
           <Button
-            variant="contained"
+            variant='contained'
             style={{
-              backgroundColor: "black",
+              backgroundColor: 'black',
               marginTop: 160,
               marginLeft: 250,
             }}
-            color="primary"
+            color='primary'
             className={classes.button}
             onClick={handelAddBtnClick}
           >
