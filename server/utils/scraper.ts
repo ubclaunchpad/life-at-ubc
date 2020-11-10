@@ -2,7 +2,6 @@ import { Browser, ElementHandle, JSHandle, LaunchOptions, Page } from "puppeteer
 import puppeteer from "puppeteer";
 import fs from "fs";
 import parentLogger from "./logger";
-import logger from "./logger";
 
 interface TermTime {
     term: string;
@@ -25,7 +24,9 @@ interface Course {
     description: string;
     credits: string;
     preReqs: string[];
+    preReqText: string;
     coReqs: string[];
+    coReqText: string;
     sections: Section[];
 }
 
@@ -90,9 +91,9 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
  *
  * For example, if a course has co-reqs but no pre-reqs: `[[], coreqs]`
  * @param {Page} page Page object for a course listing page
- * @returns {Promise<[string[], string[]]} the tuple containing an array of pre-reqs and an array of co-reqs.
+ * @returns {Promise<any>} an object that holds a list of coreqs, prereqs, and their corresponding plaintext
  */
-let getReqs = async (page: Page): Promise<[string[], string[]]> => {
+let getReqs = async (page: Page): Promise<any> => {
     // preReq <p> may not exist, so .content.expand > p:nth-of-type(3) might be coreq.
     // .content.expand > p:nth-of-type(4) is always a coreq
 
@@ -100,31 +101,52 @@ let getReqs = async (page: Page): Promise<[string[], string[]]> => {
     let preReqs: string[];
     let coReqs: string[];
 
-    let thirdChildHTML = await page.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerHTML)
+    let thirdChildHTML = await page.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerText)
         .catch((err: any) => {
             return [];
         });
-    let fourthChildHTML = await page.$eval(".content.expand > p:nth-of-type(4)", (p: any) => p.innerHTML)
+    let fourthChildHTML = await page.$eval(".content.expand > p:nth-of-type(4)", (p: any) => p.innerText)
         .catch( async (err: any) => {
             return [];
         });
 
     // regex to determine if the html contains pre-req or coreq
-    // this is kind of ugly and i'm sure it can be rewritten to be more readable
+    // sorry this is kind of ugly
     if (/Pre-req/.test(thirdChildHTML)) {
         preReqs = thirdChildHTML.match(courseCodeRegex);
 
         if (/Co-req/.test(fourthChildHTML)) {
             coReqs = fourthChildHTML.match(courseCodeRegex);
-            return [(preReqs || []), (coReqs || [])];
+            return {
+                preReq: preReqs || [],
+                preReqText: thirdChildHTML,
+                coReq: coReqs || [],
+                coReqText: fourthChildHTML,
+            };
         }
 
-        return [(preReqs || []), []];
+        return {
+            preReq: preReqs || [],
+            preReqText: thirdChildHTML,
+            coReq: [],
+            coReqText: "",
+        };
     } else if (/Co-req/.test(thirdChildHTML)) {
         coReqs = thirdChildHTML.match(courseCodeRegex);
-        return [[], (coReqs || [])];
+
+        return {
+            preReq: [],
+            preReqText: "",
+            coReq: coReqs || [],
+            coReqText: thirdChildHTML,
+        };
     } else {
-        return [[], []];
+        return {
+            preReq: [],
+            preReqText: "",
+            coReq: [],
+            coReqText: "",
+        };
     }
 };
 
@@ -172,7 +194,7 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
 
     let [ desc, creds ] = await getDescCreds(coursePage);
 
-    let [ preReq, coReq ] = await getReqs(coursePage);
+    let { preReq, preReqText, coReq, coReq_text} = await getReqs(coursePage);
 
     let courseData: Course = {
         courseTitle: courseTitle,
@@ -180,7 +202,9 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
         description: desc,
         credits: creds,
         preReqs: preReq,
+        preReqText: preReqText,
         coReqs: coReq,
+        coReqText: coReq_text,
         sections: []
     };
 
@@ -354,7 +378,7 @@ let pageConfig = async (page: Page) => {
  *
  * If given an argument, it scrapes the information of a specific course and outputs that to ./utils/output_test.json
  *
- * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), and **118** (tests courses that have different day/times)
+ * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), **118** (tests courses that have different day/times), **72** (CPSC)
  *
  * @param {number} [subjectTest] (optional) The row index (between [0, 237] inclusive) of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
  */
