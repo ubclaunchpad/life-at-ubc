@@ -7,7 +7,7 @@ import scraper from "../utils/scraper";
 import { setupDb } from "./database/setup";
 import baseRouter from "./routes/index";
 
-const log = parentLogger.child({ module: "router" });
+const log = parentLogger.child({ module: "express" });
 const expressLogger = expressPino(log);
 const PORT = process.env.PORT || 5000;
 
