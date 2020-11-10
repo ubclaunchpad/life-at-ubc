@@ -74,8 +74,8 @@ function Courses({ courseSelected, addCourseToRedux }: CoursesProps) {
   const handelAddBtnClick = () => {
     if (curr && !currCoursesSelected.includes(curr)) {
       setCurrCoursesSelected([...currCoursesSelected, curr]);
+      addCourseToRedux([...currCoursesSelected, curr]);
       setCurr("");
-      addCourseToRedux(currCoursesSelected);
     }
   };
 
