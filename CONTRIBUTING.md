@@ -45,7 +45,7 @@ Useful Docker Compose Commands (more found [here](https://docs.docker.com/compos
 
 #### Docker Installation For Windows
 - WSL2 install Windows 10 https://docs.microsoft.com/en-us/windows/wsl/install-win10
-- Docker Windows https://docs.docker.com/docker-for-windows/wsl/ - there’s a tidbit here on using VSCode’s Remote-WSL extension that easily allows you to work with a remote server in the Linux distro and your IDE client still on Windows
+- Docker Windows https://docs.docker.com/docker-for-windows/wsl/
 
 ## Pull Requests
 Before making a pull request, please ensure the following:
