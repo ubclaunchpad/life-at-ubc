@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./Header";
 import BreadCrumb from "./BreadCrumb";
 import HomePage from "../pages/HomePage";
+import TestScheduler from "./TestScheduler";
 import NextPrevSwitcher from "./NextPrevSwitcher";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -15,7 +16,8 @@ function App() {
       <Header></Header>
       <BreadCrumb></BreadCrumb>
       <BrowserRouter>
-        <Route path="/" exact component={() => <HomePage></HomePage>} />
+        <Route exact path="/" component={() => <HomePage></HomePage>} />
+        <Route exact path="/testscheduler" component={() => <TestScheduler></TestScheduler>} />
       </BrowserRouter>
       <NextPrevSwitcher></NextPrevSwitcher>
     </Provider>
