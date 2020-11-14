@@ -25,7 +25,7 @@ function TimePicker() {
         id="time"
         label="Alarm clock"
         type="time"
-        defaultValue="07:30"
+        defaultValue="08:00"
         className={classes.textField}
         InputLabelProps={{
           shrink: true,

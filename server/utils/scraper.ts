@@ -21,8 +21,12 @@ interface Section {
 interface Course {
     courseTitle: string;
     courseCode: string;
+    description: string;
+    credits: string;
     preReqs: string[];
+    preReqText: string;
     coReqs: string[];
+    coReqText: string;
     sections: Section[];
 }
 
@@ -83,6 +87,92 @@ let getCourseUrls = async (url: string, browser: Browser): Promise<string[]> => 
 };
 
 /**
+ * Produces a list of pre-reqs and co-reqs a course has, if any. If pre-reqs or co-reqs don't exist, it passes an empty array.
+ *
+ * For example, if a course has co-reqs but no pre-reqs: `[[], coreqs]`
+ * @param {Page} page Page object for a course listing page
+ * @returns {Promise<any>} an object that holds a list of coreqs, prereqs, and their corresponding plaintext
+ */
+let getReqs = async (page: Page): Promise<any> => {
+    // preReq <p> may not exist, so .content.expand > p:nth-of-type(3) might be coreq.
+    // .content.expand > p:nth-of-type(4) is always a coreq
+
+    // TODO: more nuanced output, see issue #33 on the github
+    let preReqs: string[];
+    let coReqs: string[];
+
+    let thirdChildHTML = await page.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerText)
+        .catch((err: any) => {
+            return [];
+        });
+    let fourthChildHTML = await page.$eval(".content.expand > p:nth-of-type(4)", (p: any) => p.innerText)
+        .catch( async (err: any) => {
+            return [];
+        });
+
+    // regex to determine if the html contains pre-req or coreq
+    // sorry this is kind of ugly
+    if (/Pre-req/.test(thirdChildHTML)) {
+        preReqs = thirdChildHTML.match(courseCodeRegex);
+
+        if (/Co-req/.test(fourthChildHTML)) {
+            coReqs = fourthChildHTML.match(courseCodeRegex);
+            return {
+                preReq: preReqs || [],
+                preReqText: thirdChildHTML,
+                coReq: coReqs || [],
+                coReqText: fourthChildHTML,
+            };
+        }
+
+        return {
+            preReq: preReqs || [],
+            preReqText: thirdChildHTML,
+            coReq: [],
+            coReqText: "",
+        };
+    } else if (/Co-req/.test(thirdChildHTML)) {
+        coReqs = thirdChildHTML.match(courseCodeRegex);
+
+        return {
+            preReq: [],
+            preReqText: "",
+            coReq: coReqs || [],
+            coReqText: thirdChildHTML,
+        };
+    } else {
+        return {
+            preReq: [],
+            preReqText: "",
+            coReq: [],
+            coReqText: "",
+        };
+    }
+};
+
+/**
+ * Helper function to retrieve the description and number of credits for a course.
+ * @param {Page} page Page object for a course listing page
+ * @returns {Promise<[string, string]>} a tuple that holds the description of a course and the number of credits it gives
+ */
+let getDescCreds = async (page: Page): Promise<[string, string]> => {
+    let desc: string = await getInnerHTML(page, ".content.expand > p:first-of-type");
+    let creds: string = await getInnerHTML(page, ".content.expand > p:nth-of-type(2)");
+
+    let regexedCreds = creds.match(/[0-9]+/);
+
+    if (regexedCreds != null) {
+        creds = regexedCreds[0];
+    }
+
+    if (desc === "") {
+        desc = "No description provided.";
+    }
+
+    return [desc, creds];
+};
+
+/**
  * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
  * @param {string} url URL string to a UBC Course Schedule course page
  * @param {Browser} browser the working (top-level) browser instance
@@ -97,32 +187,24 @@ let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
     await coursePage.goto(url);
 
     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-    log.info(`Opening course page: ${elapsedSeconds}s`);
+    log.debug(`Opening course page: ${elapsedSeconds}s`);
 
     let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
     let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
 
-    // prereq is USUALLY found as ".content.expand > p:nth-of-type(3)" then a list of its a children but we must validate it first
-    // TODO: check if it starts with Pre-reqs: or Co-reqs:?
-    // same with Coreq but nth-child(4) and if it exists, then it must start with just Co-reqs: but we'll just reuse the code from above lol
-    let preReqHTML: string = await coursePage.$eval(".content.expand > p:nth-of-type(3)", (p: any) => p.innerHTML)
-        .catch( async (err: any) => {
-            return "";
-        });
+    let [ desc, creds ] = await getDescCreds(coursePage);
 
-    let preReq: string[] | null = preReqHTML.match(courseCodeRegex); // gets course codes from prereqs, doesn't care if optional/required yet
-    if (preReq == null) preReq = [];
-    let coReq: string[] = await coursePage.$(".content.expand > p:nth-of-type(4)")
-        .then( (p: any) => p.$$eval("a", (a: any) => a.innerHTML))
-        .catch( async (err: any) => {
-            return [];
-        });
+    let { preReq, preReqText, coReq, coReq_text} = await getReqs(coursePage);
 
     let courseData: Course = {
         courseTitle: courseTitle,
         courseCode: courseCode,
+        description: desc,
+        credits: creds,
         preReqs: preReq,
+        preReqText: preReqText,
         coReqs: coReq,
+        coReqText: coReq_text,
         sections: []
     };
 
@@ -296,7 +378,7 @@ let pageConfig = async (page: Page) => {
  *
  * If given an argument, it scrapes the information of a specific course and outputs that to ./utils/output_test.json
  *
- * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), and **118** (tests courses that have different day/times)
+ * Some recommended arguments are **145** (tests multi-term courses), **67** (tests prereqs), **118** (tests courses that have different day/times), **72** (CPSC)
  *
  * @param {number} [subjectTest] (optional) The row index (between [0, 237] inclusive) of a course on the main [Course Schedule](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments) page
  */
@@ -334,8 +416,8 @@ let scraper = async (subjectTest?: number) => {
                 let courseInfo = await getCourseInfo(courseUrls[i], browser);
                 data.push(courseInfo);
                 const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                log.info(`getCourseInfo: build ${elapsedSeconds}s`);
-                log.info(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
+                log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
+                log.debug(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
             }
         } else if (subjectTest === undefined) {
             for (let i = 0; i < subjectUrls.length; i++) {
@@ -345,10 +427,10 @@ let scraper = async (subjectTest?: number) => {
                     let courseInfo = await getCourseInfo(courseUrls[j], browser);
                     data.push(courseInfo);
                     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                    log.info(`getCourseInfo: build ${elapsedSeconds}s`);
-                    log.info(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
+                    log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
+                    log.debug(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
                 }
-                log.info(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
+                log.debug(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
         } else {
             log.error("Input must be a number in the range [0, 237] inclusive.");
