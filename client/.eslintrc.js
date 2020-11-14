@@ -100,6 +100,7 @@ module.exports = {
         "radix": "error",
         "space-before-function-paren": ["error", {"anonymous": "always", "named": "ignore", "asyncArrow": "always"}],
         "use-isnan": "error",
+        "no-implicit-dependencies": [true, "dev"],
         "valid-typeof": "off",
         "@typescript-eslint/tslint/config": [
             "error",
