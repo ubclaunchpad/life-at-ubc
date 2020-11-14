@@ -25,12 +25,12 @@ interface ColDef {
 
 let color = (timeslot: CellClassParams) => clsx("selected", { true: (timeslot.value as string) !== "", });
 var columns: ColDef[] = [
-    {field: "id", headerName: "Time", type: "string", width: time_width, sortable: false, headerAlign: "center", cellClassName: null},
-    {field: "Monday", headerName: "Mon", type: "string", width: weekday_width, sortable: false, headerAlign: "center", cellClassName: color, },
-    {field: "Tuesday", headerName: "Tues", type: "string", width: weekday_width, sortable: false, headerAlign: "center", cellClassName: color, },
-    {field: "Wednesday", headerName: "Wed", type: "string", width: weekday_width, sortable: false, headerAlign: "center", cellClassName: color, },
-    {field: "Thursday", headerName: "Thur", type: "string", width: weekday_width, sortable: false, headerAlign: "center", cellClassName: color, },
-    {field: "Friday", headerName: "Fri", type: "string", width: weekday_width, sortable: false, headerAlign: "center", cellClassName: color, },
+    {field: "id", headerName: "Time", type: "string", width: timeWidth, sortable: false, headerAlign: "center", cellClassName: null},
+    {field: "Monday", headerName: "Mon", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
+    {field: "Tuesday", headerName: "Tues", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
+    {field: "Wednesday", headerName: "Wed", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
+    {field: "Thursday", headerName: "Thur", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
+    {field: "Friday", headerName: "Fri", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
 ];
 
 
