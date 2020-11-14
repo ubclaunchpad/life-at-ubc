@@ -5,7 +5,7 @@ export interface HomeReducerProps {
 }
 
 const initialState: HomeReducerProps = {
-  componentIndex: 2,
+  componentIndex: 1,
 };
 
 export const HomeReducer = (
