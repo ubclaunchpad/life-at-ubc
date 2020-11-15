@@ -97,20 +97,15 @@ function Courses({
 
     const department = partition[0].toUpperCase();
     const courseNumber = partition[1];
+    const correctedCourse = department + " " + courseNumber;
     const response = await axios.get(
       `http://localhost:5000/api/section/${term}/${department}/${courseNumber}`
     );
 
     if (response.data.length === 0) {
       setMessage("Course does not exist");
-    } else if (
-      coursesAdded &&
-      !coursesAdded.includes(department + courseNumber)
-    ) {
-      addCourseToRedux([
-        ...(coursesAdded as string[]),
-        department + courseNumber,
-      ]);
+    } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
+      addCourseToRedux([...(coursesAdded as string[]), correctedCourse]);
       const courseSections: CourseObjectProps[] = response.data;
       addSectionsToRedux(
         sections ? sections.concat(courseSections) : courseSections
