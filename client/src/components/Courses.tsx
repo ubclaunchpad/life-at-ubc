@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import Title from "./Title";
 import CourseItem from "./CourseItem";
 import Snackbar from "@material-ui/core/Snackbar";
-import { AddCourse, ADDCOURSE } from "../actions/HomeActions";
+import {
+  AddCourse,
+  ADDCOURSE,
+  AddCourseSections,
+  ADDCOURSESECTIONS,
+} from "../actions/HomeActions";
 import styled from "styled-components";
 import { SectionWrapper } from "./Home";
 import Button from "@material-ui/core/Button";
@@ -34,12 +39,35 @@ const CourseList = styled.div`
   flex: 3;
 `;
 
+export interface CourseObjectProps {
+  coursetitle: string;
+  coursedept: string;
+  coursenumber: string;
+  sectiontitle: string;
+  status: string;
+  activity: string;
+  prof: string;
+  term: string;
+  day: string;
+  starttime: string;
+  endtime: string;
+}
+
 interface CoursesProps {
   coursesAdded?: string[];
   addCourseToRedux?: any;
+  addSectionsToRedux?: any;
+  sections?: CourseObjectProps[];
+  term?: string;
 }
 
-function Courses({ coursesAdded, addCourseToRedux }: CoursesProps) {
+function Courses({
+  coursesAdded,
+  addCourseToRedux,
+  sections,
+  addSectionsToRedux,
+  term,
+}: CoursesProps) {
   // snackbar:
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -70,7 +98,7 @@ function Courses({ coursesAdded, addCourseToRedux }: CoursesProps) {
     const department = partition[0].toUpperCase();
     const courseNumber = partition[1];
     const response = await axios.get(
-      `http://localhost:5000/api/section/${department}/${courseNumber}`
+      `http://localhost:5000/api/section/${term}/${department}/${courseNumber}`
     );
 
     if (response.data.length === 0) {
@@ -83,6 +111,10 @@ function Courses({ coursesAdded, addCourseToRedux }: CoursesProps) {
         ...(coursesAdded as string[]),
         department + courseNumber,
       ]);
+      const courseSections: CourseObjectProps[] = response.data;
+      addSectionsToRedux(
+        sections ? sections.concat(courseSections) : courseSections
+      );
       setMessage("Course added successfully");
     } else {
       setMessage("This course has been added already");
@@ -139,6 +171,8 @@ function Courses({ coursesAdded, addCourseToRedux }: CoursesProps) {
 const mapStateToProps = (state: RootState) => {
   return {
     coursesAdded: state.HomeReducer.coursesAdded,
+    sections: state.HomeReducer.sections,
+    term: state.HomeReducer.term,
   };
 };
 
@@ -148,6 +182,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: AddCourse = {
         type: ADDCOURSE,
         courses: coursesAdded,
+      };
+      dispatch(action);
+    },
+    addSectionsToRedux(sections: CourseObjectProps[]) {
+      const action: AddCourseSections = {
+        type: ADDCOURSESECTIONS,
+        sections,
       };
       dispatch(action);
     },
