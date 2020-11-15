@@ -1,7 +1,7 @@
 import React from "react";
 import { SectionWrapper } from "./Home";
 import clsx from "clsx";
-import { DataGrid, CellClassParams, isArray } from "@material-ui/data-grid";
+import { DataGrid, CellClassParams } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 
 
@@ -57,34 +57,14 @@ let makerows = function (start: number, end: number) {
 function addCourse(rows: any, day: any, startTime: number, endTime: number, courseName: string) {
     if (startTime >= endTime || courseName === "" || courseName === null) return;
     let colnum = day + 1;
-<<<<<<< HEAD
-    for (let row of rows) {
-        let currTime = row.id;
-=======
     for (var timeslot of rows) {
         let currTime = timeslot.id;
->>>>>>> c7d1ce92b085509dbc019885acf2c4dc707b09f4
         let currHour: number = +currTime.slice(0, -3);
         let currMin: number = +currTime.slice(-2);
         currHour += (currMin === 0) ? 0 : 0.5;
         if (currHour >= startTime && currHour < endTime) {
             switch (day) {
                 case 1:
-<<<<<<< HEAD
-                    row.Monday = courseName;
-                    break;
-                case 2:
-                    row.Tuesday = courseName;
-                    break;
-                case 3:
-                    row.Wednesday = courseName;
-                    break;
-                case 4:
-                    row.Thursday = courseName;
-                    break;
-                case 5:
-                    row.Friday = courseName;
-=======
                     timeslot.Monday = courseName;
                     break;
                 case 2:
@@ -98,7 +78,6 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, cour
                     break;
                 case 5:
                     timeslot.Friday = courseName;
->>>>>>> c7d1ce92b085509dbc019885acf2c4dc707b09f4
                     break;
             }
         }
