@@ -1,7 +1,7 @@
 import React from "react";
 import { SectionWrapper } from "./Home";
 import Title from "./Title";
-import ScheduleGrid from "./ScheduleGrid"
+import ScheduleGrid from "./ScheduleGrid";
 
 function Lectures() {
   return (
