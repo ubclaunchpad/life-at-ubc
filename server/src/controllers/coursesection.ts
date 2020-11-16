@@ -43,3 +43,24 @@ export const getSection = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const getSectionWithTerm = async (req: Request, res: Response) => {
+    log.info("GET api/section");
+    log.info(`coursedept ${req.params.coursedept}`);
+    log.info(`coursenumber ${req.params.coursenumber}`);
+    const coursedept = req.params.coursedept;
+    const coursenumber = req.params.coursenumber;
+    const courseterm = req.params.term;
+    const query =
+    `SELECT * FROM coursesection 
+    WHERE coursedept=$1 AND coursenumber=$2 AND term=$3`;
+    const values = [coursedept, coursenumber, courseterm];
+    try {
+        const { rows } = await db.query(query, values);
+        res.status(200).json(rows);
+    } catch (e) {
+        return res.status(400).json({
+            message: e.message
+        });
+    }
+};
