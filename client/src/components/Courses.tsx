@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import Title from "./Title";
+import CourseItem from "./CourseItem";
+import Snackbar from "@material-ui/core/Snackbar";
+import {
+  AddCourse,
+  ADDCOURSE,
+  AddCourseSections,
+  ADDCOURSESECTIONS,
+} from "../actions/HomeActions";
 import styled from "styled-components";
 import { SectionWrapper } from "./Home";
+import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import axios from "axios";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,7 +24,7 @@ const Wrapper = styled.div`
   margin-right: auto;
 `;
 
-const AddCourse = styled.div`
+const AddCourseSection = styled.div`
   display: inline-block;
   height: 100px;
   flex: 3;
@@ -26,23 +39,155 @@ const CourseList = styled.div`
   flex: 3;
 `;
 
-function Courses() {
+export interface CourseObjectProps {
+  coursetitle: string;
+  coursedept: string;
+  coursenumber: string;
+  sectiontitle: string;
+  status: string;
+  activity: string;
+  prof: string;
+  term: string;
+  day: string;
+  starttime: string;
+  endtime: string;
+}
+
+interface CoursesProps {
+  coursesAdded?: string[];
+  addCourseToRedux?: any;
+  addSectionsToRedux?: any;
+  sections?: CourseObjectProps[];
+  term?: string;
+}
+
+function Courses({
+  coursesAdded,
+  addCourseToRedux,
+  sections,
+  addSectionsToRedux,
+  term,
+}: CoursesProps) {
+  // snackbar:
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const [input, setInput] = useState("");
+
+  const handleSnackBarClose = () => {
+    setOpen(false);
+  };
+
+  const handleChange = (e: any) => {
+    setInput(e.target.value);
+  };
+
+  const handleAddBtnClick = async () => {
+    if (input.length === 0) {
+      setMessage("Empty input");
+      setOpen(true);
+      return;
+    }
+    const partition = input.split(" ");
+    if (partition.length !== 2) {
+      setMessage("Invalid format");
+      setOpen(true);
+      return;
+    }
+
+    const department = partition[0].toUpperCase();
+    const courseNumber = partition[1];
+    const correctedCourse = department + " " + courseNumber;
+    const response = await axios.get(
+      `http://localhost:5000/api/section/${term}/${department}/${courseNumber}`
+    );
+
+    if (response.data.length === 0) {
+      setMessage("Course does not exist");
+    } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
+      addCourseToRedux([...(coursesAdded as string[]), correctedCourse]);
+      const courseSections: CourseObjectProps[] = response.data;
+      addSectionsToRedux(
+        sections ? sections.concat(courseSections) : courseSections
+      );
+      setMessage("Course added successfully");
+    } else {
+      setMessage("This course has been added already");
+    }
+    setOpen(true);
+  };
+
   return (
     <SectionWrapper>
       <Title title="2. Add Courses"></Title>
       <Wrapper>
-        <AddCourse>
+        <AddCourseSection>
           <span style={{ fontSize: 30 }}>Course:</span>
           <TextField
             id="outlined-textarea"
             variant="outlined"
+            onChange={handleChange}
             style={{ width: 250, height: 50, marginLeft: 10 }}
           />
-        </AddCourse>
-        <CourseList></CourseList>
+          <Button
+            variant="contained"
+            style={{
+              display: "block",
+              marginTop: 164,
+              marginLeft: 400,
+              color: "black",
+            }}
+            onClick={handleAddBtnClick}
+          >
+            Add
+          </Button>
+        </AddCourseSection>
+        <CourseList>
+          {coursesAdded
+            ? coursesAdded.map((course, index) => {
+                return (
+                  <CourseItem key={index} courseName={course}></CourseItem>
+                );
+              })
+            : null}
+        </CourseList>
       </Wrapper>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        onClose={handleSnackBarClose}
+        message={message}
+        key={"top" + "center"}
+      />
     </SectionWrapper>
   );
 }
 
-export default Courses;
+const mapStateToProps = (state: RootState) => {
+  return {
+    coursesAdded: state.HomeReducer.coursesAdded,
+    sections: state.HomeReducer.sections,
+    term: state.HomeReducer.term,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    addCourseToRedux(coursesAdded: string[]) {
+      const action: AddCourse = {
+        type: ADDCOURSE,
+        courses: coursesAdded,
+      };
+      dispatch(action);
+    },
+    addSectionsToRedux(sections: CourseObjectProps[]) {
+      const action: AddCourseSections = {
+        type: ADDCOURSESECTIONS,
+        sections,
+      };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Courses);
