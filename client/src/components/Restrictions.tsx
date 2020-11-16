@@ -43,6 +43,7 @@ function Restrictions() {
         {weekDays.map((weekday, index) => {
           return (
             <Button
+              key={index}
               content={weekday}
               selected={days.includes(index)}
               onClick={() => {
