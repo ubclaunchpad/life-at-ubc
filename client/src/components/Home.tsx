@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   createStyles,
   makeStyles,
@@ -11,14 +11,14 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputBase from "@material-ui/core/InputBase";
 import styled from "styled-components";
+import { SELECTTERM, SelectTerm } from "../actions/HomeActions";
+import { Dispatch } from "redux";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
 
 export const SectionWrapper = styled.div`
   text-align: center;
   height: 350px;
-`;
-
-const Space = styled.div`
-  height: 30px;
 `;
 
 const BootstrapInput = withStyles((theme: Theme) =>
@@ -66,52 +66,33 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function Home() {
-  const sessions = ["2020W", "2020S", "2021W"];
+interface HomeProps {
+  selectedTerm: string;
+  updateTermToRedux: any;
+}
+
+function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
   const terms = ["Term 1", "Term 2"];
 
   const classes = useStyles();
 
-  const [selectedSession, setSelectedSession] = useState("");
-  const [selectedterm, setSelectedTerm] = useState("");
-
-  const handleSessionChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    setSelectedSession(event.target.value as string);
-  };
-
-  const handleTermChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedTerm(event.target.value as string);
+  const handleTermChange = (event: any) => {
+    if (event.target.value === 0) {
+      updateTermToRedux("1");
+    } else {
+      updateTermToRedux("2");
+    }
   };
 
   return (
     <SectionWrapper>
-      <Title title="1. Choose Session and Term"></Title>
-      <FormControl style={{ width: 430 }} className={classes.margin}>
-        <Select
-          labelId="demo-customized-select-label"
-          id="demo-customized-select"
-          value={selectedSession}
-          onChange={handleSessionChange}
-          input={<BootstrapInput />}
-        >
-          {sessions.map((session, index) => {
-            return (
-              <MenuItem value={index} key={index}>
-                {session}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <Space></Space>
+      <Title title="1. Choose Term"></Title>
       <div>
         <FormControl style={{ width: 430 }} className={classes.margin}>
           <Select
+            defaultValue={selectedTerm ? (selectedTerm === "1" ? 0 : 1) : undefined}
             labelId="demo-customized-select-label"
             id="demo-customized-select"
-            value={selectedterm}
             onChange={handleTermChange}
             input={<BootstrapInput />}
           >
@@ -129,4 +110,22 @@ function Home() {
   );
 }
 
-export default Home;
+const mapState = (state: RootState) => {
+  return {
+    selectedTerm: state.HomeReducer.term,
+  };
+};
+
+const mapDispatch = (dispatch: Dispatch) => {
+  return {
+    updateTermToRedux(term: string) {
+      const action: SelectTerm = {
+        type: SELECTTERM,
+        term,
+      };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapState, mapDispatch)(Home);
