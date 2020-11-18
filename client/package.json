@@ -8,7 +8,7 @@
     "@material-ui/icons": "^4.9.1",
     "axios": "^0.21.0",
     "clsx": "^1.1.1",
-    "moment": "^2.29.1",
+    "dayjs": "^1.9.6",
     "pino": "^6.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

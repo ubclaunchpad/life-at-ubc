@@ -1,5 +1,5 @@
 import parentLogger from "../logger";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const log = parentLogger.child({ module: "testScheduler" });
 
@@ -145,16 +145,16 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
             let firstCourseTimeStart = combination[i]["starttime"];
-            let momentFirstCourseTimeStart = moment(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
+            let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
 
             let firstCourseEnd = combination[i]["endtime"];
-            let momentFirstCourseTimeEnd = moment(`05-17-2018 ${firstCourseEnd}`, "MM-DD-YYYY hh:mm a");
+            let momentFirstCourseTimeEnd = dayjs(`05-17-2018 ${firstCourseEnd}`, "MM-DD-YYYY hh:mm a");
 
             let secondCourseStart = combination[j]["starttime"];
-            let momentSecondCourseTimeStart = moment(`05-17-2018 ${secondCourseStart}`, "MM-DD-YYYY hh:mm a");
+            let momentSecondCourseTimeStart = dayjs(`05-17-2018 ${secondCourseStart}`, "MM-DD-YYYY hh:mm a");
 
             let secondCourseEnd = combination[j]["endtime"];
-            let momentSecondCourseTimeEnd = moment(`05-17-2018 ${secondCourseEnd}`, "MM-DD-YYYY hh:mm a");
+            let momentSecondCourseTimeEnd = dayjs(`05-17-2018 ${secondCourseEnd}`, "MM-DD-YYYY hh:mm a");
 
             // If start times are the same, they overlap
             if (momentFirstCourseTimeStart.isSame(momentSecondCourseTimeStart)) {
