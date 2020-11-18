@@ -144,34 +144,39 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
-            let firstCourseTimeStart = combination[i]["starttime"];
-            let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
+            let firstCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
+            let secondCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
 
-            let firstCourseEnd = combination[i]["endtime"];
-            let momentFirstCourseTimeEnd = dayjs(`05-17-2018 ${firstCourseEnd}`, "MM-DD-YYYY hh:mm a");
+            if (firstCourseTimeExists && secondCourseTimeExists) {
+                let firstCourseTimeStart = combination[i]["starttime"];
+                let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
 
-            let secondCourseStart = combination[j]["starttime"];
-            let momentSecondCourseTimeStart = dayjs(`05-17-2018 ${secondCourseStart}`, "MM-DD-YYYY hh:mm a");
+                let firstCourseEnd = combination[i]["endtime"];
+                let momentFirstCourseTimeEnd = dayjs(`05-17-2018 ${firstCourseEnd}`, "MM-DD-YYYY hh:mm a");
 
-            let secondCourseEnd = combination[j]["endtime"];
-            let momentSecondCourseTimeEnd = dayjs(`05-17-2018 ${secondCourseEnd}`, "MM-DD-YYYY hh:mm a");
+                let secondCourseStart = combination[j]["starttime"];
+                let momentSecondCourseTimeStart = dayjs(`05-17-2018 ${secondCourseStart}`, "MM-DD-YYYY hh:mm a");
 
-            // If start times are the same, they overlap
-            if (momentFirstCourseTimeStart.isSame(momentSecondCourseTimeStart)) {
-                return false;
-            }
+                let secondCourseEnd = combination[j]["endtime"];
+                let momentSecondCourseTimeEnd = dayjs(`05-17-2018 ${secondCourseEnd}`, "MM-DD-YYYY hh:mm a");
 
-            // If start time of course 1 is after start time of second, check if if start time of course 1 is before end time of course 2
-            if (momentFirstCourseTimeStart.isAfter(momentSecondCourseTimeStart)) {
-                if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeEnd)) {
+                // If start times are the same, they overlap
+                if (momentFirstCourseTimeStart.isSame(momentSecondCourseTimeStart)) {
                     return false;
                 }
-            }
 
-            // If start time of course 1 is before start time of second, check if if end time of course 1 is after start time of course 2
-            if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeStart)) {
-                if (momentFirstCourseTimeEnd.isAfter(momentSecondCourseTimeStart)) {
-                    return false;
+                // If start time of course 1 is after start time of second, check if if start time of course 1 is before end time of course 2
+                if (momentFirstCourseTimeStart.isAfter(momentSecondCourseTimeStart)) {
+                    if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeEnd)) {
+                        return false;
+                    }
+                }
+
+                // If start time of course 1 is before start time of second, check if if end time of course 1 is after start time of course 2
+                if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeStart)) {
+                    if (momentFirstCourseTimeEnd.isAfter(momentSecondCourseTimeStart)) {
+                        return false;
+                    }
                 }
             }
         }
