@@ -2057,5 +2057,57 @@ export const testData = [
         day: "Fri",
         starttime: "11:00",
         endtime: "12:00"
-        }
+        },
+        {
+        coursetitle: "HIST 100 What is History?",
+        coursedept:	"HIST",
+        coursenumber: "100",
+        sectiontitle: "HIST 100 201",
+        status:	"",
+        activity: "Web-Oriented Course",
+        prof: "FRENCH, WILLIAM EARL",
+        term: "2",
+        day: "Tue Thu",
+        starttime: "14:00",
+        endtime: "15:30"
+    },
+    {
+        coursetitle: "HIST 100 What is History?",
+        coursedept:	"HIST",
+        coursenumber: "100",
+        sectiontitle: "HIST 100 L1B",
+        status:	"",
+        activity: "Discussion",
+        prof: "",
+        term: "2",
+        day: "Fri",
+        starttime: "11:00",
+        endtime: "12:00",
+    },
+    {
+        coursetitle: "HIST 100 What is History?",
+        coursedept:	"HIST",
+        coursenumber: "100",
+        sectiontitle: "HIST 100 L1A",
+        status:	"",
+        activity: "Discussion",
+        prof: "",
+        term: "2",
+        day: "Thu",
+        starttime: "15:30",
+        endtime: "16:30"
+    },
+    {
+        coursetitle: "CHEM 448A Directed Studies in Chemistry - T1 DST CHEMISTRY",
+        coursedept:	"CHEM",
+        coursenumber: "448A",
+        sectiontitle: "CHEM 448A 100",
+        status: "Blocked",
+        activity: "Directed Studies",
+        prof: "",
+        term: "1",
+        day: "",
+        starttime: "",
+        endtime: ""
+    }
 ];
