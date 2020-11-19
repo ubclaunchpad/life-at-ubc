@@ -24,24 +24,24 @@ export interface CourseSection {
  * NOTE: My types here are generic because there might be more changes to schema, so don't want to lock in types just yet
  */
 export const filterLectures = (courseSections: CourseSection[]): CourseSection[] => {
-    const lectures = courseSections.filter(isLectureType);
+    const lectures = courseSections.filter(filterActivityTypes);
     return lectures;
 };
 
 /**
  * helper function for filterLectures
  * @param {CourseSection} courseSection a course section
- * @returns {boolean} returns false if a section's type is any of lectureTypes
+ * @returns {boolean} returns false if a section's type is any of unwantedTypes
  */
-export const isLectureType = (courseSection: CourseSection) => {
+export const filterActivityTypes = (courseSection: CourseSection) => {
     const activity = courseSection["activity"];
-    const lectureTypes = [
+    const unwantedTypes = [
         "Waiting List",
         "Tutorial",
         "Laboratory",
         "Discussion"
     ];
-    return !lectureTypes.some((lectureType: string) => activity === lectureType);
+    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
 
 
