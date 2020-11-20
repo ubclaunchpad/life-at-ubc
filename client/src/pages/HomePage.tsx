@@ -5,6 +5,8 @@ import Restrictions from "../components/Restrictions";
 import Lectures from "../components/Lectures";
 import Labs from "../components/Labs";
 import Generate from "../components/Generate";
+import DegNav from "../components/DegNav"
+import AllCourses from "../components/AllCourses"
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 
@@ -21,6 +23,8 @@ function HomePage({ index }: HomePageProps) {
       {index === 3 && <Lectures></Lectures>}
       {index === 4 && <Labs></Labs>}
       {index === 5 && <Generate></Generate>}
+      {index === 6 && <DegNav></DegNav>}
+      {index === 7 && <AllCourses></AllCourses>}
     </div>
   );
 }
