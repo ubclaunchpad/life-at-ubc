@@ -33,6 +33,13 @@ var columns: ColDef[] = [
     {field: "Friday", headerName: "Fri", type: "string", width: weekdayWidth, sortable: false, headerAlign: "center", cellClassName: color, },
 ];
 
+const daysOfWeek: {[key: string]: number} = {
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+};
 
 let makerows = function (start: number, end: number) {
     var rows: any[] = [];
@@ -112,30 +119,21 @@ const gridStyle = makeStyles(() => ({
 
 
 /* Main Function that Generates the Grid */
-function ScheduleGrid() {
+function ScheduleGrid({ schedule = [] }: any) {
     const classes = gridStyle();
     const colorclasses = colorStyle();
 
     let startHour = 8, endHour = 20;
     var rows = makerows(startHour, endHour);
-    addCourse(rows, 1, 13, 14, "CPSC 221");
-    addCourse(rows, 3, 13, 14, "CPSC 221");
-    addCourse(rows, 5, 13, 14, "CPSC 221");
-    addCourse(rows, 1, 14, 15, "ELEC 221");
-    addCourse(rows, 3, 14, 15, "ELEC 221");
-    addCourse(rows, 5, 14, 15, "ELEC 221");
-    addCourse(rows, 1, 17, 19, "ELEC 221");
-    addCourse(rows, 5, 11, 13, "CPEN 331");
-    addCourse(rows, 5, 15, 16, "CPEN 331");
-    addCourse(rows, 5, 17, 20, "CPEN 331");
-    addCourse(rows, 2, 8, 9.5, "MATH 307");
-    addCourse(rows, 4, 8, 9.5, "MATH 307");
-    addCourse(rows, 2, 9.5, 11, "PHYS 301");
-    addCourse(rows, 2, 13, 14, "PHYS 301");
-    addCourse(rows, 4, 9.5, 11, "PHYS 301");
-    addCourse(rows, 1, 15, 16, "MECH 360");
-    addCourse(rows, 2, 17, 18.5, "MECH 360");
-    addCourse(rows, 4, 17, 18.5, "MECH 360");
+    schedule.forEach((section: any) => {
+        const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
+        const [sh, sm] = starttime.split(":");
+        const [eh, em] = endtime.split(":");
+        const start = Number(sh) + (Number(sm) / 60);
+        const end = Number(eh) + (Number(em) / 60);
+        const days = day.split(" ");
+        days.forEach((dayOfWeek: any) => addCourse(rows, daysOfWeek[dayOfWeek], start, end, sectiontitle));
+    });
 
     return (
         <SectionWrapper>

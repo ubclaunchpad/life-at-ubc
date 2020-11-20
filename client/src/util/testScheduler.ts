@@ -17,6 +17,12 @@ export interface CourseSection {
     endtime: string;
 }
 
+export const generateSchedules = (courses: CourseSection[]): CourseSection[][] => {
+    const lectures = filterLectures(courses);
+    const schedules = generateCourseScheduleOnlyLectures(lectures);
+    return schedules;
+};
+
 /**
  * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
  * @param {CourseSection[]} courseSections array of course sections (of all types including lectures, labs, waitlists)
@@ -160,9 +166,12 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
             let firstCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
-            let secondCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
+            let secondCourseTimeExists: boolean = combination[j]["starttime"] !== undefined && combination[j]["endtime"] !== undefined;
+            const firstDay = combination[i].day;
+            const secondDay = combination[j].day;
 
             if (firstCourseTimeExists && secondCourseTimeExists) {
+                if (firstDay !== secondDay) continue;
                 let firstCourseTimeStart = combination[i]["starttime"];
                 let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
 
