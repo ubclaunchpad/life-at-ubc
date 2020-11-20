@@ -18,7 +18,7 @@ const initialState: HomeReducerProps = {
   componentIndex: 0,
   coursesAdded: [],
   sections: [],
-  term: "",
+  term: "1",
 };
 
 export const HomeReducer = (
