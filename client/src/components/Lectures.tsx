@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Pagination from "@material-ui/lab/Pagination";
 import { SectionWrapper } from "./Home";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
@@ -7,10 +8,13 @@ import { connect } from "react-redux";
 import { generateSchedules, CourseSection } from "../util/testScheduler";
 
 function Lectures({ schedules = [] }: any) {
+  const [selected, setSelected] = useState(0);
+  const handleChange = (e: any, n: number) => setSelected(n);
   return (
     <SectionWrapper>
       <Title title="4. Select Lectures to Lock Them"></Title>
-      {schedules.map((schedule: CourseSection[], i: any) => <ScheduleGrid key={i} schedule={schedule}/>)}
+      {schedules[selected] && <ScheduleGrid schedule={schedules[selected]}/>}
+      <Pagination count={schedules.length} shape="rounded" onChange={handleChange} />
     </SectionWrapper>
   );
 }
