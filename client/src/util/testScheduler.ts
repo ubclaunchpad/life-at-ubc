@@ -33,7 +33,7 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
  * @param {CourseSection} courseSection a course section
  * @returns {boolean} returns false if a section's type is any of unwantedTypes
  */
-export const filterActivityTypes = (courseSection: CourseSection) => {
+export const filterActivityTypes = (courseSection: CourseSection): boolean => {
     const activity = courseSection["activity"];
     const unwantedTypes = [
         "Waiting List",
@@ -44,6 +44,31 @@ export const filterActivityTypes = (courseSection: CourseSection) => {
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
 
+/**
+ * Given an array of course sections, produces an array with sections that fall on an allowed day.
+ * @param {CourseSection[]} courseSections array of course sections
+ * @returns {CourseSection[]} an array with
+ */
+export const filterRestrictedDays = (courseSections: CourseSection[], restrictedDays: string[]): CourseSection[] => {
+    return courseSections.filter((courseSection: CourseSection) => {
+        const sectionDays: string[] = courseSection["day"].split(" ");
+        sectionDays.forEach((day: string) => {
+            if (restrictedDays.some((restriction: string) => day === restriction)) {
+                return false;
+            }    
+        });
+        return true;
+    }); 
+}
+
+/**
+ * helper to convert numbers to shortened day strings
+ * @param num number between [0,6] inclusive that represents a day
+ */
+export const mapDayIndexToString = (num: number): string => {
+    const indexToString = ["Mon", "Tues", "Weds", "Thurs", "Fri", "Sat", "Sun"]
+    return indexToString[num];
+}
 
 /**
  * Given an array of unique course sections (lectures), generates all valid combinations
