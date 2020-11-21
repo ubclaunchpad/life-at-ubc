@@ -5,6 +5,7 @@ import {
   ADDCOURSE,
   ADDCOURSESECTIONS,
   SELECTTERM,
+  SELECTDAYS,
 } from "../actions/HomeActions";
 
 export interface HomeReducerProps {
@@ -12,6 +13,7 @@ export interface HomeReducerProps {
   coursesAdded: string[];
   sections: CourseObjectProps[];
   term: string;
+  days: number[];
 }
 
 const initialState: HomeReducerProps = {
@@ -19,6 +21,7 @@ const initialState: HomeReducerProps = {
   coursesAdded: [],
   sections: [],
   term: "",
+  days: [],
 };
 
 export const HomeReducer = (
@@ -37,6 +40,9 @@ export const HomeReducer = (
     }
     case SELECTTERM: {
       return { ...state, term: action.term };
+    }
+    case SELECTDAYS: {
+      return { ...state, days: action.days };
     }
     default:
       return state;

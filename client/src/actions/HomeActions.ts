@@ -4,6 +4,7 @@ export const SELECTTERM = "select_term";
 export const SWITCHCOMPONENT = "switch_component";
 export const ADDCOURSE = "add_course";
 export const ADDCOURSESECTIONS = "add_course_sections";
+export const SELECTDAYS = "select_days";
 
 export interface SelectTerm {
   type: typeof SELECTTERM;
@@ -25,4 +26,14 @@ export interface AddCourseSections {
   sections: CourseObjectProps[];
 }
 
-export type HomeActions = Switch | AddCourse | AddCourseSections | SelectTerm;
+export interface SelectDays {
+  type: typeof SELECTDAYS;
+  days: number[];
+}
+
+export type HomeActions =
+  | Switch
+  | AddCourse
+  | AddCourseSections
+  | SelectTerm
+  | SelectDays;
