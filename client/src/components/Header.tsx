@@ -1,5 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import Link from "@material-ui/core/Link";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import { SWITCHCOMPONENT, Switch } from "../actions/HomeActions";
 
 const StyledHeader = styled.div`
   width: 1300px;
@@ -16,19 +21,58 @@ const StyledHeader = styled.div`
   }
 `;
 
-function Header() {
+const StyledLink = styled(Link)`
+  cursor: pointer;
+`;
+
+interface NavBarProps {
+  index?: number;
+  handleClick?: any;
+}
+
+function Header({ index, handleClick }: NavBarProps) {
   return (
     <StyledHeader>
       <div className="left" style={{ display: "inline-block" }}>
         <span>Schedule Generator</span>
       </div>
       <div className="right" style={{ display: "inline-block" }}>
-        <span style={{ marginRight: 30 }}>Home</span>
-        <span style={{ marginRight: 30 }}>Degree Navigator</span>
-        <span>Courses</span>
+      <StyledLink
+          style={{ color: "black" }}
+          href="/"
+        >
+          <span style={{ marginRight: 30 }}>Home</span>
+        </StyledLink>
+        <StyledLink
+          style={{ color: "black" }}
+          href="/degnav"
+        >
+          <span style={{ marginRight: 30 }}>Degree Navigator</span>
+        </StyledLink>
+        <StyledLink
+          style={{ color: "black" }}
+          href="/allcourses"
+        >
+          <span style={{ marginRight: 30 }}>Courses</span>
+        </StyledLink>
       </div>
     </StyledHeader>
   );
 }
 
-export default Header;
+const mapStateToProps = (state: RootState) => {
+  return {
+    index: state.HomeReducer.componentIndex,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    handleClick(index: any) {
+      const action: Switch = { type: SWITCHCOMPONENT, index };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
