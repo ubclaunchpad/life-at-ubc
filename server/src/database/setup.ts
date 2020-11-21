@@ -7,8 +7,9 @@ const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
 
 export const setupDb = async () => {
-    const { rows: tables } = await getTables();
-    if (tables.every((table) => ["prereq", "coreq", "coursesection"].includes(table.table_name))) {
+    let { rows: tables } = await getTables();
+    tables = tables.map((table) => table.table_name);
+    if (["prereq", "coreq", "coursesection"].every((name) => tables.includes(name))) {
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
