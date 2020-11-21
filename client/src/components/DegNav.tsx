@@ -6,5 +6,6 @@ const DegNavPage = () => {
       <h3>This is the Degree Navigator Page!</h3>
     </div>
   );
-}
+};
+
 export default DegNavPage;

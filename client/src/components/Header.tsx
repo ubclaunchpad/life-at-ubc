@@ -39,25 +39,19 @@ function Header({ index, handleClick }: NavBarProps) {
       <div className="right" style={{ display: "inline-block" }}>
       <StyledLink
           style={{ color: "black" }}
-          onClick={() => {
-            handleClick(0);
-          }}
+          href="/"
         >
           <span style={{ marginRight: 30 }}>Home</span>
         </StyledLink>
         <StyledLink
           style={{ color: "black" }}
-          onClick={() => {
-            handleClick(6);
-          }}
+          href="/degnav"
         >
           <span style={{ marginRight: 30 }}>Degree Navigator</span>
         </StyledLink>
         <StyledLink
           style={{ color: "black" }}
-          onClick={() => {
-            handleClick(7);
-          }}
+          href="/allcourses"
         >
           <span style={{ marginRight: 30 }}>Courses</span>
         </StyledLink>

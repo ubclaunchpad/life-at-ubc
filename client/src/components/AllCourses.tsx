@@ -6,7 +6,6 @@ const AllCourses = () => {
       <h3>Welcome to the courses page!</h3>
     </div>
   );
-}
-
+};
 
 export default AllCourses;
