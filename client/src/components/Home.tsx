@@ -90,7 +90,7 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
       <div>
         <FormControl style={{ width: 430 }} className={classes.margin}>
           <Select
-            defaultValue={selectedTerm ? (selectedTerm === "1" ? 0 : 1) : undefined}
+            value={!selectedTerm || selectedTerm === "1" ? 0 : 1}
             labelId="demo-customized-select-label"
             id="demo-customized-select"
             onChange={handleTermChange}
