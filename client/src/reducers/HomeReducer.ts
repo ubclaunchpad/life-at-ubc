@@ -5,13 +5,16 @@ import {
   ADDCOURSE,
   ADDCOURSESECTIONS,
   SELECTTERM,
+  SETVALIDSCHEDULES
 } from "../actions/HomeActions";
+import { CourseSection } from "../util/testScheduler";
 
 export interface HomeReducerProps {
   componentIndex: number;
   coursesAdded: string[];
   sections: CourseObjectProps[];
   term: string;
+  schedules: CourseSection[][];
 }
 
 const initialState: HomeReducerProps = {
@@ -19,6 +22,7 @@ const initialState: HomeReducerProps = {
   coursesAdded: [],
   sections: [],
   term: "1",
+  schedules: []
 };
 
 export const HomeReducer = (
@@ -37,6 +41,9 @@ export const HomeReducer = (
     }
     case SELECTTERM: {
       return { ...state, term: action.term };
+    }
+    case SETVALIDSCHEDULES: {
+      return { ...state, schedules: action.schedules };
     }
     default:
       return state;
