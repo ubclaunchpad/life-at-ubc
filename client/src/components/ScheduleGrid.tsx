@@ -3,6 +3,7 @@ import { SectionWrapper } from "./Home";
 import clsx from "clsx";
 import { DataGrid, CellClassParams } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
+import { CourseSection } from "../util/testScheduler";
 
 
 const weekdayWidth = 125;
@@ -117,9 +118,13 @@ const gridStyle = makeStyles(() => ({
     }
 }));
 
+interface ScheduleGridProps {
+    schedule: CourseSection[];
+}
+
 
 /* Main Function that Generates the Grid */
-function ScheduleGrid({ schedule = [] }: any) {
+function ScheduleGrid({ schedule }: ScheduleGridProps) {
     const classes = gridStyle();
     const colorclasses = colorStyle();
 

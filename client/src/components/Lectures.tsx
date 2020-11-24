@@ -7,7 +7,12 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { generateSchedules, CourseSection } from "../util/testScheduler";
 
-function Lectures({ schedules = [] }: any) {
+interface LectureProps {
+  schedules: CourseSection[][];
+  addSchedules?: any;
+}
+
+function Lectures({ schedules, addSchedules }: LectureProps) {
   const [selected, setSelected] = useState(0);
   const handleChange = (e: any, n: number) => setSelected(n);
   return (
