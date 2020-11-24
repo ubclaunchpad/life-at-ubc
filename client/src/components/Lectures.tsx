@@ -7,15 +7,20 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { generateSchedules, CourseSection } from "../util/testScheduler";
 import { Dispatch } from "redux";
-import { SetValidSchedules, SETVALIDSCHEDULES } from "../actions/HomeActions";
+import { SetValidSchedules, SETVALIDSCHEDULES, SETSELECTEDSCHEDULE, SetSelectedSchedule } from "../actions/HomeActions";
 interface LectureProps {
   schedules: CourseSection[][];
   addSchedules?: any;
+  setSelectedSchedule? : any;
 }
 
-function Lectures({ schedules, addSchedules }: LectureProps) {
+function Lectures({ schedules, addSchedules, setSelectedSchedule }: LectureProps) {
+  // TODO: state should not be default 0, if user has already selected, we should set it to the selected one
   const [selected, setSelected] = useState(0);
-  const handleChange = (e: any, n: number) => setSelected(n);
+  const handleChange = (e: any, n: number) => {
+    setSelectedSchedule(n);
+    setSelected(n);
+  };
   useEffect(() => {
     addSchedules(schedules);
   }, []);
@@ -40,6 +45,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: SetValidSchedules = {
         type: SETVALIDSCHEDULES,
         schedules: schedules,
+      };
+      dispatch(action);
+    },
+    setSelectedSchedule(schedule: number) {
+      const action: SetSelectedSchedule = {
+        type: SETSELECTEDSCHEDULE,
+        selectedSchedule: schedule,
       };
       dispatch(action);
     }
