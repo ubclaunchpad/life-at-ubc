@@ -66,6 +66,7 @@ export const filterRestrictedDays = (courseSections: CourseSection[], restricted
 /**
  * helper to convert numbers to shortened day strings
  * @param num number between [0,6] inclusive that represents a day
+ * @returns a shortened day string
  */
 export const mapDayIndexToString = (num: number): string => {
     const indexToString = ["Mon", "Tue", "Wed", "Thu", "Fri"];
