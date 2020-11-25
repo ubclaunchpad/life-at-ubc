@@ -13,7 +13,8 @@ const StyledDiv = styled.div`
 
 function TestScheduler() {
     let displayLectures = filterLectures(testData);
-    let displayFilteredLectures = filterRestrictedDays(displayLectures, [2].map(mapDayIndexToString)); // test value, pass in restricted days from Redux store
+    let displayFilteredLectures = filterRestrictedDays(displayLectures, [0].map(mapDayIndexToString)); // test value, pass in restricted days from Redux store
+    logger.info(displayFilteredLectures);
     let combinations = generateCourseScheduleOnlyLectures(displayFilteredLectures);
     return (
         <StyledDiv>

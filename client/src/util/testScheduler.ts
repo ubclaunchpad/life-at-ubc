@@ -47,7 +47,7 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
 /**
  * Given an array of course sections, produces an array with sections that fall on an allowed day.
  * @param {CourseSection[]} courseSections array of course sections
- * @returns {CourseSection[]} an array with
+ * @returns {CourseSection[]} an array with courses that pass the given day restrictions
  */
 export const filterRestrictedDays = (courseSections: CourseSection[], restrictedDays: string[]): CourseSection[] => {
     return courseSections.filter((courseSection: CourseSection) => {
