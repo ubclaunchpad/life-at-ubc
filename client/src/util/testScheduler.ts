@@ -52,23 +52,25 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
 export const filterRestrictedDays = (courseSections: CourseSection[], restrictedDays: string[]): CourseSection[] => {
     return courseSections.filter((courseSection: CourseSection) => {
         const sectionDays: string[] = courseSection["day"].split(" ");
+        let validSection = true;
         sectionDays.forEach((day: string) => {
             if (restrictedDays.some((restriction: string) => day === restriction)) {
-                return false;
-            }    
+                validSection = false;
+                return;
+            }
         });
-        return true;
-    }); 
-}
+        return validSection;
+    });
+};
 
 /**
  * helper to convert numbers to shortened day strings
  * @param num number between [0,6] inclusive that represents a day
  */
 export const mapDayIndexToString = (num: number): string => {
-    const indexToString = ["Mon", "Tues", "Weds", "Thurs", "Fri", "Sat", "Sun"]
+    const indexToString = ["Mon", "Tue", "Wed", "Thu", "Fri"];
     return indexToString[num];
-}
+};
 
 /**
  * Given an array of unique course sections (lectures), generates all valid combinations
