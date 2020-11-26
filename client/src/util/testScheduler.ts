@@ -34,6 +34,18 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
     return lectures;
 };
 
+
+/**
+ * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
+ * @param {CourseSection[]} courseSections array of course sections (of all types including lectures, labs, waitlists)
+ * @returns {CourseSection[]} An array of course sections which only contains "lecture" type
+ * NOTE: My types here are generic because there might be more changes to schema, so don't want to lock in types just yet
+ */
+export const filterNotLectures = (courseSections: CourseSection[]): any => {
+    const lectures = courseSections.filter(filterActivityTypesNotLecture);
+    return lectures;
+};
+
 /**
  * helper function for filterLectures
  * @param {CourseSection} courseSection a course section
@@ -46,6 +58,22 @@ export const filterActivityTypes = (courseSection: CourseSection) => {
         "Tutorial",
         "Laboratory",
         "Discussion"
+    ];
+    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
+};
+
+
+/**
+ * Filter out lectures
+ * @param {CourseSection} courseSection a course section
+ * @returns {boolean} returns false if a section's type is any of unwantedTypes
+ */
+export const filterActivityTypesNotLecture = (courseSection: any) => {
+    const activity = courseSection["activity"];
+    const unwantedTypes = [
+        "Waiting List",
+        "Web-Oriented Course",
+        "Lecture"
     ];
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
