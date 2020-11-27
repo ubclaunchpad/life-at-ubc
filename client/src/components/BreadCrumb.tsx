@@ -6,6 +6,7 @@ import MuiLink from "@material-ui/core/Link";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import { removeUndefinedProps } from "@material-ui/data-grid";
 
 const steps = [
   { step: 0, title: "Home" },
@@ -21,26 +22,25 @@ const StyledBreadcrumbesWrapper = styled.div`
   margin: 46px auto 40px;
 `;
 
+const Link = ({ title, ...props }: any) => (
+  <MuiLink {...props}>{title}</MuiLink>
+);
+
+const StyledLink = styled(Link)`
+  cursor: pointer;
+  font-weight: ${({ selected }) => selected ? 600 : 300};
+`;
+
 interface BreadcrumbProps {
   index?: number;
   handleClick?: any;
 }
 
 function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
-  const Link = ({ title }: any) => (
-    <MuiLink>{title}</MuiLink>
-  );
-  const StyledLink = styled(Link).attrs(({ step }: any) => ({
-    style: { color: index === step ? "orange" : "inherit" },
-    onClick: () => handleClick(step)
-  }))`
-    cursor: pointer;
-  `;
-
   return (
     <StyledBreadcrumbesWrapper>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
-        {steps.map((props, i) => <StyledLink key={i} {...props} />)}
+        {steps.map(({step, ...props}, i) => <StyledLink key={i} selected={step === index} onClick={() => handleClick(step)} {...props} />)}
       </Breadcrumbs>
     </StyledBreadcrumbesWrapper>
   );
