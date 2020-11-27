@@ -1,5 +1,5 @@
 import React from "react";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -8,6 +8,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+
+const colors = ["#1BAFD0", "#FD636B", "#FFB900", "#3BE8B0", "#6967C1"];
 
 function makerows(start: number, end: number) {
     const rows: any[] = [];
@@ -22,7 +24,7 @@ function makerows(start: number, end: number) {
 }
 
 
-function addCourse(rows: any, day: any, startTime: number, endTime: number, courseName: string) {
+function addCourse(rows: any, day: any, startTime: number, endTime: number, courseName: string, i: number) {
     if (startTime >= endTime || courseName === "" || courseName === null) return;
     for (let timeslot of rows) {
         let currTime = timeslot.id;
@@ -35,7 +37,7 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, cour
                 courseName,
                 rowSpan: (endTime - startTime) * 2,
                 style: {
-                    background: "#2ABB9B",
+                    background: colors[i % 5],
                     display: (currHour === startTime) ? "table-cell" : "none",
                 }
             };
@@ -54,14 +56,14 @@ function ScheduleGrid({ schedule = [] }: any) {
     const classes = useStyles();
     const startHour = 8, endHour = 20;
     const rows = makerows(startHour, endHour);
-    schedule.forEach((section: any) => {
+    schedule.forEach((section: any, i: number) => {
         const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
         const [sh, sm] = starttime.split(":");
         const [eh, em] = endtime.split(":");
         const start = Number(sh) + (Number(sm) / 60);
         const end = Number(eh) + (Number(em) / 60);
         const days = day.split(" ");
-        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle));
+        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
     });
 
     function ScheduleCell({ courseName = "", ...props }: any) {
@@ -114,9 +116,9 @@ function ScheduleGrid({ schedule = [] }: any) {
     }
 
     return (
-        <SectionWrapper>
+        <Section>
             <ScheduleTable />
-        </SectionWrapper>
+        </Section>
     );
 }
 

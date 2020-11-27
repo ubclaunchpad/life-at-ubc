@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import TimePicker from "./TimePicker";
 import Title from "./Title";
 import Button from "./Button";
@@ -36,7 +36,7 @@ function Restrictions() {
   };
 
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="3. Add Restrictions"></Title>
       <Title title="What days do you want to go to school?"></Title>
       <ButtonGroup>
@@ -58,7 +58,7 @@ function Restrictions() {
         <TimePicker></TimePicker>
         <TimePicker></TimePicker>
       </TimePickerGroup>
-    </SectionWrapper>
+    </Section>
   );
 }
 
