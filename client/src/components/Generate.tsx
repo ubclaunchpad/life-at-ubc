@@ -6,7 +6,7 @@ import ScheduleGrid from "./ScheduleGrid";
 function Generate() {
   return (
     <Section>
-      <Title title="Your Individualized Scehdule"></Title>
+      <Title title="Your Individualized Schedule"></Title>
       <ScheduleGrid></ScheduleGrid>
     </Section>
   );

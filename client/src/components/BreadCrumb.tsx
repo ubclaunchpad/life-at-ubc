@@ -17,7 +17,7 @@ const steps = [
 ];
 
 const StyledBreadcrumbesWrapper = styled.div`
-  max-width: 768px;
+  width: fit-content;
   margin: 46px auto 40px;
 `;
 
@@ -40,7 +40,7 @@ function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
   return (
     <StyledBreadcrumbesWrapper>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
-        {steps.map((props) => <StyledLink {...props} />)}
+        {steps.map((props, i) => <StyledLink key={i} {...props} />)}
       </Breadcrumbs>
     </StyledBreadcrumbesWrapper>
   );

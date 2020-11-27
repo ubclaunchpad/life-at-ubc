@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBack from "@material-ui/icons/ArrowBack";
@@ -13,6 +12,7 @@ import { Dispatch } from "redux";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
+      color: "#FFF",
       margin: theme.spacing(1),
     },
   })
@@ -30,26 +30,24 @@ function NextPrevSwitcher({ index, handleBtnClick }: SwitcherProps) {
       {index !== 0 && (
         <Button
           variant="contained"
-          style={{ backgroundColor: "black" }}
-          color="primary"
+          color="secondary"
           className={classes.button}
           startIcon={<ArrowBack />}
           onClick={() => {
             handleBtnClick((index as number) - 1);
           }}
-        ></Button>
+        >Prev</Button>
       )}
       {index !== 5 && (
         <Button
           variant="contained"
-          style={{ backgroundColor: "black" }}
-          color="primary"
+          color="secondary"
           className={classes.button}
           endIcon={<ArrowForward />}
           onClick={() => {
             handleBtnClick((index as number) + 1);
           }}
-        ></Button>
+        >Next</Button>
       )}
     </Section>
   );

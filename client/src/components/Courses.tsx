@@ -130,11 +130,12 @@ function Courses({
           />
           <Button
             variant="contained"
+            color="secondary"
             style={{
               display: "block",
               marginTop: 164,
               marginLeft: 400,
-              color: "black",
+              color: "white",
             }}
             onClick={handleAddBtnClick}
           >
@@ -156,7 +157,7 @@ function Courses({
         open={open}
         onClose={handleSnackBarClose}
         message={message}
-        key={"top" + "center"}
+        key="topcenter"
       />
     </Section>
   );

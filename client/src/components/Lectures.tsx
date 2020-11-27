@@ -5,7 +5,7 @@ import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-import { generateSchedules, CourseSection } from "../util/testScheduler";
+import { generateSchedules } from "../util/testScheduler";
 
 function Lectures({ schedules = [] }: any) {
   const [selected, setSelected] = useState(0);
