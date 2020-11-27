@@ -25,7 +25,7 @@ const initialState: HomeReducerProps = {
   sections: [],
   term: "1",
   schedules: [],
-  selectedSchedule: 1 // TODO: Should this be defaulted to 1?
+  selectedSchedule: 0 // TODO: Should this be defaulted to 1?
 };
 
 export const HomeReducer = (

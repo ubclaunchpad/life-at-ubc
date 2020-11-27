@@ -18,8 +18,8 @@ function Lectures({ schedules, addSchedules, setSelectedSchedule }: LectureProps
   // TODO: state should not be default 0, if user has already selected, we should set it to the selected one
   const [selected, setSelected] = useState(0);
   const handleChange = (e: any, n: number) => {
-    setSelectedSchedule(n);
-    setSelected(n);
+    setSelectedSchedule(n - 1);
+    setSelected(n - 1);
   };
   useEffect(() => {
     addSchedules(schedules);
