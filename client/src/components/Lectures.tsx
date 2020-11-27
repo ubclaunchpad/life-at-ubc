@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import { RootState } from "../reducers/index";
@@ -25,11 +25,11 @@ function Lectures({ schedules, addSchedules, setSelectedSchedule }: LectureProps
     addSchedules(schedules);
   }, []);
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="4. Select Lectures to Lock Them"></Title>
       {schedules[selected] && <ScheduleGrid schedule={schedules[selected]}/>}
       <Pagination count={schedules.length} shape="rounded" onChange={handleChange} />
-    </SectionWrapper>
+    </Section>
   );
 }
 
