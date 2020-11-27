@@ -6,11 +6,17 @@ import DegNav from "./DegNav";
 import AllCourses from "./AllCourses";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Provider } from "react-redux";
-import { configureStore } from "../reducers/index";
+import thunk from "redux-thunk";
+import reducers from "../reducers";
+import { createStore, applyMiddleware } from "redux";
 import { StylesProvider, ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-const store = configureStore();
+const store = createStore(
+  reducers,
+  applyMiddleware(thunk)
+);
+
 const theme = createMuiTheme({
   typography: {
     fontFamily: [
