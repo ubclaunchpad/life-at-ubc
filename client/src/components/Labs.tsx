@@ -6,6 +6,7 @@ import { CourseSection, filterNotLectures } from "../util/testScheduler";
 
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
+import Chip from "@material-ui/core/Chip";
 
 interface LabsProps {
   selectedSchedule: number;
@@ -15,10 +16,22 @@ interface LabsProps {
 
 
 function Labs({selectedSchedule, schedules, notLectureSections}: LabsProps) {
+  const handleClick = (section: any) => {
+    // TODO: Add lab to schedule
+  };
+
   return (
     <Section>
       <Title title="5. Add Lab Sections"></Title>
       <ScheduleGrid></ScheduleGrid>
+      {notLectureSections.map((notLectureSection: CourseSection) => (
+        <Chip
+          variant="outlined"
+          size="medium"
+          label={notLectureSection["sectiontitle"]}
+          onClick={() => handleClick(notLectureSection)}
+        />
+      ))}
     </Section>
   );
 }
