@@ -5,6 +5,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 import { SWITCHCOMPONENT, Switch } from "../actions/HomeActions";
+import Section from "./Section";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -17,11 +18,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const SectionWrapper = styled.div`
-  margin-top: 30px;
-  text-align: center;
-`;
-
 interface SwitcherProps {
   index?: number;
   handleBtnClick?: any;
@@ -30,7 +26,7 @@ interface SwitcherProps {
 function NextPrevSwitcher({ index, handleBtnClick }: SwitcherProps) {
   const classes = useStyles();
   return (
-    <SectionWrapper>
+    <Section>
       {index !== 0 && (
         <Button
           variant="contained"
@@ -55,7 +51,7 @@ function NextPrevSwitcher({ index, handleBtnClick }: SwitcherProps) {
           }}
         ></Button>
       )}
-    </SectionWrapper>
+    </Section>
   );
 }
 

@@ -1,15 +1,15 @@
 import React from "react";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 
 
 function Labs() {
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="5. Add Lab Sections"></Title>
       <ScheduleGrid></ScheduleGrid>
-    </SectionWrapper>
+    </Section>
   );
 }
 

@@ -1,14 +1,14 @@
 import React from "react";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 
 function Generate() {
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="Your Individualized Scehdule"></Title>
       <ScheduleGrid></ScheduleGrid>
-    </SectionWrapper>
+    </Section>
   );
 }
 

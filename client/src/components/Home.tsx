@@ -11,15 +11,11 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputBase from "@material-ui/core/InputBase";
 import styled from "styled-components";
+import Section from "./Section";
 import { SELECTTERM, SelectTerm } from "../actions/HomeActions";
 import { Dispatch } from "redux";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-
-export const SectionWrapper = styled.div`
-  text-align: center;
-  height: 350px;
-`;
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -85,7 +81,7 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
   };
 
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="1. Choose Term"></Title>
       <div>
         <FormControl style={{ width: 430 }} className={classes.margin}>
@@ -106,7 +102,7 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
           </Select>
         </FormControl>
       </div>
-    </SectionWrapper>
+    </Section>
   );
 }
 

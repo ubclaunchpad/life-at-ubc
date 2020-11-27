@@ -1,5 +1,5 @@
 import React from "react";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -114,9 +114,9 @@ function ScheduleGrid({ schedule = [] }: any) {
     }
 
     return (
-        <SectionWrapper>
+        <Section>
             <ScheduleTable />
-        </SectionWrapper>
+        </Section>
     );
 }
 

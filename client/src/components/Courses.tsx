@@ -9,7 +9,7 @@ import {
   ADDCOURSESECTIONS,
 } from "../actions/HomeActions";
 import styled from "styled-components";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
@@ -19,7 +19,6 @@ import { Dispatch } from "redux";
 
 const Wrapper = styled.div`
   display: flex;
-  width: 1200px;
   margin-left: auto;
   margin-right: auto;
 `;
@@ -118,7 +117,7 @@ function Courses({
   };
 
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="2. Add Courses"></Title>
       <Wrapper>
         <AddCourseSection>
@@ -159,7 +158,7 @@ function Courses({
         message={message}
         key={"top" + "center"}
       />
-    </SectionWrapper>
+    </Section>
   );
 }
 
