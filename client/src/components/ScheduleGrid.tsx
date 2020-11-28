@@ -66,7 +66,7 @@ const gridStyle = makeStyles(() => ({
 
 interface ScheduleGridProps {
     schedule?: CourseSection[];
-    selectedSchedule?: number;
+    selectedSchedule: number;
     schedules?: CourseSection[][];
 }
 
@@ -87,7 +87,7 @@ function ScheduleGrid({ schedule, selectedSchedule, schedules }: ScheduleGridPro
             days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
         });
     } else {
-        if (selectedSchedule && schedules) {
+        if (schedules) {
             // TODO: dont repeat this code
             schedules[selectedSchedule].forEach((section: any, i: number) => {
                 const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
