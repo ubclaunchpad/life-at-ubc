@@ -64,11 +64,11 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
 
 /**
  * Given an array of course sections, produces an array with sections that fall on an allowed day.
- * @param {CourseSection[]} courseSections array of course sections
+ * @param {CourseSection[]} courseSections array of combinations
  * @returns {CourseSection[]} an array with courses that pass the given day restrictions
  */
-export const filterRestrictedDays = (courseSections: CourseSection[], restrictedDays: string[]): CourseSection[] => {
-    return courseSections.filter((courseSection: CourseSection) => {
+export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
+   /*  return courseSections.filter((courseSection: CourseSection) => {
         const sectionDays: string[] = courseSection["day"].split(" ");
         let validSection = true;
         sectionDays.forEach((day: string) => {
@@ -78,6 +78,31 @@ export const filterRestrictedDays = (courseSections: CourseSection[], restricted
             }
         });
         return validSection;
+    }); */
+
+    return combinations.filter((combination: CourseSection[]) => {
+        let validCombination = true;
+
+        combination.forEach((section: CourseSection) => {
+            const sectionDays: string[] = section["day"].split(" ");
+            let validSection = true;
+
+            sectionDays.forEach((day: string) => {
+                // we find a day that is unwanted, so we escape out of the foreach
+                if (restrictedDays.some((restriction: string) => day === restriction)) {
+                    validSection = false;
+                    return;
+                }
+            });
+
+            // found that this section falls on a unwanted day, so this combination is invalid and we escape again
+            if (!validSection) {
+                validCombination = false;
+                return;
+            }
+        });
+
+        return validCombination;
     });
 };
 
@@ -116,9 +141,9 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
 export const generateCourseScheduleOnlyLectures = (courses: CourseSection[]): CourseSection[][] => {
     const uniqueCourses = countUniqueCourses(courses);
     let allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length - 1, courses);
-    log.info(allCombinations);
+    log.info(allCombinations, "allCombinations");
     let filteredCombinations = filterCombinations(allCombinations);
-    log.info(filteredCombinations);
+    log.info(filteredCombinations, "filteredCombination");
     return filteredCombinations;
 };
 
@@ -168,11 +193,13 @@ export const backTrackOnlyLectures = (max: number, n: number, courses: CourseSec
  * @param {CourseSection[][]} combinations generated course schedules
  * @returns {CourseSection[][]} returns filtered version of combinations (eg. filter our combinations which dont contain every course)
  */
-export const filterCombinations = (combinations: CourseSection[][]): CourseSection[][] => {
+export const filterCombinations = (combinations: CourseSection[][], restrictedDays?: number[]): CourseSection[][] => {
     // TODO: Other filters can go here
     let filteredMissingCourses = filterCombinationsWithMissingCourses(combinations);
     log.info(filteredMissingCourses);
-    return filterCombinationsWithTimeOverlaps(filteredMissingCourses);
+    let filteredDayRestrictedCourses = filterRestrictedDays(filteredMissingCourses, (restrictedDays || []).map(mapDayIndexToString));
+    log.info(filteredDayRestrictedCourses, "filterDayRestrictions");
+    return filterCombinationsWithTimeOverlaps(filteredDayRestrictedCourses);
 };
 
 /**
