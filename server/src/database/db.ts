@@ -10,7 +10,7 @@ class Database {
 
     constructor() {
         // If on docker pool should take config, if on local database pool should take localconfig
-        this.pool = new Pool(config);
+        this.pool = new Pool((process.env.DB_LOCAL) ? localconfig : config);
         this.pool.on("error", (err, client) => {
             log.error("Unexpected error on idle PostgreSQL client.", err);
             process.exit(-1);

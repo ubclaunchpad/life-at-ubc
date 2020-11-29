@@ -7,6 +7,12 @@ const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
 
 export const setupDb = async () => {
+    let { rows: tables } = await getTables();
+    tables = tables.map((table) => table.table_name);
+    if (["prereq", "coreq", "coursesection"].every((name) => tables.includes(name))) {
+        log.info("Tables already exist. Will not be re-creating the DB.");
+        return;
+    }
     await dropDb();
     await createDb();
     await populateDb();
@@ -84,3 +90,10 @@ const insertReq = (table: string, req: []) => {
 const insertSection = (section: []) => {
     db.query("INSERT INTO CourseSection VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", section);
 };
+
+const getTables = () => db.query(`
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema='public'
+    AND table_type='BASE TABLE';
+`);
