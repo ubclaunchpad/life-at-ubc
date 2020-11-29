@@ -17,9 +17,9 @@ export interface CourseSection {
     endtime: string;
 }
 
-export const generateSchedules = (courses: CourseSection[]): CourseSection[][] => {
+export const generateSchedules = (courses: CourseSection[], restrictedDays: number[] = []): CourseSection[][] => {
     const lectures = filterLectures(courses);
-    const schedules = generateCourseScheduleOnlyLectures(lectures);
+    const schedules = generateCourseScheduleOnlyLectures(lectures, restrictedDays);
     return schedules;
 };
 
@@ -65,21 +65,9 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
 /**
  * Given an array of course sections, produces an array with sections that fall on an allowed day.
  * @param {CourseSection[]} courseSections array of combinations
- * @returns {CourseSection[]} an array with courses that pass the given day restrictions
+ * @returns {CourseSection[]} an array of combinations that pass the given day restrictions
  */
 export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
-   /*  return courseSections.filter((courseSection: CourseSection) => {
-        const sectionDays: string[] = courseSection["day"].split(" ");
-        let validSection = true;
-        sectionDays.forEach((day: string) => {
-            if (restrictedDays.some((restriction: string) => day === restriction)) {
-                validSection = false;
-                return;
-            }
-        });
-        return validSection;
-    }); */
-
     return combinations.filter((combination: CourseSection[]) => {
         let validCombination = true;
 
@@ -138,11 +126,11 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
  * @param {CourseSection[]} courses array of course sections (should only be lectures)
  * @returns {CourseSection[]} An array of valid course schedules
  */
-export const generateCourseScheduleOnlyLectures = (courses: CourseSection[]): CourseSection[][] => {
+export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], restrictedDays: number[]): CourseSection[][] => {
     const uniqueCourses = countUniqueCourses(courses);
     let allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length - 1, courses);
     log.info(allCombinations, "allCombinations");
-    let filteredCombinations = filterCombinations(allCombinations);
+    let filteredCombinations = filterCombinations(allCombinations, restrictedDays);
     log.info(filteredCombinations, "filteredCombination");
     return filteredCombinations;
 };
@@ -193,11 +181,11 @@ export const backTrackOnlyLectures = (max: number, n: number, courses: CourseSec
  * @param {CourseSection[][]} combinations generated course schedules
  * @returns {CourseSection[][]} returns filtered version of combinations (eg. filter our combinations which dont contain every course)
  */
-export const filterCombinations = (combinations: CourseSection[][], restrictedDays?: number[]): CourseSection[][] => {
+export const filterCombinations = (combinations: CourseSection[][], restrictedDays: number[]): CourseSection[][] => {
     // TODO: Other filters can go here
     let filteredMissingCourses = filterCombinationsWithMissingCourses(combinations);
     log.info(filteredMissingCourses);
-    let filteredDayRestrictedCourses = filterRestrictedDays(filteredMissingCourses, (restrictedDays || []).map(mapDayIndexToString));
+    let filteredDayRestrictedCourses = filterRestrictedDays(filteredMissingCourses, restrictedDays.map(mapDayIndexToString));
     log.info(filteredDayRestrictedCourses, "filterDayRestrictions");
     return filterCombinationsWithTimeOverlaps(filteredDayRestrictedCourses);
 };

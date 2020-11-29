@@ -13,7 +13,7 @@ const StyledDiv = styled.div`
 
 function TestScheduler() {
     let displayLectures = filterLectures(testData);
-    let combinations = generateCourseScheduleOnlyLectures(displayLectures);
+    let combinations = generateCourseScheduleOnlyLectures(displayLectures, []); // dummy value for restricted days arr
     logger.info(combinations);
     return (
         <StyledDiv>
