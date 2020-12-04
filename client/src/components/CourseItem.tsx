@@ -1,4 +1,5 @@
 import React from "react";
+import ClearIcon from "@material-ui/icons/Clear";
 import styled from "styled-components";
 
 const StyledItem = styled.div`
@@ -12,7 +13,15 @@ interface CourseItemProps {
   courseName: string;
 }
 function CourseItem({ courseName }: CourseItemProps) {
-  return <StyledItem>{courseName}</StyledItem>;
+  return (
+    <StyledItem>
+      {courseName}
+      <ClearIcon
+        style={{ lineHeight: 40, cursor: "pointer" }}
+        fontSize='small'
+      ></ClearIcon>
+    </StyledItem>
+  );
 }
 
 export default CourseItem;

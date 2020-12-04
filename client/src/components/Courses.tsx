@@ -11,8 +11,15 @@ import {
 import styled from "styled-components";
 import Section from "./Section";
 import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
+import { DELETCOURSE, DeleteCourse } from "../actions/HomeActions";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -36,6 +43,7 @@ const CourseList = styled.div`
   border: 1px solid #c4c4c4;
   border-radius: 10px;
   flex: 3;
+  overflow: scroll;
 `;
 
 export interface CourseObjectProps {
@@ -56,6 +64,7 @@ interface CoursesProps {
   coursesAdded?: string[];
   addCourseToRedux?: any;
   addSectionsToRedux?: any;
+  deleteCourseInRedux?: any;
   sections?: CourseObjectProps[];
   term?: string;
 }
@@ -65,6 +74,7 @@ function Courses({
   addCourseToRedux,
   sections,
   addSectionsToRedux,
+  deleteCourseInRedux,
   term,
 }: CoursesProps) {
   // snackbar:
@@ -116,21 +126,29 @@ function Courses({
     setOpen(true);
   };
 
+  const handleDltBtnClick = (deletedCourse: string) => {
+    const coursesAfterDeletion = coursesAdded
+      ? coursesAdded.filter((course) => course !== deletedCourse)
+      : null;
+    console.log(coursesAfterDeletion);
+    deleteCourseInRedux([coursesAfterDeletion]);
+  };
+
   return (
     <Section>
-      <Title title="2. Add Courses"></Title>
+      <Title title='2. Add Courses'></Title>
       <Wrapper>
         <AddCourseSection>
           <span style={{ fontSize: 30 }}>Course:</span>
           <TextField
-            id="outlined-textarea"
-            variant="outlined"
+            id='outlined-textarea'
+            variant='outlined'
             onChange={handleChange}
             style={{ width: 250, height: 50, marginLeft: 10 }}
           />
           <Button
-            variant="contained"
-            color="secondary"
+            variant='contained'
+            color='secondary'
             style={{
               display: "block",
               marginTop: 164,
@@ -142,11 +160,31 @@ function Courses({
             Add
           </Button>
         </AddCourseSection>
+
         <CourseList>
-          {coursesAdded
+          {coursesAdded && coursesAdded.length > 0
             ? coursesAdded.map((course, index) => {
                 return (
-                  <CourseItem key={index} courseName={course}></CourseItem>
+                  <List
+                    style={{ borderBottom: "1px solid #eee" }}
+                    key={index}
+                    dense={false}
+                  >
+                    <ListItem>
+                      <ListItemText primary={course} />
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge='end'
+                          aria-label='delete'
+                          onClick={() => {
+                            handleDltBtnClick(course);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
                 );
               })
             : null}
@@ -157,7 +195,7 @@ function Courses({
         open={open}
         onClose={handleSnackBarClose}
         message={message}
-        key="topcenter"
+        key='topcenter'
       />
     </Section>
   );
@@ -184,6 +222,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: AddCourseSections = {
         type: ADDCOURSESECTIONS,
         sections,
+      };
+      dispatch(action);
+    },
+    deleteCourseInRedux(courses: string[]) {
+      const action: DeleteCourse = {
+        type: DELETCOURSE,
+        courses,
       };
       dispatch(action);
     },

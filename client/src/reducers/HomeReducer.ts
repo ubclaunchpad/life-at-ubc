@@ -6,7 +6,8 @@ import {
   ADDCOURSESECTIONS,
   SELECTTERM,
   SETVALIDSCHEDULES,
-  SETSELECTEDSCHEDULE
+  SETSELECTEDSCHEDULE,
+  DELETCOURSE,
 } from "../actions/HomeActions";
 import { CourseSection } from "../util/testScheduler";
 
@@ -20,12 +21,12 @@ export interface HomeReducerProps {
 }
 
 const initialState: HomeReducerProps = {
-  componentIndex: 0,
+  componentIndex: 1,
   coursesAdded: [],
   sections: [],
   term: "1",
   schedules: [],
-  selectedSchedule: 0 // TODO: Should this be defaulted to 1?
+  selectedSchedule: 0, // TODO: Should this be defaulted to 1?
 };
 
 export const HomeReducer = (
@@ -50,6 +51,9 @@ export const HomeReducer = (
     }
     case SETSELECTEDSCHEDULE: {
       return { ...state, selectedSchedule: action.selectedSchedule };
+    }
+    case DELETCOURSE: {
+      return { ...state, coursesAdded: action.courses };
     }
     default:
       return state;
