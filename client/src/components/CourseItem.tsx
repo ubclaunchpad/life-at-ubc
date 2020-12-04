@@ -18,7 +18,7 @@ function CourseItem({ courseName }: CourseItemProps) {
       {courseName}
       <ClearIcon
         style={{ lineHeight: 40, cursor: "pointer" }}
-        fontSize='small'
+        fontSize="small"
       ></ClearIcon>
     </StyledItem>
   );

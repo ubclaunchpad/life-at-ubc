@@ -21,7 +21,7 @@ export interface HomeReducerProps {
 }
 
 const initialState: HomeReducerProps = {
-  componentIndex: 1,
+  componentIndex: 0,
   coursesAdded: [],
   sections: [],
   term: "1",

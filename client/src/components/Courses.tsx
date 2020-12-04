@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Title from "./Title";
-import CourseItem from "./CourseItem";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   AddCourse,
@@ -39,7 +38,7 @@ const AddCourseSection = styled.div`
 
 const CourseList = styled.div`
   display: inline-block;
-  height: 250px;
+  height: 262px;
   border: 1px solid #c4c4c4;
   border-radius: 10px;
   flex: 3;
@@ -129,30 +128,29 @@ function Courses({
   const handleDltBtnClick = (deletedCourse: string) => {
     const coursesAfterDeletion = coursesAdded
       ? coursesAdded.filter((course) => course !== deletedCourse)
-      : null;
-    console.log(coursesAfterDeletion);
-    deleteCourseInRedux([coursesAfterDeletion]);
+      : [];
+    deleteCourseInRedux(coursesAfterDeletion);
   };
 
   return (
     <Section>
-      <Title title='2. Add Courses'></Title>
+      <Title title="2. Add Courses"></Title>
       <Wrapper>
         <AddCourseSection>
           <span style={{ fontSize: 30 }}>Course:</span>
           <TextField
-            id='outlined-textarea'
-            variant='outlined'
+            id="outlined-textarea"
+            variant="outlined"
             onChange={handleChange}
             style={{ width: 250, height: 50, marginLeft: 10 }}
           />
           <Button
-            variant='contained'
-            color='secondary'
+            variant="contained"
+            color="secondary"
             style={{
               display: "block",
               marginTop: 164,
-              marginLeft: 400,
+              marginLeft: 360,
               color: "white",
             }}
             onClick={handleAddBtnClick}
@@ -160,7 +158,6 @@ function Courses({
             Add
           </Button>
         </AddCourseSection>
-
         <CourseList>
           {coursesAdded && coursesAdded.length > 0
             ? coursesAdded.map((course, index) => {
@@ -174,8 +171,8 @@ function Courses({
                       <ListItemText primary={course} />
                       <ListItemSecondaryAction>
                         <IconButton
-                          edge='end'
-                          aria-label='delete'
+                          edge="end"
+                          aria-label="delete"
                           onClick={() => {
                             handleDltBtnClick(course);
                           }}
@@ -195,7 +192,7 @@ function Courses({
         open={open}
         onClose={handleSnackBarClose}
         message={message}
-        key='topcenter'
+        key="topcenter"
       />
     </Section>
   );
