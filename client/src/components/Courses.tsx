@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Title from "./Title";
-import CourseItem from "./CourseItem";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   AddCourse,
@@ -11,8 +10,15 @@ import {
 import styled from "styled-components";
 import Section from "./Section";
 import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
+import { DELETCOURSE, DeleteCourse } from "../actions/HomeActions";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -32,10 +38,11 @@ const AddCourseSection = styled.div`
 
 const CourseList = styled.div`
   display: inline-block;
-  height: 250px;
+  height: 262px;
   border: 1px solid #c4c4c4;
   border-radius: 10px;
   flex: 3;
+  overflow: scroll;
 `;
 
 export interface CourseObjectProps {
@@ -56,6 +63,7 @@ interface CoursesProps {
   coursesAdded?: string[];
   addCourseToRedux?: any;
   addSectionsToRedux?: any;
+  deleteCourseInRedux?: any;
   sections?: CourseObjectProps[];
   term?: string;
 }
@@ -65,6 +73,7 @@ function Courses({
   addCourseToRedux,
   sections,
   addSectionsToRedux,
+  deleteCourseInRedux,
   term,
 }: CoursesProps) {
   // snackbar:
@@ -116,6 +125,13 @@ function Courses({
     setOpen(true);
   };
 
+  const handleDltBtnClick = (deletedCourse: string) => {
+    const coursesAfterDeletion = coursesAdded
+      ? coursesAdded.filter((course) => course !== deletedCourse)
+      : [];
+    deleteCourseInRedux(coursesAfterDeletion);
+  };
+
   return (
     <Section>
       <Title title="2. Add Courses"></Title>
@@ -134,7 +150,7 @@ function Courses({
             style={{
               display: "block",
               marginTop: 164,
-              marginLeft: 400,
+              marginLeft: 360,
               color: "white",
             }}
             onClick={handleAddBtnClick}
@@ -143,10 +159,29 @@ function Courses({
           </Button>
         </AddCourseSection>
         <CourseList>
-          {coursesAdded
+          {coursesAdded && coursesAdded.length > 0
             ? coursesAdded.map((course, index) => {
                 return (
-                  <CourseItem key={index} courseName={course}></CourseItem>
+                  <List
+                    style={{ borderBottom: "1px solid #eee" }}
+                    key={index}
+                    dense={false}
+                  >
+                    <ListItem>
+                      <ListItemText primary={course} />
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            handleDltBtnClick(course);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
                 );
               })
             : null}
@@ -184,6 +219,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: AddCourseSections = {
         type: ADDCOURSESECTIONS,
         sections,
+      };
+      dispatch(action);
+    },
+    deleteCourseInRedux(courses: string[]) {
+      const action: DeleteCourse = {
+        type: DELETCOURSE,
+        courses,
       };
       dispatch(action);
     },

@@ -7,6 +7,7 @@ export const ADDCOURSE = "add_course";
 export const ADDCOURSESECTIONS = "add_course_sections";
 export const SETVALIDSCHEDULES = "set_valid_schedules";
 export const SETSELECTEDSCHEDULE = "set_selected_schedule";
+export const DELETCOURSE = "delete_course";
 
 export interface SelectTerm {
   type: typeof SELECTTERM;
@@ -37,4 +38,16 @@ export interface SetSelectedSchedule {
   selectedSchedule: number;
 }
 
-export type HomeActions = Switch | AddCourse | AddCourseSections | SelectTerm | SetValidSchedules | SetSelectedSchedule;
+export interface DeleteCourse {
+  type: typeof DELETCOURSE;
+  courses: string[];
+}
+
+export type HomeActions =
+  | Switch
+  | AddCourse
+  | AddCourseSections
+  | SelectTerm
+  | SetValidSchedules
+  | SetSelectedSchedule
+  | DeleteCourse;
