@@ -21,5 +21,5 @@ COPY . .
 RUN chown -R node:node /app
 USER node
 
-EXPOSE ${DB_HOST}
+EXPOSE 5000
 CMD ["npm", "run", "dev"]
