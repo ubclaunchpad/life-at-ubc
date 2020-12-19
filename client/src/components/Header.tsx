@@ -14,8 +14,8 @@ const Link = ({ href, text }: any) => (
 );
 
 const StyledHeader = styled.div`
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@400;600;900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
-  font-family: 'Source Sans Pro', sans-serif;
+  @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@400;600;900&family=Source+Sans+Pro:wght@300;400;600&display=swap");
+  font-family: "Source Sans Pro", sans-serif;
   font-weight: 300;
   display: flex;
   max-width: 1024px;
@@ -41,17 +41,17 @@ const StyledLink = styled(Link)`
 
 interface NavBarProps {
   index?: number;
-  handleClick?: any;
+  handleClick: (index: number) => void;
 }
 
 function Header({ index, handleClick }: NavBarProps) {
   return (
     <StyledHeader>
-      <img src={logo} className="logo" alt="logo"/>
+      <img src={logo} className="logo" alt="logo" />
       <div className="right">
-        <StyledLink href="/" text="Home"/>
-        <StyledLink href="/degnav" text="Degree Navigator"/>
-        <StyledLink href="/allcourses" text="Courses"/>
+        <StyledLink href="/" text="Home" />
+        <StyledLink href="/degnav" text="Degree Navigator" />
+        <StyledLink href="/allcourses" text="Courses" />
       </div>
     </StyledHeader>
   );
@@ -65,7 +65,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    handleClick(index: any) {
+    handleClick(index: number) {
       const action: Switch = { type: SWITCHCOMPONENT, index };
       dispatch(action);
     },
