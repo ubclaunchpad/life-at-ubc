@@ -13,13 +13,11 @@ RUN apt-get update \
       --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# RUN apt-get update && apt-get install -y postgresql-client-12
-
 RUN npm ci
 COPY . .
 
 RUN chown -R node:node /app
 USER node
 
-EXPOSE 5000
+EXPOSE ${DB_HOST}
 CMD ["npm", "run", "dev"]
