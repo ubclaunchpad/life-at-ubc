@@ -40,3 +40,19 @@ jobs:
 
     - name: Run lint for /server
       run: cd server && npm run lint
+
+  # Deploy frontend to Netlify
+  deployFrontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy Frontend to Netlify
+        uses: nwtgck/actions-netlify@v1.1
+        with:
+          publish-dir: './client'
+          production-branch: main
+          deploy-message: "Deploy Frontend to Netlify from Github Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
