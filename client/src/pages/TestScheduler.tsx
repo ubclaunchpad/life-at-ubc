@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { filterLectures, generateCourseScheduleOnlyLectures} from "../util/testScheduler";
 import {testData} from "../util/testData";

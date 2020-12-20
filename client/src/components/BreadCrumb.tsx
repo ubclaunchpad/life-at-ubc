@@ -6,7 +6,6 @@ import MuiLink from "@material-ui/core/Link";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { removeUndefinedProps } from "@material-ui/data-grid";
 
 const steps = [
   { step: 0, title: "Home" },

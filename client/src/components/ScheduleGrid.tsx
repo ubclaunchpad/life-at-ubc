@@ -55,14 +55,14 @@ const useStyles = makeStyles({
     },
 });
 
-const gridStyle = makeStyles(() => ({
-    root: {
-        marginLeft: 320,
-        marginRight: 355,
-        textAlign: "center",
-        textDecorationColor: "rgba(157, 255, 118, 0)"
-    }
-}));
+// const gridStyle = makeStyles(() => ({
+//     root: {
+//         marginLeft: 320,
+//         marginRight: 355,
+//         textAlign: "center",
+//         textDecorationColor: "rgba(157, 255, 118, 0)"
+//     }
+// }));
 
 interface ScheduleGridProps {
     schedule?: CourseSection[];
