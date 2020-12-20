@@ -48,11 +48,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Deploy Frontend to Netlify
-        uses: nwtgck/actions-netlify@v1.1
+        uses: netlify/actions/cli@master
         with:
-          publish-dir: './client'
-          production-branch: main
-          deploy-message: "Deploy Frontend to Netlify from Github Actions"
+          args: deploy --dir=build --prod
+          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
