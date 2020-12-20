@@ -42,7 +42,7 @@ jobs:
       run: cd server && npm run lint
 
   # Deploy backend Docker container to Heroku
-  deploy:
+  deployBackend:
     name: Deploy Backend
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +51,7 @@ jobs:
         uses: akhileshns/heroku-deploy@v3.7.8
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "life-at-ubc"
+          heroku_app_name: "course-load-ubc"
           heroku_email: "${{secrets.HEROKU_EMAIL}}"
           usedocker: true
           appdir: "server"
