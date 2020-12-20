@@ -41,3 +41,30 @@ jobs:
 
     - name: Run lint for /server
       run: cd server && npm run lint
+
+  # Deploy frontend to Netlify
+  deployFrontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Install NodeJS
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      # Run npm install and build on our code
+      - run: cd client && npm install
+      - run: cd client && CI=false npm run build --if-present
+
+      # Deploy the build to Netlify
+      - name: Deploy Frontend to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=client/build --prod
+          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
