@@ -377,7 +377,7 @@ export const testData = [
     activity: "Web-Oriented Course",
     prof: "OLA, OLUWAKEMI",
     term: "1",
-    day: "Tue Thu",
+    day: "Wed",
     starttime: "9:30",
     endtime: "11:00"
     },
