@@ -8,7 +8,7 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import Chip from "@material-ui/core/Chip";
 import { Dispatch } from "redux";
-import { SetValidSchedules, SETVALIDSCHEDULES, SETSELECTEDSCHEDULE, SetSelectedSchedule } from "../actions/HomeActions";
+import { SetValidSchedules, SETVALIDSCHEDULES } from "../actions/HomeActions";
 
 interface LabsProps {
   selectedSchedule: number;

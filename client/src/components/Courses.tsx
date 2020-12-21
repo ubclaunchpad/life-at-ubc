@@ -23,6 +23,9 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
+const API_BASE_URL = (process.env.NODE_ENV === "production") ?
+  "https://course-load-ubc.herokuapp.com" : "http://localhost:5000";
+
 const Wrapper = styled.div`
   display: flex;
   margin-left: auto;
@@ -107,7 +110,7 @@ function Courses({
     const courseNumber = partition[1];
     const correctedCourse = department + " " + courseNumber;
     const response = await axios.get(
-      `http://localhost:5000/api/section/${term}/${department}/${courseNumber}`
+      `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
     );
 
     if (response.data.length === 0) {
