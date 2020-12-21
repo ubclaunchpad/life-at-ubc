@@ -25,7 +25,7 @@ services:
             - POSTGRES_PORT=${DB_PORT}
         ports:
             - 5000:5000
-        links:
+        depends_on:
             - db
 
 volumes:
