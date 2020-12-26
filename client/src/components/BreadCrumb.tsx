@@ -27,19 +27,26 @@ const Link = ({ title, ...props }: any) => (
 
 const StyledLink = styled(Link)`
   cursor: pointer;
-  font-weight: ${({ selected }) => selected ? 600 : 300};
+  font-weight: ${({ selected }) => (selected ? 600 : 300)};
 `;
 
 interface BreadcrumbProps {
   index?: number;
-  handleClick?: any;
+  handleClick: (index: number) => void;
 }
 
 function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
   return (
     <StyledBreadcrumbesWrapper>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
-        {steps.map(({step, ...props}, i) => <StyledLink key={i} selected={step === index} onClick={() => handleClick(step)} {...props} />)}
+        {steps.map(({ step, ...props }, i) => (
+          <StyledLink
+            key={i}
+            selected={step === index}
+            onClick={() => handleClick(step)}
+            {...props}
+          />
+        ))}
       </Breadcrumbs>
     </StyledBreadcrumbesWrapper>
   );
@@ -53,7 +60,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    handleClick(index: any) {
+    handleClick(index: number) {
       const action: Switch = { type: SWITCHCOMPONENT, index };
       dispatch(action);
     },

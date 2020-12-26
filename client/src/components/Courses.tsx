@@ -64,9 +64,9 @@ export interface CourseObjectProps {
 
 interface CoursesProps {
   coursesAdded?: string[];
-  addCourseToRedux?: any;
-  addSectionsToRedux?: any;
-  deleteCourseInRedux?: any;
+  addCourseToRedux: (coursesAdded: string[]) => void;
+  addSectionsToRedux: (sections: CourseObjectProps[]) => void;
+  deleteCourseInRedux: (courses: string[]) => void;
   sections?: CourseObjectProps[];
   term?: string;
 }
@@ -132,6 +132,15 @@ function Courses({
     const coursesAfterDeletion = coursesAdded
       ? coursesAdded.filter((course) => course !== deletedCourse)
       : [];
+    const [deptName, courseNumber] = deletedCourse.split(" ");
+    const sectionsAfterDeletion = sections
+      ? sections.filter(
+          (section) =>
+            section.coursedept !== deptName ||
+            section.coursenumber !== courseNumber
+        )
+      : [];
+    addSectionsToRedux(sectionsAfterDeletion);
     deleteCourseInRedux(coursesAfterDeletion);
   };
 
