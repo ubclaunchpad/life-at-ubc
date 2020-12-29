@@ -28,8 +28,9 @@ describe("Button", () => {
   });
 
   it("can render content properly", () => {
-    const wrapper = mount(<Button content="test" />);
+    const testContent = "test";
+    const wrapper = mount(<Button content={testContent} />);
     const button = wrapper.find("div");
-    expect(button.text()).toEqual("test");
+    expect(button.text()).toEqual(testContent);
   });
 });
