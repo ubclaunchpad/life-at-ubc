@@ -1,6 +1,6 @@
 import React from "react";
 import { mount } from "enzyme";
-import Restrictions from "../../components/Restrictions";
+import Restrictions, { weekDays } from "../../components/Restrictions";
 import { findTestWrapper } from "../../util/findTestWrapper";
 
 describe("Restrictions", () => {
@@ -14,6 +14,9 @@ describe("Restrictions", () => {
 
   it("render five buttons represeting five workdays", () => {
     expect(buttons.length).toBe(5);
+    for (let i = 0; i < 5; i++) {
+      expect(buttons.at(i).find("div").text()).toEqual(weekDays[i]);
+    }
   });
 
   it("does not have any selected days initially", () => {

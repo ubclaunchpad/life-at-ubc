@@ -20,7 +20,13 @@ const TimePickerGroup = styled.div`
   justify-content: center;
 `;
 
-const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const weekDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
 
 function Restrictions() {
   const [days, setDays] = useState<number[]>([]);
