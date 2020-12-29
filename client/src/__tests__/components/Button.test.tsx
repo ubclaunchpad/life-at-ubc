@@ -1,10 +1,6 @@
 import React from "react";
 import { mount } from "enzyme";
-import Button from "../components/Button";
-import Enzyme from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
-
-Enzyme.configure({ adapter: new Adapter() });
+import Button from "../../components/Button";
 
 describe("Button", () => {
   it("can be rendered properly", () => {

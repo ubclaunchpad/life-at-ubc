@@ -50,6 +50,14 @@
       "react-app"
     ]
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/setup/setupEnzyme.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/__tests__/setup/"
+    ]
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

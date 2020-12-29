@@ -1,5 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Button can be rendered properly 1`] = `ReactWrapper {}`;
-
-exports[`Button renders properly 1`] = `ReactWrapper {}`;
