@@ -36,11 +36,15 @@ jobs:
     - name: Run lint for /client
       run: cd client && npm run lint
 
+    - name: Run tests for /client
+      run: cd client && npm run test
+
     - name: Install dependencies for /server
       run: cd server && npm ci
 
     - name: Run lint for /server
       run: cd server && npm run lint
+
 
   # Deploy frontend to Netlify
   deployFrontend:
