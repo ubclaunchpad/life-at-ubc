@@ -25,7 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --watchAll",
+    "test": "react-scripts test --watchAll=true",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .tsx,.ts",
     "fix": "eslint . --ext .tsx,.ts --fix"
@@ -43,19 +43,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
-  "jest": {
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/__tests__/setup/setupEnzyme.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/src/__tests__/setup/"
     ]
   },
   "devDependencies": {
@@ -77,7 +64,6 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint": "^6.6.0",
-    "jest": "^26.6.3",
     "jest-enzyme": "^7.1.2",
     "pino-pretty": "^4.3.0",
     "tslint": "^6.1.3",
