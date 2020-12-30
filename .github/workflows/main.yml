@@ -6,9 +6,9 @@ on:
     branches: [ main ]
 
 jobs:
-  # This workflow contains a single job called "lint_main"
-  lint_main:
-    name: RunLintOnMainBranch
+  # This workflow contains a single job called "build_main"
+  build_main:
+    name: Build Main Branch
 
     runs-on: ubuntu-latest
 
@@ -36,11 +36,15 @@ jobs:
     - name: Run lint for /client
       run: cd client && npm run lint
 
+    - name: Run tests for /client
+      run: cd client && npm run test
+
     - name: Install dependencies for /server
       run: cd server && npm ci
 
     - name: Run lint for /server
       run: cd server && npm run lint
+
 
   # Deploy frontend to Netlify
   deployFrontend:
