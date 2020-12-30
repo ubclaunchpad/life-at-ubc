@@ -6,9 +6,9 @@ on:
     branches: [ main ]
 
 jobs:
-  # This workflow contains a single job called "lint_main"
-  lint_main:
-    name: RunLintOnMainBranch
+  # This workflow contains a single job called "build_main"
+  build_main:
+    name: Build Main Branch
 
     runs-on: ubuntu-latest
 
