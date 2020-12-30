@@ -20,7 +20,13 @@ const TimePickerGroup = styled.div`
   justify-content: center;
 `;
 
-const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const weekDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
 
 function Restrictions() {
   const [days, setDays] = useState<number[]>([]);
@@ -37,14 +43,18 @@ function Restrictions() {
 
   return (
     <Section>
-      <Title title="3. Add Restrictions"></Title>
-      <Title title="What days do you want to go to school?"></Title>
+      <Title title="3. Add Restrictions" data-test="title"></Title>
+      <Title
+        title="What days do you want to go to school?"
+        data-test="title"
+      ></Title>
       <ButtonGroup>
         {weekDays.map((weekday, index) => {
           return (
             <Button
               key={index}
               content={weekday}
+              data-test="button"
               selected={days.includes(index)}
               onClick={() => {
                 handleBtnClick(index);
