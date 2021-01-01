@@ -10,20 +10,21 @@ import thunk from "redux-thunk";
 import reducers from "./reducers";
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { StylesProvider, ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {
+  StylesProvider,
+  ThemeProvider,
+  createMuiTheme,
+} from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-const store = createStore(
+export const store = createStore(
   reducers,
   composeWithDevTools(applyMiddleware(thunk))
 );
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: [
-      "Source Sans Pro",
-      "sans-serif",
-    ].join(","),
+    fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
   },
   palette: {
     background: {
@@ -34,7 +35,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: "#FF8669",
-    }
+    },
   },
 });
 
@@ -47,9 +48,17 @@ function App() {
           <Header></Header>
           <BrowserRouter>
             <Route exact path="/" component={() => <HomePage></HomePage>} />
-            <Route exact path="/testscheduler" component={() => <TestScheduler></TestScheduler>} />
+            <Route
+              exact
+              path="/testscheduler"
+              component={() => <TestScheduler></TestScheduler>}
+            />
             <Route exact path="/degnav" component={() => <DegNav></DegNav>} />
-            <Route exact path="/allcourses" component={() => <AllCourses></AllCourses>} />
+            <Route
+              exact
+              path="/allcourses"
+              component={() => <AllCourses></AllCourses>}
+            />
           </BrowserRouter>
         </StylesProvider>
       </ThemeProvider>

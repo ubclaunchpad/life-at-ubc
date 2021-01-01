@@ -17,14 +17,17 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
+import { MESSAGE } from "../util/constants";
 import axios from "axios";
 import { DELETCOURSE, DeleteCourse } from "../actions/HomeActions";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
-const API_BASE_URL = (process.env.NODE_ENV === "production") ?
-  "https://course-load-ubc.herokuapp.com" : "http://localhost:5000";
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://course-load-ubc.herokuapp.com"
+    : "http://localhost:5000";
 
 const Wrapper = styled.div`
   display: flex;
@@ -63,12 +66,12 @@ export interface CourseObjectProps {
 }
 
 interface CoursesProps {
-  coursesAdded?: string[];
+  coursesAdded: string[];
   addCourseToRedux: (coursesAdded: string[]) => void;
   addSectionsToRedux: (sections: CourseObjectProps[]) => void;
   deleteCourseInRedux: (courses: string[]) => void;
-  sections?: CourseObjectProps[];
-  term?: string;
+  sections: CourseObjectProps[];
+  term: string;
 }
 
 function Courses({
@@ -95,13 +98,13 @@ function Courses({
 
   const handleAddBtnClick = async () => {
     if (input.length === 0) {
-      setMessage("Empty input");
+      setMessage(MESSAGE.EMPTY_INPUT);
       setOpen(true);
       return;
     }
     const partition = input.split(" ");
     if (partition.length !== 2) {
-      setMessage("Invalid format");
+      setMessage(MESSAGE.INVALID_FORMAT);
       setOpen(true);
       return;
     }
@@ -114,16 +117,16 @@ function Courses({
     );
 
     if (response.data.length === 0) {
-      setMessage("Course does not exist");
+      setMessage(MESSAGE.COURSE_NOT_EXISTS);
     } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
       addCourseToRedux([...(coursesAdded as string[]), correctedCourse]);
       const courseSections: CourseObjectProps[] = response.data;
       addSectionsToRedux(
         sections ? sections.concat(courseSections) : courseSections
       );
-      setMessage("Course added successfully");
+      setMessage(MESSAGE.ADD_COURSE_SUCC);
     } else {
-      setMessage("This course has been added already");
+      setMessage(MESSAGE.COURSE_ALREADY_ADDED);
     }
     setOpen(true);
   };
@@ -155,6 +158,7 @@ function Courses({
             variant="outlined"
             onChange={handleChange}
             style={{ width: 250, height: 50, marginLeft: 10 }}
+            data-test="textField"
           />
           <Button
             variant="contained"
@@ -166,6 +170,7 @@ function Courses({
               color: "white",
             }}
             onClick={handleAddBtnClick}
+            data-test="addButton"
           >
             Add
           </Button>
@@ -178,6 +183,7 @@ function Courses({
                     style={{ borderBottom: "1px solid #eee" }}
                     key={index}
                     dense={false}
+                    data-test="list-item"
                   >
                     <ListItem>
                       <ListItemText primary={course} />
