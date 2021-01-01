@@ -22,7 +22,6 @@ describe("Course", () => {
 
   it(`can send HTTP request to server and update course list if the input course is legit`, () => {
     textField.simulate("change", { target: { value: "CPSC 221" } });
-    console.log(textField.debug());
     expect(textField.text()).toBe("CPSC 221");
     addButton.simulate("click");
     process.nextTick(() => {
