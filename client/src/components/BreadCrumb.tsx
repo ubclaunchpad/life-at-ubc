@@ -45,6 +45,7 @@ function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
             selected={step === index}
             onClick={() => handleClick(step)}
             {...props}
+            data-test="link"
           />
         ))}
       </Breadcrumbs>

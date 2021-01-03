@@ -90,10 +90,11 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
             id="demo-customized-select"
             onChange={handleTermChange}
             input={<BootstrapInput />}
+            data-test="select"
           >
             {terms.map((term, index) => {
               return (
-                <MenuItem value={index} key={index}>
+                <MenuItem value={index} key={index} data-test="option">
                   {term}
                 </MenuItem>
               );
