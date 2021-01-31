@@ -8,37 +8,47 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import Chip from "@material-ui/core/Chip";
 import { Dispatch } from "redux";
-import { SetValidSchedules, SETVALIDSCHEDULES } from "../actions/HomeActions";
+import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 
 interface LabsProps {
-  selectedSchedule: number;
-  schedules: CourseSection[][];
-  notLectureSections: CourseSection[];
-  addSchedules?: any;
+  selectedSchedule: CourseSection[];
+  notLectureSections: { [key: string]: CourseSection[] };
+  setSelectedSchedule?: any;
 }
 
 
-function Labs({selectedSchedule, schedules, notLectureSections, addSchedules}: LabsProps) {
-  const handleClick = (section: CourseSection) => {
-    // TODO: This isnt a good way to add lectures, since we're replacing the entire schedules state in the store
-    // Need a better way to do this
-    const newSchedules = [...schedules];
-    newSchedules[selectedSchedule].push(section);
-    addSchedules(newSchedules);
+function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
+  const handleClick = (selectedSection: CourseSection) => {
+    if (selectedSchedule.includes(selectedSection)) {
+      setSelectedSchedule([...selectedSchedule.filter((section) => section !== selectedSection)]);
+    } else {
+      setSelectedSchedule([...selectedSchedule, selectedSection]);
+    }
   };
 
   return (
     <Section>
       <Title title="5. Add Lab Sections"></Title>
-      <ScheduleGrid></ScheduleGrid>
-      {notLectureSections.map((notLectureSection: CourseSection) => (
-        <Chip
-          variant="outlined"
-          size="medium"
-          label={notLectureSection["sectiontitle"]}
-          onClick={() => handleClick(notLectureSection)}
-        />
-      ))}
+      <div style={{ display: "flex" }}>
+        <ScheduleGrid></ScheduleGrid>
+        {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
+          const currNotLectureSections = notLectureSections[notLectureSectionTitle];
+          return (
+            <div key={i}>
+              <p>{notLectureSectionTitle}</p>
+              {currNotLectureSections.map((notLectureSection: CourseSection, j) => (
+                <Chip
+                  key={j}
+                  variant="outlined"
+                  size="medium"
+                  label={notLectureSection["sectiontitle"]}
+                  onClick={() => handleClick(notLectureSection)}
+                />
+              ))}
+            </div>
+          );
+        })}
+      </div>
     </Section>
   );
 }
@@ -46,17 +56,16 @@ function Labs({selectedSchedule, schedules, notLectureSections, addSchedules}: L
 const mapStateToProps = (state: RootState) => {
   return {
     selectedSchedule: state.HomeReducer.selectedSchedule,
-    schedules: state.HomeReducer.schedules,
     notLectureSections: filterNotLectures(state.HomeReducer.sections)
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    addSchedules(schedules: CourseSection[][]) {
-      const action: SetValidSchedules = {
-        type: SETVALIDSCHEDULES,
-        schedules: schedules,
+    setSelectedSchedule(schedule: CourseSection[]) {
+      const action: SetSelectedSchedule = {
+        type: SETSELECTEDSCHEDULE,
+        selectedSchedule: schedule,
       };
       dispatch(action);
     },

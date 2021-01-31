@@ -35,7 +35,7 @@ export interface SetValidSchedules {
 }
 export interface SetSelectedSchedule {
   type: typeof SETSELECTEDSCHEDULE;
-  selectedSchedule: number;
+  selectedSchedule: CourseSection[];
 }
 
 export interface DeleteCourse {

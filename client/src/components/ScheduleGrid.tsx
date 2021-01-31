@@ -27,7 +27,6 @@ function makerows(start: number, end: number) {
     return rows;
 }
 
-
 function addCourse(rows: any, day: any, startTime: number, endTime: number, courseName: string, i: number) {
     if (startTime >= endTime || courseName === "" || courseName === null) return;
     for (let timeslot of rows) {
@@ -51,55 +50,30 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, cour
 
 const useStyles = makeStyles({
     container: {
-        maxHeight: 440,
+        // maxHeight: 440,
     },
 });
 
-// const gridStyle = makeStyles(() => ({
-//     root: {
-//         marginLeft: 320,
-//         marginRight: 355,
-//         textAlign: "center",
-//         textDecorationColor: "rgba(157, 255, 118, 0)"
-//     }
-// }));
-
 interface ScheduleGridProps {
     schedule?: CourseSection[];
-    selectedSchedule: number;
-    schedules?: CourseSection[][];
+    selectedSchedule: CourseSection[];
 }
 
-
 /* Main Function that Generates the Grid */
-function ScheduleGrid({ schedule, selectedSchedule, schedules }: ScheduleGridProps) {
+function ScheduleGrid({ schedule, selectedSchedule }: ScheduleGridProps) {
     const classes = useStyles();
     const startHour = 8, endHour = 20;
     const rows = makerows(startHour, endHour);
-    if (schedule) {
-        schedule.forEach((section: any, i: number) => {
-            const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
-            const [sh, sm] = starttime.split(":");
-            const [eh, em] = endtime.split(":");
-            const start = Number(sh) + (Number(sm) / 60);
-            const end = Number(eh) + (Number(em) / 60);
-            const days = day.split(" ");
-            days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
-        });
-    } else {
-        if (schedules) {
-            // TODO: dont repeat this code
-            schedules[selectedSchedule].forEach((section: any, i: number) => {
-                const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
-                const [sh, sm] = starttime.split(":");
-                const [eh, em] = endtime.split(":");
-                const start = Number(sh) + (Number(sm) / 60);
-                const end = Number(eh) + (Number(em) / 60);
-                const days = day.split(" ");
-                days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
-            });
-        }
-    }
+
+    (schedule || selectedSchedule).forEach((section: any, i: number) => {
+        const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
+        const [sh, sm] = starttime.split(":");
+        const [eh, em] = endtime.split(":");
+        const start = Number(sh) + (Number(sm) / 60);
+        const end = Number(eh) + (Number(em) / 60);
+        const days = day.split(" ");
+        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
+    });
 
     function ScheduleCell({ courseName = "", ...props }: any) {
         return (
@@ -160,7 +134,6 @@ function ScheduleGrid({ schedule, selectedSchedule, schedules }: ScheduleGridPro
 const mapStateToProps = (state: RootState) => {
     return {
       selectedSchedule: state.HomeReducer.selectedSchedule,
-      schedules: state.HomeReducer.schedules
     };
 };
 
