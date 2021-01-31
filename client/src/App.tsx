@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
-import TestScheduler from "./pages/TestScheduler";
 import DegNav from "./pages/DegNav";
 import AllCourses from "./pages/AllCourses";
 import { BrowserRouter, Route } from "react-router-dom";
@@ -48,11 +47,6 @@ function App() {
           <Header></Header>
           <BrowserRouter>
             <Route exact path="/" component={() => <HomePage></HomePage>} />
-            <Route
-              exact
-              path="/testscheduler"
-              component={() => <TestScheduler></TestScheduler>}
-            />
             <Route exact path="/degnav" component={() => <DegNav></DegNav>} />
             <Route
               exact

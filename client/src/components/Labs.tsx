@@ -16,7 +16,6 @@ interface LabsProps {
   setSelectedSchedule?: any;
 }
 
-
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
   const handleClick = (selectedSection: CourseSection) => {
     if (selectedSchedule.includes(selectedSection)) {
@@ -31,23 +30,25 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
       <Title title="5. Add Lab Sections"></Title>
       <div style={{ display: "flex" }}>
         <ScheduleGrid></ScheduleGrid>
-        {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
-          const currNotLectureSections = notLectureSections[notLectureSectionTitle];
-          return (
-            <div key={i}>
-              <p>{notLectureSectionTitle}</p>
-              {currNotLectureSections.map((notLectureSection: CourseSection, j) => (
-                <Chip
-                  key={j}
-                  variant="outlined"
-                  size="medium"
-                  label={notLectureSection["sectiontitle"]}
-                  onClick={() => handleClick(notLectureSection)}
-                />
-              ))}
-            </div>
-          );
-        })}
+        <div>
+          {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
+            const currNotLectureSections = notLectureSections[notLectureSectionTitle];
+            return (
+              <div key={i}>
+                <p>{notLectureSectionTitle}</p>
+                {currNotLectureSections.map((notLectureSection: CourseSection, j) => (
+                  <Chip
+                    key={j}
+                    variant="outlined"
+                    size="medium"
+                    label={notLectureSection["sectiontitle"]}
+                    onClick={() => handleClick(notLectureSection)}
+                  />
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Section>
   );

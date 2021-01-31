@@ -65,7 +65,7 @@ function ScheduleGrid({ schedule, selectedSchedule }: ScheduleGridProps) {
     const startHour = 8, endHour = 20;
     const rows = makerows(startHour, endHour);
 
-    (schedule || selectedSchedule).forEach((section: any, i: number) => {
+    (schedule ? schedule : selectedSchedule).forEach((section: any, i: number) => {
         const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
         const [sh, sm] = starttime.split(":");
         const [eh, em] = endtime.split(":");
