@@ -18,6 +18,7 @@ export interface HomeReducerProps {
   term: string;
   schedules: CourseSection[][];
   selectedSchedule: number;
+  latestState: number;
 }
 
 const initialState: HomeReducerProps = {
@@ -27,33 +28,45 @@ const initialState: HomeReducerProps = {
   term: "1",
   schedules: [],
   selectedSchedule: 0, // TODO: Should this be defaulted to 1?
+  latestState: 0,
 };
 
 export const HomeReducer = (
   state: HomeReducerProps = initialState,
   action: HomeActions
 ): HomeReducerProps => {
+  var latestState;
   switch (action.type) {
     case SWITCHCOMPONENT: {
+      if (action.index > state.latestState + 1) {
+        // console.log(action.index, state.latestState);
+        return state;
+      }
       return { ...state, componentIndex: action.index };
     }
     case ADDCOURSE: {
-      return { ...state, coursesAdded: action.courses };
+      latestState = 1 <= state.latestState ? state.latestState : 1;
+      return { ...state, coursesAdded: action.courses, latestState: latestState };
     }
     case ADDCOURSESECTIONS: {
-      return { ...state, sections: action.sections };
+      latestState = 1 <= state.latestState ? state.latestState : 1;
+      return { ...state, sections: action.sections, latestState: latestState };
     }
     case SELECTTERM: {
-      return { ...state, term: action.term };
+      latestState = 0 <= state.latestState ? state.latestState : 0;
+      return { ...state, term: action.term , latestState: latestState };
     }
     case SETVALIDSCHEDULES: {
-      return { ...state, schedules: action.schedules };
+      latestState = 3 <= state.latestState ? state.latestState : 3;
+      return { ...state, schedules: action.schedules, latestState: latestState };
     }
     case SETSELECTEDSCHEDULE: {
-      return { ...state, selectedSchedule: action.selectedSchedule };
+      latestState = 3 <= state.latestState ? state.latestState : 3;
+      return { ...state, selectedSchedule: action.selectedSchedule, latestState: latestState };
     }
     case DELETCOURSE: {
-      return { ...state, coursesAdded: action.courses };
+      latestState = 1 <= state.latestState ? state.latestState : 1;
+      return { ...state, coursesAdded: action.courses, latestState: latestState };
     }
     default:
       return state;
