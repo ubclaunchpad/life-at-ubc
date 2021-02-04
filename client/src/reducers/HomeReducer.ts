@@ -38,7 +38,7 @@ export const HomeReducer = (
   var latestState;
   switch (action.type) {
     case SWITCHCOMPONENT: {
-      if (action.index > state.latestState + 1) {
+      if (action.index > state.latestState + 1 && action.index <= 2) {
         // console.log(action.index, state.latestState);
         return state;
       }
