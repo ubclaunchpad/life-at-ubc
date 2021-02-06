@@ -42,8 +42,12 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
  * NOTE: My types here are generic because there might be more changes to schema, so don't want to lock in types just yet
  */
 export const filterNotLectures = (courseSections: CourseSection[]): any => {
-    const lectures = courseSections.filter(filterActivityTypesNotLecture);
-    return lectures;
+    const sections = courseSections.filter(filterActivityTypesNotLecture);
+    return sections.reduce((acc: { [key: string]: CourseSection[] }, section) => {
+        const { coursetitle } = section;
+        const curr = acc[coursetitle] || [];
+        return ({...acc, [coursetitle]: [...curr, section]});
+    }, {});
 };
 
 /**

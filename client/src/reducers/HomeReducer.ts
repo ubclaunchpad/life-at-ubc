@@ -17,7 +17,7 @@ export interface HomeReducerProps {
   sections: CourseObjectProps[];
   term: string;
   schedules: CourseSection[][];
-  selectedSchedule: number;
+  selectedSchedule: CourseSection[];
 }
 
 const initialState: HomeReducerProps = {
@@ -26,7 +26,7 @@ const initialState: HomeReducerProps = {
   sections: [],
   term: "1",
   schedules: [],
-  selectedSchedule: 0, // TODO: Should this be defaulted to 1?
+  selectedSchedule: [],
 };
 
 export const HomeReducer = (
