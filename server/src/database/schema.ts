@@ -35,5 +35,6 @@ export const Course = `CREATE TABLE Course (
     Description TEXT,
     Credits INT,
     PreReqText TEXT,
+    CoReqText TEXT,
     Sections json
 );`;
