@@ -27,3 +27,13 @@ export const CourseSection = `CREATE TABLE CourseSection (
     StartTime VARCHAR(255),
     EndTime VARCHAR(255)
 );`;
+
+export const Course = `CREATE TABLE Course (
+    CourseTitle VARCHAR(255),
+    CourseDept VARCHAR(255),
+    CourseNumber VARCHAR(255),
+    Description TEXT,
+    Credits INT,
+    PreReqText TEXT,
+    Sections json
+);`;

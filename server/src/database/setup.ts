@@ -1,7 +1,7 @@
 import { readFile } from "fs";
 import parentLogger from "../../utils/logger";
 import db from "./db";
-import { PreReq, CoReq, CourseSection } from "./schema";
+import { PreReq, CoReq, CourseSection, Course } from "./schema";
 
 const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
@@ -9,21 +9,21 @@ const src = "./utils/output.json";
 export const setupDb = async () => {
     let { rows: tables } = await getTables();
     tables = tables.map((table) => table.table_name);
-    if (["prereq", "coreq", "coursesection"].every((name) => tables.includes(name))) {
+    if (["prereq", "coreq", "course"].every((name) => tables.includes(name))) {
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
     await dropDb();
     await createDb();
-    await populateDb();
+    await popDB();
 };
 
-const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, CourseSection;`);
+const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course;`);
 
 const createDb = async () => {
     await db.query(PreReq);
     await db.query(CoReq);
-    await db.query(CourseSection);
+    await db.query(Course);
 };
 
 const populateDb = () => {
@@ -91,9 +91,59 @@ const insertSection = (section: []) => {
     db.query("INSERT INTO CourseSection VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", section);
 };
 
+const insertCourse = (course: []) => {
+    db.query("INSERT INTO Course VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", course);
+};
+
 const getTables = () => db.query(`
     SELECT table_name
     FROM information_schema.tables
     WHERE table_schema='public'
     AND table_type='BASE TABLE';
 `);
+
+// setup for course-centered db, will fully replace populateDB when done implementing
+const popDB = () => {
+    readFile(src, { encoding: "utf8" }, async (err: any, data: any) => {
+
+        if (err) {
+            log.error(`error ${err}`);
+            return;
+        }
+
+        const courses = JSON.parse(data);
+        log.info(`${courses.length} courses`);
+        const coReqsToStore: any[] = [];
+        const preReqsToStore: any[] = [];
+        const coursesToStore: any[] = [];
+        courses.forEach((course: any) => {
+            const { courseTitle, courseCode, description, credits, preReqText, coReqText, preReqs = [], coReqs = [], sections = [] } = course;
+            const [ courseDept, courseNumber ] = courseCode.split(" ");
+            coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqText, coReqsToStore));
+            preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqText, preReqsToStore));
+            const sectionJson = JSON.stringify(sections);
+            coursesToStore.push([
+                courseTitle, courseDept,
+                courseNumber, description,
+                credits, preReqText,
+                coReqText, sectionJson
+            ]);
+        });
+        try {
+            log.info(`Found ${coReqsToStore.length} co-requisites.`);
+            log.info(`Found ${preReqsToStore.length} pre-requisites.`);
+            log.info(`Found ${coursesToStore.length} courses.`);
+            coReqsToStore.forEach(insertCoReq);
+            preReqsToStore.forEach(insertPreReq);
+            coursesToStore.forEach(insertCourse);
+            const { rows: coReqs } = await db.query(`SELECT * FROM CoReq`);
+            const { rows: preReqs } = await db.query(`SELECT * FROM PreReq`);
+            const { rows: sections } = await db.query(`SELECT * FROM Course`);
+            log.info(`Inserted ${coReqs.length} co-requisites.`);
+            log.info(`Inserted ${preReqs.length} pre-requisites.`);
+            log.info(`Inserted ${sections.length} course sections.`);
+        } catch (e) {
+            log.error(`error ${e}`);
+        }
+    });
+};
