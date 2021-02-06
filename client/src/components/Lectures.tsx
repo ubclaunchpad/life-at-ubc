@@ -22,10 +22,14 @@ function Lectures({
 }: LectureProps) {
   const [selected, setSelected] = useState(0);
   const handleChange = (e: any, n: number) => {
-    // TODO: save the selection only when lock button is clicked
     setSelectedSchedule(schedules[n - 1]);
     setSelected(n - 1);
   };
+
+  useEffect(() => {
+    setSelectedSchedule(schedules[0]);
+  }, []);
+
   return (
     <Section>
       <Title title="4. Select Lectures to Lock Them"></Title>
