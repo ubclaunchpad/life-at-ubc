@@ -42,8 +42,12 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
  * NOTE: My types here are generic because there might be more changes to schema, so don't want to lock in types just yet
  */
 export const filterNotLectures = (courseSections: CourseSection[]): any => {
-    const lectures = courseSections.filter(filterActivityTypesNotLecture);
-    return lectures;
+    const sections = courseSections.filter(filterActivityTypesNotLecture);
+    return sections.reduce((acc: { [key: string]: CourseSection[] }, section) => {
+        const { coursetitle } = section;
+        const curr = acc[coursetitle] || [];
+        return ({...acc, [coursetitle]: [...curr, section]});
+    }, {});
 };
 
 /**
@@ -68,30 +72,20 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
  * @returns {CourseSection[]} an array of combinations that pass the given day restrictions
  */
 export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
-    return combinations.filter((combination: CourseSection[]) => {
+    let newCombinations =  combinations.filter((combination: CourseSection[]) => {
         let validCombination = true;
-
-        combination.forEach((section: CourseSection) => {
+        for (let section of combination ) {
             const sectionDays: string[] = section["day"].split(" ");
-            let validSection = true;
-
-            sectionDays.forEach((day: string) => {
-                // we find a day that is unwanted, so we escape out of the foreach
-                if (restrictedDays.some((restriction: string) => day === restriction)) {
-                    validSection = false;
-                    return;
+            for (let restrictedDay of sectionDays) {
+                if (restrictedDays.includes(restrictedDay)) {
+                    return false;
                 }
-            });
-
-            // found that this section falls on a unwanted day, so this combination is invalid and we escape again
-            if (!validSection) {
-                validCombination = false;
-                return;
             }
-        });
-
-        return validCombination;
+        }
+        return true;
     });
+    return newCombinations;
+
 };
 
 /**
