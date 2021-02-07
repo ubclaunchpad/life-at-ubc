@@ -45,7 +45,7 @@ function Lectures({
 
 const mapStateToProps = (state: RootState) => {
   return {
-    schedules: generateSchedules(state.HomeReducer.sections),
+    schedules: generateSchedules(state.HomeReducer.sections, state.HomeReducer.days),
   };
 };
 

@@ -5,6 +5,7 @@ import {
   ADDCOURSE,
   ADDCOURSESECTIONS,
   SELECTTERM,
+  SELECTDAYS,
   SETVALIDSCHEDULES,
   SETSELECTEDSCHEDULE,
   DELETCOURSE,
@@ -16,6 +17,7 @@ export interface HomeReducerProps {
   coursesAdded: string[];
   sections: CourseObjectProps[];
   term: string;
+  days: number[];
   schedules: CourseSection[][];
   selectedSchedule: CourseSection[];
 }
@@ -24,6 +26,7 @@ const initialState: HomeReducerProps = {
   componentIndex: 0,
   coursesAdded: [],
   sections: [],
+  days: [],
   term: "1",
   schedules: [],
   selectedSchedule: [],
@@ -45,6 +48,9 @@ export const HomeReducer = (
     }
     case SELECTTERM: {
       return { ...state, term: action.term };
+    }
+    case SELECTDAYS: {
+      return { ...state, days: action.days };
     }
     case SETVALIDSCHEDULES: {
       return { ...state, schedules: action.schedules };

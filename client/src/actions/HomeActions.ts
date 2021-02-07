@@ -5,6 +5,7 @@ export const SELECTTERM = "select_term";
 export const SWITCHCOMPONENT = "switch_component";
 export const ADDCOURSE = "add_course";
 export const ADDCOURSESECTIONS = "add_course_sections";
+export const SELECTDAYS = "select_days";
 export const SETVALIDSCHEDULES = "set_valid_schedules";
 export const SETSELECTEDSCHEDULE = "set_selected_schedule";
 export const DELETCOURSE = "delete_course";
@@ -29,6 +30,10 @@ export interface AddCourseSections {
   sections: CourseObjectProps[];
 }
 
+export interface SelectDays {
+  type: typeof SELECTDAYS;
+  days: number[];
+}
 export interface SetValidSchedules {
   type: typeof SETVALIDSCHEDULES;
   schedules: CourseSection[][];
@@ -48,6 +53,7 @@ export type HomeActions =
   | AddCourse
   | AddCourseSections
   | SelectTerm
+  | SelectDays
   | SetValidSchedules
   | SetSelectedSchedule
   | DeleteCourse;
