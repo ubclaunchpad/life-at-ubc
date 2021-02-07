@@ -90,7 +90,6 @@ function Restrictions({
 const mapState = (state: RootState) => {
   return {
     selectedDays: state.HomeReducer.days,
-    schedules: generateSchedules(state.HomeReducer.sections, state.HomeReducer.days),
   };
 };
 
