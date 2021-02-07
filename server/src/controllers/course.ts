@@ -22,7 +22,7 @@ export const getAllSections = async (req: Request, res: Response) => {
         const { rows } = await db.query("SELECT * from course");
         let response: any[] = [];
         rows.forEach((row) => {
-            response.push(displayAllSections(row.sections, row.coursetitle));
+            response.push(...displayAllSections(row.sections, row.coursetitle));
         });
         res.status(200).json(response);
     } catch (e) {

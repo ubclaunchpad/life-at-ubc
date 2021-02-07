@@ -4,6 +4,7 @@
  */
 import express from "express";
 import { getCourses,
+         getAllSections,
          getCourseSections,
          getCourseSectionsWithTerm
 } from "../controllers/course";
@@ -15,6 +16,8 @@ const router = express.Router();
  * When endpoint is hit, call back function imported from controllers is triggered
  */
 router.get("/courses", getCourses);
+
+router.get("/sections", getAllSections);
 
 /**
  * Sample api endpoint for getting a specific course within coursesection table
