@@ -9,20 +9,21 @@ const src = "./utils/output.json";
 export const setupDb = async () => {
     let { rows: tables } = await getTables();
     tables = tables.map((table) => table.table_name);
-    if (["prereq", "coreq", "course"].every((name) => tables.includes(name))) {
+    if (["prereq", "coreq", "course", "coursesection"].every((name) => tables.includes(name))) {
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
     await dropDb();
     await createDb();
-    await popDB();
+    await popDb();
 };
 
-const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course;`);
+const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course, CourseSection;`);
 
 const createDb = async () => {
     await db.query(PreReq);
     await db.query(CoReq);
+    await db.query(CourseSection);
     await db.query(Course);
 };
 
@@ -103,7 +104,7 @@ const getTables = () => db.query(`
 `);
 
 // setup for course-centered db, will fully replace populateDB when done implementing
-const popDB = () => {
+const popDb = () => {
     readFile(src, { encoding: "utf8" }, async (err: any, data: any) => {
 
         if (err) {
