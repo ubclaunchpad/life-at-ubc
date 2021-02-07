@@ -4,12 +4,16 @@ import db from "./database/db";
 import expressPino from "express-pino-logger";
 import parentLogger from "../utils/logger";
 import scraper from "../utils/scraper";
+import cron from "node-cron";
 import { setupDb } from "./database/setup";
 import baseRouter from "./routes/index";
 
 const log = parentLogger.child({ module: "express" });
 const expressLogger = expressPino(log);
 const PORT = process.env.PORT || 5000;
+// asterisks in order are: minute hour day-of-month month day-of-week
+// the below means that the script runs at 12 am every 1st of the month
+const crontab = "0 0 1 * *";
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,6 +25,10 @@ app.use((req, res, next) => {
 });
 app.use(expressLogger);
 app.use("/", baseRouter);
+
+cron.schedule(crontab, () => {
+    scraper();
+});
 
 app.listen(PORT, () => {
     log.info(`Server running on port ${PORT}`);
