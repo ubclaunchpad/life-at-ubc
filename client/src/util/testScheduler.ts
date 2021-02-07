@@ -17,6 +17,12 @@ export interface CourseSection {
     endtime: string;
 }
 
+export const generateSchedules = (courses: CourseSection[], restrictedDays: number[] = []): CourseSection[][] => {
+    const lectures = filterLectures(courses);
+    const schedules = generateCourseScheduleOnlyLectures(lectures, restrictedDays);
+    return schedules;
+};
+
 /**
  * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
  * @param {CourseSection[]} courseSections array of course sections (of all types including lectures, labs, waitlists)
@@ -28,18 +34,91 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
     return lectures;
 };
 
+
+/**
+ * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
+ * @param {CourseSection[]} courseSections array of course sections (of all types including lectures, labs, waitlists)
+ * @returns {CourseSection[]} An array of course sections which only contains "lecture" type
+ * NOTE: My types here are generic because there might be more changes to schema, so don't want to lock in types just yet
+ */
+export const filterNotLectures = (courseSections: CourseSection[]): any => {
+    const sections = courseSections.filter(filterActivityTypesNotLecture);
+    return sections.reduce((acc: { [key: string]: CourseSection[] }, section) => {
+        const { coursetitle } = section;
+        const curr = acc[coursetitle] || [];
+        return ({...acc, [coursetitle]: [...curr, section]});
+    }, {});
+};
+
 /**
  * helper function for filterLectures
  * @param {CourseSection} courseSection a course section
  * @returns {boolean} returns false if a section's type is any of unwantedTypes
  */
-export const filterActivityTypes = (courseSection: CourseSection) => {
+export const filterActivityTypes = (courseSection: CourseSection): boolean => {
     const activity = courseSection["activity"];
     const unwantedTypes = [
         "Waiting List",
         "Tutorial",
         "Laboratory",
         "Discussion"
+    ];
+    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
+};
+
+/**
+ * Given an array of course sections, produces an array with sections that fall on an allowed day.
+ * @param {CourseSection[]} courseSections array of combinations
+ * @returns {CourseSection[]} an array of combinations that pass the given day restrictions
+ */
+export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
+    return combinations.filter((combination: CourseSection[]) => {
+        let validCombination = true;
+
+        combination.forEach((section: CourseSection) => {
+            const sectionDays: string[] = section["day"].split(" ");
+            let validSection = true;
+
+            sectionDays.forEach((day: string) => {
+                // we find a day that is unwanted, so we escape out of the foreach
+                if (restrictedDays.some((restriction: string) => day === restriction)) {
+                    validSection = false;
+                    return;
+                }
+            });
+
+            // found that this section falls on a unwanted day, so this combination is invalid and we escape again
+            if (!validSection) {
+                validCombination = false;
+                return;
+            }
+        });
+
+        return validCombination;
+    });
+};
+
+/**
+ * helper to convert numbers to shortened day strings
+ * @param num number between [0,6] inclusive that represents a day
+ * @returns a shortened day string
+ */
+export const mapDayIndexToString = (num: number): string => {
+    const indexToString = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    return indexToString[num];
+};
+
+/**
+ * Filter out lectures
+ * @param {CourseSection} courseSection a course section
+ * @returns {boolean} returns false if a section's type is any of unwantedTypes
+ */
+export const filterActivityTypesNotLecture = (courseSection: any) => {
+    const activity = courseSection["activity"];
+    const unwantedTypes = [
+        "Waiting List",
+        "Web-Oriented Course",
+        "Lecture"
     ];
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
@@ -51,12 +130,12 @@ export const filterActivityTypes = (courseSection: CourseSection) => {
  * @param {CourseSection[]} courses array of course sections (should only be lectures)
  * @returns {CourseSection[]} An array of valid course schedules
  */
-export const generateCourseScheduleOnlyLectures = (courses: CourseSection[]): CourseSection[][] => {
+export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], restrictedDays: number[]): CourseSection[][] => {
     const uniqueCourses = countUniqueCourses(courses);
     let allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length - 1, courses);
-    log.info(allCombinations);
-    let filteredCombinations = filterCombinations(allCombinations);
-    log.info(filteredCombinations);
+    log.info(allCombinations, "allCombinations");
+    let filteredCombinations = filterCombinations(allCombinations, restrictedDays);
+    log.info(filteredCombinations, "filteredCombination");
     return filteredCombinations;
 };
 
@@ -106,11 +185,13 @@ export const backTrackOnlyLectures = (max: number, n: number, courses: CourseSec
  * @param {CourseSection[][]} combinations generated course schedules
  * @returns {CourseSection[][]} returns filtered version of combinations (eg. filter our combinations which dont contain every course)
  */
-export const filterCombinations = (combinations: CourseSection[][]): CourseSection[][] => {
+export const filterCombinations = (combinations: CourseSection[][], restrictedDays: number[]): CourseSection[][] => {
     // TODO: Other filters can go here
     let filteredMissingCourses = filterCombinationsWithMissingCourses(combinations);
     log.info(filteredMissingCourses);
-    return filterCombinationsWithTimeOverlaps(filteredMissingCourses);
+    let filteredDayRestrictedCourses = filterRestrictedDays(filteredMissingCourses, restrictedDays.map(mapDayIndexToString));
+    log.info(filteredDayRestrictedCourses, "filterDayRestrictions");
+    return filterCombinationsWithTimeOverlaps(filteredDayRestrictedCourses);
 };
 
 /**
@@ -160,9 +241,12 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
             let firstCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
-            let secondCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
+            let secondCourseTimeExists: boolean = combination[j]["starttime"] !== undefined && combination[j]["endtime"] !== undefined;
+            const firstDay = combination[i].day;
+            const secondDay = combination[j].day;
 
             if (firstCourseTimeExists && secondCourseTimeExists) {
+                if (firstDay !== secondDay) continue;
                 let firstCourseTimeStart = combination[i]["starttime"];
                 let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
 

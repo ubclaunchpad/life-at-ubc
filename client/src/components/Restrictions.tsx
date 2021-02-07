@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { SectionWrapper } from "./Home";
 // import TimePicker from "./TimePicker";
+import Section from "./Section";
+import TimePicker from "./TimePicker";
 import Title from "./Title";
 import Button from "./Button";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { SELECTDAYS, SelectDays } from "../actions/HomeActions";
+import { generateSchedules, CourseSection } from "../util/testScheduler";
 
 const ButtonGroup = styled.div`
   margin-left: 100px;
@@ -24,7 +26,13 @@ const ButtonGroup = styled.div`
 //   justify-content: center;
 // `;
 
-const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const weekDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
 
 interface RestrictionProps {
   selectedDays?: number[];
@@ -52,7 +60,7 @@ function Restrictions({
   }, [days]);
 
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="3. Add Restrictions"></Title>
       <Title title="What days can you not go to school?"></Title>
       <ButtonGroup>
@@ -61,6 +69,7 @@ function Restrictions({
             <Button
               key={index}
               content={weekday}
+              data-test="button"
               selected={days.includes(index)}
               onClick={() => {
                 handleBtnClick(index);
@@ -74,13 +83,14 @@ function Restrictions({
         <TimePicker></TimePicker>
         <TimePicker></TimePicker>
       </TimePickerGroup> */}
-    </SectionWrapper>
+    </Section>
   );
 }
 
 const mapState = (state: RootState) => {
   return {
     selectedDays: state.HomeReducer.days,
+    schedules: generateSchedules(state.HomeReducer.sections, state.HomeReducer.days),
   };
 };
 
@@ -92,7 +102,7 @@ const mapDispatch = (dispatch: Dispatch) => {
         days,
       };
       dispatch(action);
-    },
+    }
   };
 };
 

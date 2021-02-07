@@ -8,3 +8,6 @@
 
 # DB config
 .env
+
+# Compiled JS files
+*.js

@@ -1,15 +1,64 @@
-import React from "react";
-import { SectionWrapper } from "./Home";
+import React, { useState, useEffect } from "react";
+import Pagination from "@material-ui/lab/Pagination";
+import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { generateSchedules, CourseSection } from "../util/testScheduler";
+import { Dispatch } from "redux";
+import {
+  SETSELECTEDSCHEDULE,
+  SetSelectedSchedule,
+} from "../actions/HomeActions";
+interface LectureProps {
+  schedules: CourseSection[][];
+  setSelectedSchedule?: any;
+}
 
-function Lectures() {
+function Lectures({
+  schedules,
+  setSelectedSchedule,
+}: LectureProps) {
+  const [selected, setSelected] = useState(0);
+  const handleChange = (e: any, n: number) => {
+    setSelectedSchedule(schedules[n - 1]);
+    setSelected(n - 1);
+  };
+
+  useEffect(() => {
+    setSelectedSchedule(schedules[0]);
+  }, []);
+
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="4. Select Lectures to Lock Them"></Title>
-      <ScheduleGrid></ScheduleGrid>
-    </SectionWrapper>
+      {schedules[selected] && <ScheduleGrid schedule={schedules[selected]} />}
+      <Pagination
+        count={schedules.length}
+        shape="rounded"
+        onChange={handleChange}
+      />
+    </Section>
   );
 }
 
-export default Lectures;
+const mapStateToProps = (state: RootState) => {
+  return {
+    schedules: generateSchedules(state.HomeReducer.sections),
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    setSelectedSchedule(schedule: CourseSection[]) {
+      const action: SetSelectedSchedule = {
+        type: SETSELECTEDSCHEDULE,
+        selectedSchedule: schedule,
+      };
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Lectures);

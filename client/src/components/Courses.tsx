@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Title from "./Title";
-import CourseItem from "./CourseItem";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   AddCourse,
@@ -9,17 +8,29 @@ import {
   ADDCOURSESECTIONS,
 } from "../actions/HomeActions";
 import styled from "styled-components";
-import { SectionWrapper } from "./Home";
+import Section from "./Section";
 import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
+import { MESSAGE } from "../util/constants";
 import axios from "axios";
+import { DELETCOURSE, DeleteCourse } from "../actions/HomeActions";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://course-load-ubc.herokuapp.com"
+    : "http://localhost:5000";
+
 const Wrapper = styled.div`
   display: flex;
-  width: 1200px;
   margin-left: auto;
   margin-right: auto;
 `;
@@ -33,10 +44,11 @@ const AddCourseSection = styled.div`
 
 const CourseList = styled.div`
   display: inline-block;
-  height: 250px;
+  height: 262px;
   border: 1px solid #c4c4c4;
   border-radius: 10px;
   flex: 3;
+  overflow: scroll;
 `;
 
 export interface CourseObjectProps {
@@ -55,8 +67,9 @@ export interface CourseObjectProps {
 
 interface CoursesProps {
   coursesAdded?: string[];
-  addCourseToRedux?: any;
-  addSectionsToRedux?: any;
+  addCourseToRedux: (coursesAdded: string[]) => void;
+  addSectionsToRedux: (sections: CourseObjectProps[]) => void;
+  deleteCourseInRedux: (courses: string[]) => void;
   sections?: CourseObjectProps[];
   term?: string;
 }
@@ -66,6 +79,7 @@ function Courses({
   addCourseToRedux,
   sections,
   addSectionsToRedux,
+  deleteCourseInRedux,
   term,
 }: CoursesProps) {
   // snackbar:
@@ -84,13 +98,13 @@ function Courses({
 
   const handleAddBtnClick = async () => {
     if (input.length === 0) {
-      setMessage("Empty input");
+      setMessage(MESSAGE.EMPTY_INPUT);
       setOpen(true);
       return;
     }
     const partition = input.split(" ");
     if (partition.length !== 2) {
-      setMessage("Invalid format");
+      setMessage(MESSAGE.INVALID_FORMAT);
       setOpen(true);
       return;
     }
@@ -99,26 +113,42 @@ function Courses({
     const courseNumber = partition[1];
     const correctedCourse = department + " " + courseNumber;
     const response = await axios.get(
-      `http://localhost:5000/api/section/${term}/${department}/${courseNumber}`
+      `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
     );
 
     if (response.data.length === 0) {
-      setMessage("Course does not exist");
+      setMessage(MESSAGE.COURSE_NOT_EXIST);
     } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
       addCourseToRedux([...(coursesAdded as string[]), correctedCourse]);
       const courseSections: CourseObjectProps[] = response.data;
       addSectionsToRedux(
         sections ? sections.concat(courseSections) : courseSections
       );
-      setMessage("Course added successfully");
+      setMessage(MESSAGE.COURSE_ADD_SUCC);
     } else {
-      setMessage("This course has been added already");
+      setMessage(MESSAGE.COURSE_ALREADY_ADDED);
     }
     setOpen(true);
   };
 
+  const handleDltBtnClick = (deletedCourse: string) => {
+    const coursesAfterDeletion = coursesAdded
+      ? coursesAdded.filter((course) => course !== deletedCourse)
+      : [];
+    const [deptName, courseNumber] = deletedCourse.split(" ");
+    const sectionsAfterDeletion = sections
+      ? sections.filter(
+          (section) =>
+            section.coursedept !== deptName ||
+            section.coursenumber !== courseNumber
+        )
+      : [];
+    addSectionsToRedux(sectionsAfterDeletion);
+    deleteCourseInRedux(coursesAfterDeletion);
+  };
+
   return (
-    <SectionWrapper>
+    <Section>
       <Title title="2. Add Courses"></Title>
       <Wrapper>
         <AddCourseSection>
@@ -131,11 +161,12 @@ function Courses({
           />
           <Button
             variant="contained"
+            color="secondary"
             style={{
               display: "block",
               marginTop: 164,
-              marginLeft: 400,
-              color: "black",
+              marginLeft: 360,
+              color: "white",
             }}
             onClick={handleAddBtnClick}
           >
@@ -143,10 +174,29 @@ function Courses({
           </Button>
         </AddCourseSection>
         <CourseList>
-          {coursesAdded
+          {coursesAdded && coursesAdded.length > 0
             ? coursesAdded.map((course, index) => {
                 return (
-                  <CourseItem key={index} courseName={course}></CourseItem>
+                  <List
+                    style={{ borderBottom: "1px solid #eee" }}
+                    key={index}
+                    dense={false}
+                  >
+                    <ListItem>
+                      <ListItemText primary={course} />
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            handleDltBtnClick(course);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
                 );
               })
             : null}
@@ -157,9 +207,9 @@ function Courses({
         open={open}
         onClose={handleSnackBarClose}
         message={message}
-        key={"top" + "center"}
+        key="topcenter"
       />
-    </SectionWrapper>
+    </Section>
   );
 }
 
@@ -184,6 +234,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: AddCourseSections = {
         type: ADDCOURSESECTIONS,
         sections,
+      };
+      dispatch(action);
+    },
+    deleteCourseInRedux(courses: string[]) {
+      const action: DeleteCourse = {
+        type: DELETCOURSE,
+        courses,
       };
       dispatch(action);
     },
