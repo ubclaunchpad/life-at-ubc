@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Section from "./Section";
-import TimePicker from "./TimePicker";
 import Title from "./Title";
 import Button from "./Button";
+import { RootState } from "../reducers/index";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import { SELECTDAYS, SelectDays } from "../actions/HomeActions";
 
 const ButtonGroup = styled.div`
   margin-left: 100px;
   margin-right: 100px;
   margin-bottom: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const TimePickerGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -28,8 +25,16 @@ export const weekDays = [
   "Friday",
 ];
 
-function Restrictions() {
-  const [days, setDays] = useState<number[]>([]);
+interface RestrictionProps {
+  selectedDays?: number[];
+  updateSelectedDaysToRedux?: any;
+}
+
+function Restrictions({
+  selectedDays,
+  updateSelectedDaysToRedux,
+}: RestrictionProps) {
+  const [days, setDays] = useState<number[]>(selectedDays ? selectedDays : []);
 
   // when a day is not selected, it becomes selected after being clicked. Vice versa.
   const handleBtnClick = (index: number) => {
@@ -41,13 +46,14 @@ function Restrictions() {
     }
   };
 
+  useEffect(() => {
+    updateSelectedDaysToRedux(days);
+  }, [days]);
+
   return (
     <Section>
-      <Title title="3. Add Restrictions" data-test="title"></Title>
-      <Title
-        title="What days do you want to go to school?"
-        data-test="title"
-      ></Title>
+      <Title title="3. Add Restrictions"></Title>
+      <Title title="What days do you not want to go to school?"></Title>
       <ButtonGroup>
         {weekDays.map((weekday, index) => {
           return (
@@ -63,13 +69,26 @@ function Restrictions() {
           );
         })}
       </ButtonGroup>
-      <Title title="What time?"></Title>
-      <TimePickerGroup>
-        <TimePicker></TimePicker>
-        <TimePicker></TimePicker>
-      </TimePickerGroup>
     </Section>
   );
 }
 
-export default Restrictions;
+const mapState = (state: RootState) => {
+  return {
+    selectedDays: state.HomeReducer.days,
+  };
+};
+
+const mapDispatch = (dispatch: Dispatch) => {
+  return {
+    updateSelectedDaysToRedux(days: number[]) {
+      const action: SelectDays = {
+        type: SELECTDAYS,
+        days,
+      };
+      dispatch(action);
+    }
+  };
+};
+
+export default connect(mapState, mapDispatch)(Restrictions);
