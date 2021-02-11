@@ -62,6 +62,9 @@ export const HomeReducer = (
     case SELECTDAYS: {
       return { ...state, days: action.days };
     }
+    case SELECTDAYS: {
+      return { ...state, days: action.days };
+    }
     case SETVALIDSCHEDULES: {
       latestState = 3 <= state.latestState ? state.latestState : 3;
       return { ...state, schedules: action.schedules, latestState: latestState };
