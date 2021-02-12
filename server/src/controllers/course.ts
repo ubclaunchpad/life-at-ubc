@@ -160,7 +160,7 @@ const buildCourseSection = (courseTitle: string, section: any, timeInfo: any) =>
         prof: section.prof,
         term: timeInfo.term,
         day: timeInfo.day,
-        startTime: timeInfo.start,
-        endTime: timeInfo.end
+        starttime: timeInfo.start,
+        endtime: timeInfo.end
     };
 };

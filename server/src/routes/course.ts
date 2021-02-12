@@ -23,8 +23,8 @@ router.get("/sections", getAllSections);
  * Sample api endpoint for getting a specific course within coursesection table
  * analogous to getSections, gets all the sections of a specified course
  */
-router.get("/course/:coursedept/:coursenumber", getCourseSections);
+router.get("/section/:coursedept/:coursenumber", getCourseSections);
 
-router.get("/course/:term/:coursedept/:coursenumber", getCourseSectionsWithTerm);
+router.get("/section/:term/:coursedept/:coursenumber", getCourseSectionsWithTerm);
 
 export default router;
