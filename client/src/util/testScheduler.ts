@@ -27,10 +27,10 @@ export const generateSchedules = (
 };
 
 /**
- * Given an array of schedules, filter out schedules that contain selected sections
+ * Given an array of schedules, filter out schedules that does not contain all selected sections
  * @param {CourseSection[][]} schedules array of schedules based on course selection and restrictions
  * @param {string[]} selected array of selected sections which must be included in the schedule
- * @returns {CourseSection[][]} An array of schedules that contain selected sections
+ * @returns {CourseSection[][]} An array of schedules that contain all selected sections
  */
 export const filterSchedules = (schedules: CourseSection[][], selected: string[]): CourseSection[][] => {
     return schedules.filter((schedule: CourseSection[]) => {
