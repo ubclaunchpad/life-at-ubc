@@ -10,11 +10,7 @@ export const setupDb = async () => {
     let { rows: tables } = await getTables();
     tables = tables.map((table) => table.table_name);
 
-    if (tables.includes("coursesection")) {
-        await db.query("DROP TABLE IF EXISTS CourseSection;");
-    }
-
-    if (["prereq", "coreq", "course"].every((name) => tables.includes(name))) {
+    if (["prereq", "coreq", "course", "coursesection"].every((name) => tables.includes(name))) {
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
@@ -24,7 +20,7 @@ export const setupDb = async () => {
     await populateDb();
 };
 
-const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course;`);
+const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course, CourseSection;`);
 
 const createDb = async () => {
     await db.query(PreReq);
