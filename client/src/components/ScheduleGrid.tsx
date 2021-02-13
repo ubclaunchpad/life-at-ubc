@@ -7,11 +7,13 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import { Dispatch } from "redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { CourseSection } from "../util/testScheduler";
 
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
+import { SETSELECTEDSECTIONS, SetSelectedSections } from "../actions/HomeActions";
 
 const colors = ["#1BAFD0", "#FD636B", "#FFB900", "#3BE8B0", "#6967C1"];
 
@@ -27,8 +29,8 @@ function makerows(start: number, end: number) {
     return rows;
 }
 
-function addCourse(rows: any, day: any, startTime: number, endTime: number, courseName: string, i: number) {
-    if (startTime >= endTime || courseName === "" || courseName === null) return;
+function addCourse(rows: any, day: any, startTime: number, endTime: number, sectionTitle: string, i: number) {
+    if (startTime >= endTime || sectionTitle === "" || sectionTitle === null) return;
     for (let timeslot of rows) {
         let currTime = timeslot.id;
         let currHour: number = +currTime.slice(0, -3);
@@ -37,7 +39,7 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, cour
         if (currHour >= startTime && currHour < endTime) {
             timeslot[day] = {
                 align: "center",
-                courseName,
+                sectionTitle,
                 rowSpan: (endTime - startTime) * 2,
                 style: {
                     background: colors[i % 5],
@@ -57,13 +59,22 @@ const useStyles = makeStyles({
 interface ScheduleGridProps {
     schedule?: CourseSection[];
     selectedSchedule: CourseSection[];
+    selectedSections: string[];
+    setSelectedSections: (selectedSections: string[]) => void;
 }
 
 /* Main Function that Generates the Grid */
-function ScheduleGrid({ schedule, selectedSchedule }: ScheduleGridProps) {
+function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelectedSections }: ScheduleGridProps) {
     const classes = useStyles();
     const startHour = 8, endHour = 20;
     const rows = makerows(startHour, endHour);
+
+    const toggleSection = (sectionTitle: string) => () => {
+        const sections = selectedSections.includes(sectionTitle)
+        ? selectedSections.filter((section: string) => section !== sectionTitle)
+        : [...selectedSections, sectionTitle];
+        setSelectedSections([...sections]);
+    };
 
     (schedule ? schedule : selectedSchedule).forEach((section: any, i: number) => {
         const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
@@ -75,9 +86,12 @@ function ScheduleGrid({ schedule, selectedSchedule }: ScheduleGridProps) {
         days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
     });
 
-    function ScheduleCell({ courseName = "", ...props }: any) {
+    function ScheduleCell({ sectionTitle = "", ...props }: any) {
         return (
-            <TableCell {...props}>{courseName}</TableCell>
+            <TableCell {...props} onClick={toggleSection(sectionTitle)}>
+                {sectionTitle}
+                {selectedSections.includes(sectionTitle) && " (selected)"}
+            </TableCell>
         );
     }
 
@@ -134,7 +148,20 @@ function ScheduleGrid({ schedule, selectedSchedule }: ScheduleGridProps) {
 const mapStateToProps = (state: RootState) => {
     return {
       selectedSchedule: state.HomeReducer.selectedSchedule,
+      selectedSections: state.HomeReducer.selectedSections,
     };
 };
 
-export default connect(mapStateToProps)(ScheduleGrid);
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+      setSelectedSections(selectedSections: string[]) {
+        const action: SetSelectedSections = {
+          type: SETSELECTEDSECTIONS,
+          selectedSections,
+        };
+        dispatch(action);
+      },
+    };
+  };
+
+export default connect(mapStateToProps, mapDispatchToProps)(ScheduleGrid);

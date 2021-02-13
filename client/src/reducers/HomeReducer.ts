@@ -2,13 +2,13 @@ import { CourseObjectProps } from "../components/Courses";
 import {
   HomeActions,
   SWITCHCOMPONENT,
-  ADDCOURSE,
   ADDCOURSESECTIONS,
   SELECTTERM,
   SELECTDAYS,
+  SETCOURSES,
   SETVALIDSCHEDULES,
   SETSELECTEDSCHEDULE,
-  DELETCOURSE,
+  SETSELECTEDSECTIONS,
 } from "../actions/HomeActions";
 import { CourseSection } from "../util/testScheduler";
 
@@ -20,6 +20,7 @@ export interface HomeReducerProps {
   days: number[];
   schedules: CourseSection[][];
   selectedSchedule: CourseSection[];
+  selectedSections: string[];
 }
 
 const initialState: HomeReducerProps = {
@@ -30,6 +31,7 @@ const initialState: HomeReducerProps = {
   term: "1",
   schedules: [],
   selectedSchedule: [],
+  selectedSections: [],
 };
 
 export const HomeReducer = (
@@ -40,9 +42,6 @@ export const HomeReducer = (
     case SWITCHCOMPONENT: {
       return { ...state, componentIndex: action.index };
     }
-    case ADDCOURSE: {
-      return { ...state, coursesAdded: action.courses };
-    }
     case ADDCOURSESECTIONS: {
       return { ...state, sections: action.sections };
     }
@@ -52,14 +51,17 @@ export const HomeReducer = (
     case SELECTDAYS: {
       return { ...state, days: action.days };
     }
+    case SETCOURSES: {
+      return { ...state, coursesAdded: action.courses };
+    }
     case SETVALIDSCHEDULES: {
       return { ...state, schedules: action.schedules };
     }
     case SETSELECTEDSCHEDULE: {
       return { ...state, selectedSchedule: action.selectedSchedule };
     }
-    case DELETCOURSE: {
-      return { ...state, coursesAdded: action.courses };
+    case SETSELECTEDSECTIONS: {
+      return { ...state, selectedSections: action.selectedSections };
     }
     default:
       return state;

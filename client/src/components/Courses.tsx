@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import Title from "./Title";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
-  AddCourse,
-  ADDCOURSE,
-  AddCourseSections,
-  ADDCOURSESECTIONS,
+  SetCourses, SETCOURSES,
+  AddCourseSections, ADDCOURSESECTIONS,
 } from "../actions/HomeActions";
 import styled from "styled-components";
 import Section from "./Section";
@@ -19,7 +17,6 @@ import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import { MESSAGE } from "../util/constants";
 import axios from "axios";
-import { DELETCOURSE, DeleteCourse } from "../actions/HomeActions";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -66,21 +63,19 @@ export interface CourseObjectProps {
 }
 
 interface CoursesProps {
-  coursesAdded?: string[];
-  addCourseToRedux: (coursesAdded: string[]) => void;
-  addSectionsToRedux: (sections: CourseObjectProps[]) => void;
-  deleteCourseInRedux: (courses: string[]) => void;
-  sections?: CourseObjectProps[];
   term?: string;
+  sections?: CourseObjectProps[];
+  coursesAdded?: string[];
+  addSectionsToRedux: (sections: CourseObjectProps[]) => void;
+  setCoursesToRedux: (courses: string[]) => void;
 }
 
 function Courses({
-  coursesAdded,
-  addCourseToRedux,
-  sections,
-  addSectionsToRedux,
-  deleteCourseInRedux,
   term,
+  sections,
+  coursesAdded,
+  addSectionsToRedux,
+  setCoursesToRedux,
 }: CoursesProps) {
   // snackbar:
   const [open, setOpen] = useState(false);
@@ -119,7 +114,7 @@ function Courses({
     if (response.data.length === 0) {
       setMessage(MESSAGE.COURSE_NOT_EXIST);
     } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
-      addCourseToRedux([...(coursesAdded as string[]), correctedCourse]);
+      setCoursesToRedux([...(coursesAdded as string[]), correctedCourse]);
       const courseSections: CourseObjectProps[] = response.data;
       addSectionsToRedux(
         sections ? sections.concat(courseSections) : courseSections
@@ -144,7 +139,7 @@ function Courses({
         )
       : [];
     addSectionsToRedux(sectionsAfterDeletion);
-    deleteCourseInRedux(coursesAfterDeletion);
+    setCoursesToRedux(coursesAfterDeletion);
   };
 
   return (
@@ -223,9 +218,9 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    addCourseToRedux(coursesAdded: string[]) {
-      const action: AddCourse = {
-        type: ADDCOURSE,
+    setCoursesToRedux(coursesAdded: string[]) {
+      const action: SetCourses = {
+        type: SETCOURSES,
         courses: coursesAdded,
       };
       dispatch(action);
@@ -234,13 +229,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       const action: AddCourseSections = {
         type: ADDCOURSESECTIONS,
         sections,
-      };
-      dispatch(action);
-    },
-    deleteCourseInRedux(courses: string[]) {
-      const action: DeleteCourse = {
-        type: DELETCOURSE,
-        courses,
       };
       dispatch(action);
     },
