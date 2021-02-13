@@ -73,7 +73,6 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
  */
 export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
     let newCombinations =  combinations.filter((combination: CourseSection[]) => {
-        let validCombination = true;
         for (let section of combination ) {
             const sectionDays: string[] = section["day"].split(" ");
             for (let restrictedDay of sectionDays) {
@@ -112,7 +111,6 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
     ];
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
-
 
 /**
  * Given an array of unique course sections (lectures), generates all valid combinations

@@ -29,7 +29,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     <Section>
       <Title title="5. Add Lab Sections"></Title>
       <div style={{ display: "flex" }}>
-        <ScheduleGrid></ScheduleGrid>
+        <ScheduleGrid />
         <div>
           {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
             const currNotLectureSections = notLectureSections[notLectureSectionTitle];
