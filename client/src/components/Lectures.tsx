@@ -13,11 +13,13 @@ import {
 } from "../actions/HomeActions";
 interface LectureProps {
   schedules: CourseSection[][];
+  selectedSections: string[];
   setSelectedSchedule?: any;
 }
 
 function Lectures({
   schedules,
+  selectedSections,
   setSelectedSchedule,
 }: LectureProps) {
   const [selected, setSelected] = useState(0);
@@ -27,25 +29,31 @@ function Lectures({
   };
 
   useEffect(() => {
-    setSelectedSchedule(schedules[0]);
+    setSelectedSchedule(schedules[0] || []);
   }, []);
+
+  useEffect(() => {
+    setSelected(0);
+  }, [selectedSections]);
 
   return (
     <Section>
       <Title title="4. Select Lectures to Lock Them"></Title>
       {schedules[selected] && <ScheduleGrid schedule={schedules[selected]} />}
       <Pagination
-        count={schedules.length}
         shape="rounded"
+        page={selected + 1}
+        count={schedules.length}
         onChange={handleChange}
       />
     </Section>
   );
 }
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = ({ HomeReducer: { sections, days, selectedSections } }: RootState) => {
   return {
-    schedules: generateSchedules(state.HomeReducer.sections, state.HomeReducer.days),
+    schedules: generateSchedules(sections, days, selectedSections),
+    selectedSections,
   };
 };
 
