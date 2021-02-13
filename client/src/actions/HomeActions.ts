@@ -45,9 +45,9 @@ export interface SetSelectedSchedule {
   selectedSchedule: CourseSection[];
 }
 
-export interface DeleteCourse {
-  type: typeof DELETCOURSE;
-  courses: string[];
+export interface SetSelectedSections {
+  type: typeof SETSELECTEDSECTIONS;
+  selectedSections: string[];
 }
 
 export type HomeActions =
@@ -58,4 +58,4 @@ export type HomeActions =
   | SetCourses
   | SetValidSchedules
   | SetSelectedSchedule
-  | DeleteCourse;
+  | SetSelectedSections;

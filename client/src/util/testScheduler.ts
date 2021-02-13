@@ -17,10 +17,26 @@ export interface CourseSection {
     endtime: string;
 }
 
-export const generateSchedules = (courses: CourseSection[], restrictedDays: number[] = []): CourseSection[][] => {
+export const generateSchedules = (
+    courses: CourseSection[],
+    restrictedDays: number[] = [],
+    selectedSections: string[] = []): CourseSection[][] => {
     const lectures = filterLectures(courses);
     const schedules = generateCourseScheduleOnlyLectures(lectures, restrictedDays);
-    return schedules;
+    return filterSchedules(schedules, selectedSections);
+};
+
+/**
+ * Given an array of schedules, filter out schedules that contain selected sections
+ * @param {CourseSection[][]} schedules array of schedules based on course selection and restrictions
+ * @param {string[]} selected array of selected sections which must be included in the schedule
+ * @returns {CourseSection[][]} An array of schedules that contain selected sections
+ */
+export const filterSchedules = (schedules: CourseSection[][], selected: string[]): CourseSection[][] => {
+    return schedules.filter((schedule: CourseSection[]) => {
+        const set = new Set(schedule.map(({ sectiontitle }) => sectiontitle));
+        return selected.every((section) => set.has(section));
+    });
 };
 
 /**
@@ -33,7 +49,6 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
     const lectures = courseSections.filter(filterActivityTypes);
     return lectures;
 };
-
 
 /**
  * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
