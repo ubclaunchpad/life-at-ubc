@@ -1,7 +1,7 @@
 import { readFile } from "fs";
 import parentLogger from "../../utils/logger";
 import db from "./db";
-import { PreReq, CoReq, Course } from "./schema";
+import { PreReq, CoReq, Course, CourseSection } from "./schema";
 
 const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
@@ -9,10 +9,16 @@ const src = "./utils/output.json";
 export const setupDb = async () => {
     let { rows: tables } = await getTables();
     tables = tables.map((table) => table.table_name);
+
+    if (tables.includes("coursesection")) {
+        await db.query("DROP TABLE IF EXISTS CourseSection;");
+    }
+
     if (["prereq", "coreq", "course"].every((name) => tables.includes(name))) {
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
+
     await dropDb();
     await createDb();
     await populateDb();
@@ -93,6 +99,3 @@ const getTables = () => db.query(`
     WHERE table_schema='public'
     AND table_type='BASE TABLE';
 `);
-
-// setup for course-centered db, will fully replace populateDB when done implementing
-
