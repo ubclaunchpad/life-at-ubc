@@ -27,7 +27,10 @@ app.use(expressLogger);
 app.use("/", baseRouter);
 
 cron.schedule(crontab, () => {
-    scraper();
+    scraper().then(() => {
+        log.info("Updating database.");
+        setupDb(true);
+    });
 });
 
 app.listen(PORT, () => {
@@ -45,4 +48,4 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 testDb();
-setupDb();
+setupDb(false);
