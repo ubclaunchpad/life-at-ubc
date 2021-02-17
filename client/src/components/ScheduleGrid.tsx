@@ -57,7 +57,6 @@ const useStyles = makeStyles({
         // maxHeight: 440,
     },
     body: {
-        // "border": "2px solid transparent",
         "boxSizing": "border-box",
         "width": 200,
         "&.selected": {
