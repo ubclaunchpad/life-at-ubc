@@ -1,4 +1,5 @@
 import React from "react";
+import cx from "classnames";
 import Section from "./Section";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -15,7 +16,7 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { SETSELECTEDSECTIONS, SetSelectedSections } from "../actions/HomeActions";
 
-const colors = ["#1BAFD0", "#FD636B", "#FFB900", "#3BE8B0", "#6967C1"];
+const lectureTypes = new Set(["Waiting List", "Web-Oriented Course", "Lecture"]);
 
 function makerows(start: number, end: number) {
     const rows: any[] = [];
@@ -29,7 +30,7 @@ function makerows(start: number, end: number) {
     return rows;
 }
 
-function addCourse(rows: any, day: any, startTime: number, endTime: number, sectionTitle: string, i: number) {
+function addCourse(rows: any, day: any, startTime: number, endTime: number, sectionTitle: string, activity: string, i: number) {
     if (startTime >= endTime || sectionTitle === "" || sectionTitle === null) return;
     for (let timeslot of rows) {
         let currTime = timeslot.id;
@@ -42,8 +43,9 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, sect
                 sectionTitle,
                 rowSpan: (endTime - startTime) * 2,
                 style: {
-                    background: colors[i % 5],
+                    background: lectureTypes.has(activity) ? "#dff0d8" : "#d8dff0",
                     display: (currHour === startTime) ? "table-cell" : "none",
+                    cursor: "pointer",
                 }
             };
         }
@@ -54,6 +56,14 @@ const useStyles = makeStyles({
     container: {
         // maxHeight: 440,
     },
+    body: {
+        // "border": "2px solid transparent",
+        "boxSizing": "border-box",
+        "width": 200,
+        "&.selected": {
+            border: "2px solid #b2dba1"
+        }
+    }
 });
 
 interface ScheduleGridProps {
@@ -70,6 +80,7 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
     const rows = makerows(startHour, endHour);
 
     const toggleSection = (sectionTitle: string) => () => {
+        if (!sectionTitle) return;
         const sections = selectedSections.includes(sectionTitle)
         ? selectedSections.filter((section: string) => section !== sectionTitle)
         : [...selectedSections, sectionTitle];
@@ -77,20 +88,19 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
     };
 
     (schedule ? schedule : selectedSchedule).forEach((section: any, i: number) => {
-        const { sectiontitle, starttime = "", endtime = "", day = "" } = section;
+        const { sectiontitle, activity, starttime = "", endtime = "", day = "" } = section;
         const [sh, sm] = starttime.split(":");
         const [eh, em] = endtime.split(":");
         const start = Number(sh) + (Number(sm) / 60);
         const end = Number(eh) + (Number(em) / 60);
         const days = day.split(" ");
-        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, i));
+        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, activity, i));
     });
 
     function ScheduleCell({ sectionTitle = "", ...props }: any) {
         return (
-            <TableCell {...props} onClick={toggleSection(sectionTitle)}>
+            <TableCell {...props} className={cx({selected: selectedSections.includes(sectionTitle) }, classes.body)} onClick={toggleSection(sectionTitle)}>
                 {sectionTitle}
-                {selectedSections.includes(sectionTitle) && " (selected)"}
             </TableCell>
         );
     }
@@ -130,7 +140,7 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
     function ScheduleTable() {
         return (
             <TableContainer component={Paper} className={classes.container}>
-                <Table stickyHeader aria-label="course schedule">
+                <Table size="small" stickyHeader aria-label="course schedule">
                     <ScheduleHead />
                     <ScheduleBody />
                 </Table>

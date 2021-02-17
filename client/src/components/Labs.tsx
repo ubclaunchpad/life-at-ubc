@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
@@ -6,7 +6,9 @@ import { CourseSection, filterNotLectures } from "../util/testScheduler";
 
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-import Chip from "@material-ui/core/Chip";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 
@@ -17,11 +19,15 @@ interface LabsProps {
 }
 
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
-  const handleClick = (selectedSection: CourseSection) => {
-    if (selectedSchedule.includes(selectedSection)) {
-      setSelectedSchedule([...selectedSchedule.filter((section) => section !== selectedSection)]);
+  const [selected, setSelected] = useState(Object.fromEntries(Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])));
+  const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
+    const nextSelectedSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
+    if (selectedSection.sectiontitle === selected[sectionTitle]) {
+      setSelected({...selected, [sectionTitle]: ""});
+      setSelectedSchedule(nextSelectedSchedule);
     } else {
-      setSelectedSchedule([...selectedSchedule, selectedSection]);
+      setSelected({...selected, [sectionTitle]: selectedSection.sectiontitle});
+      setSelectedSchedule([...nextSelectedSchedule, selectedSection]);
     }
   };
 
@@ -29,22 +35,22 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     <Section>
       <Title title="5. Add Lab Sections"></Title>
       <div style={{ display: "flex" }}>
-        <ScheduleGrid />
-        <div>
+        <div style={{ flex: 2 }}>
+          <ScheduleGrid />
+        </div>
+        <div style={{ flex: 1 }}>
           {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
             const currNotLectureSections = notLectureSections[notLectureSectionTitle];
             return (
               <div key={i}>
-                <p>{notLectureSectionTitle}</p>
-                {currNotLectureSections.map((notLectureSection: CourseSection, j) => (
-                  <Chip
-                    key={j}
-                    variant="outlined"
-                    size="medium"
-                    label={notLectureSection["sectiontitle"]}
-                    onClick={() => handleClick(notLectureSection)}
-                  />
-                ))}
+                  <InputLabel>{notLectureSectionTitle}</InputLabel>
+                  <Select
+                    value={selected[notLectureSectionTitle]}
+                  >
+                    {currNotLectureSections.map((section, j) => (
+                      <MenuItem key={j} value={section.sectiontitle} onClick={handleClick(notLectureSectionTitle, section)}>{section.sectiontitle}</MenuItem>
+                    ))}
+                  </Select>
               </div>
             );
           })}
