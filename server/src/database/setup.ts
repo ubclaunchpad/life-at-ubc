@@ -1,23 +1,24 @@
 import { readFile } from "fs";
 import parentLogger from "../../utils/logger";
 import db from "./db";
-import { PreReq, CoReq, Course, CourseSection } from "./schema";
+import { PreReq, CoReq, Course } from "./schema";
 
 const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
 
-export const setupDb = async () => {
+export const setupDb = async (update: boolean) => {
     let { rows: tables } = await getTables();
     tables = tables.map((table) => table.table_name);
 
-    if (["prereq", "coreq", "course", "coursesection"].every((name) => tables.includes(name))) {
+    if (update === true || ["prereq", "coreq", "course"].some((name) => !tables.includes(name))) {
+        await dropDb();
+        await createDb();
+        await populateDb();
+    } else {
+        if (tables.includes("coursesection")) await db.query(`DROP TABLE IF EXISTS CourseSection;`);
         log.info("Tables already exist. Will not be re-creating the DB.");
         return;
     }
-
-    await dropDb();
-    await createDb();
-    await populateDb();
 };
 
 const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course, CourseSection;`);
