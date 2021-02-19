@@ -11,6 +11,7 @@ import {
   SETSELECTEDSCHEDULE,
   SetSelectedSchedule,
 } from "../actions/HomeActions";
+import search from "../assets/search.svg";
 interface LectureProps {
   schedules: CourseSection[][];
   selectedSections: string[];
@@ -36,16 +37,31 @@ function Lectures({
     setSelected(0);
   }, [selectedSections]);
 
-  return (
-    <Section>
-      <Title title="4. Select Lectures to Lock Them"></Title>
-      {schedules[selected] && <ScheduleGrid schedule={schedules[selected]} />}
+  const NoResultFound = () => {
+    return (
+      <div style={{ textAlign: "center", fontSize: 16 }}>
+        <img src={search} alt="no result" style={{ margin: "100px auto 0", display: "block", width: 50 }} />
+        <p>There are no timetable that matches your preference</p>
+      </div>
+    );
+  };
+
+  const Schedule = () => (
+    <>
+    {schedules[selected] && <ScheduleGrid schedule={schedules[selected]} />}
       <Pagination
         shape="rounded"
         page={selected + 1}
         count={schedules.length}
         onChange={handleChange}
       />
+    </>
+  );
+
+  return (
+    <Section>
+      <Title title="4. Select Lectures to Lock Them"></Title>
+      {schedules.length ? <Schedule /> : <NoResultFound />}
     </Section>
   );
 }
