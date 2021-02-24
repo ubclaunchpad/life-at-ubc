@@ -44,8 +44,8 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <StylesProvider injectFirst>
-          <Header></Header>
           <BrowserRouter>
+            <Header></Header>
             <Route exact path="/" component={() => <HomePage></HomePage>} />
             <Route exact path="/degnav" component={() => <DegNav></DegNav>} />
             <Route
