@@ -42,7 +42,7 @@ const displayAllSections = (sections: any[], courseTitle: string) => {
 const searchSectionsByTerm = (sections: any[], courseTitle: string, term: string) => {
     let result: any[] = [];
     sections.forEach((section) => {
-        let timeInfo = section.timeInfo.find((element: any) => element.term === term);
+        let timeInfo = section.timeInfo.find((element: any) => element.term.includes(term));
         if (timeInfo !== undefined) {
             result.push(buildCourseSection(courseTitle, section, timeInfo));
         }

@@ -1,17 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import MuiLink from "@material-ui/core/Link";
+import { Link } from "react-router-dom";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { SWITCHCOMPONENT, Switch } from "../actions/HomeActions";
 import logo from "../assets/logo.svg";
-
-const Link = ({ href, text }: any) => (
-  <MuiLink href={href}>
-    <span style={{ marginRight: 30 }}>{text}</span>
-  </MuiLink>
-);
 
 const StyledHeader = styled.div`
   @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@400;600;900&family=Source+Sans+Pro:wght@300;400;600&display=swap");
@@ -36,22 +30,18 @@ const StyledHeader = styled.div`
 
 const StyledLink = styled(Link)`
   color: black;
-  cursor: pointer;
+  margin-right: 30px;
+  text-decoration: none;
 `;
 
-interface NavBarProps {
-  index?: number;
-  handleClick: (index: number) => void;
-}
-
-function Header({ index, handleClick }: NavBarProps) {
+function Header() {
   return (
     <StyledHeader>
       <img src={logo} className="logo" alt="logo" />
       <div className="right">
-        <StyledLink href="/" text="Home" />
-        <StyledLink href="/degnav" text="Degree Navigator" />
-        <StyledLink href="/allcourses" text="Courses" />
+        <StyledLink to="/">Home</StyledLink>
+        <StyledLink to="/degnav">Degree Navigator</StyledLink>
+        <StyledLink to="/allcourses">Courses</StyledLink>
       </div>
     </StyledHeader>
   );

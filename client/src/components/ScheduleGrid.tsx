@@ -30,8 +30,8 @@ function makerows(start: number, end: number) {
     return rows;
 }
 
-function addCourse(rows: any, day: any, startTime: number, endTime: number, sectionTitle: string, activity: string, i: number) {
-    if (startTime >= endTime || sectionTitle === "" || sectionTitle === null) return;
+function addCourse(rows: any, day: any, term: string, startTime: number, endTime: number, sectiontitle: string, activity: string, i: number) {
+    if (startTime >= endTime || sectiontitle === "" || sectiontitle === null) return;
     for (let timeslot of rows) {
         let currTime = timeslot.id;
         let currHour: number = +currTime.slice(0, -3);
@@ -40,7 +40,8 @@ function addCourse(rows: any, day: any, startTime: number, endTime: number, sect
         if (currHour >= startTime && currHour < endTime) {
             timeslot[day] = {
                 align: "center",
-                sectionTitle,
+                term,
+                sectiontitle,
                 rowSpan: (endTime - startTime) * 2,
                 style: {
                     background: lectureTypes.has(activity) ? "#dff0d8" : "#d8dff0",
@@ -75,31 +76,34 @@ interface ScheduleGridProps {
 /* Main Function that Generates the Grid */
 function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelectedSections }: ScheduleGridProps) {
     const classes = useStyles();
-    const startHour = 8, endHour = 20;
+    const startHour = 7, endHour = 20;
     const rows = makerows(startHour, endHour);
 
-    const toggleSection = (sectionTitle: string) => () => {
-        if (!sectionTitle) return;
-        const sections = selectedSections.includes(sectionTitle)
-        ? selectedSections.filter((section: string) => section !== sectionTitle)
-        : [...selectedSections, sectionTitle];
+    const toggleSection = (sectiontitle: string) => () => {
+        if (!sectiontitle) return;
+        const sections = selectedSections.includes(sectiontitle)
+        ? selectedSections.filter((section: string) => section !== sectiontitle)
+        : [...selectedSections, sectiontitle];
         setSelectedSections([...sections]);
     };
 
     (schedule ? schedule : selectedSchedule).forEach((section: any, i: number) => {
-        const { sectiontitle, activity, starttime = "", endtime = "", day = "" } = section;
+        const { sectiontitle = "", activity, term = "", starttime = "", endtime = "", day = "" } = section;
         const [sh, sm] = starttime.split(":");
         const [eh, em] = endtime.split(":");
         const start = Number(sh) + (Number(sm) / 60);
         const end = Number(eh) + (Number(em) / 60);
         const days = day.split(" ");
-        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, start, end, sectiontitle, activity, i));
+        days.forEach((dayOfWeek: any) => addCourse(rows, dayOfWeek, term, start, end, sectiontitle, activity, i));
     });
 
-    function ScheduleCell({ sectionTitle = "", ...props }: any) {
+    function ScheduleCell({ sectiontitle, term, ...props }: any) {
         return (
-            <TableCell {...props} className={cx({selected: selectedSections.includes(sectionTitle) }, classes.body)} onClick={toggleSection(sectionTitle)}>
-                {sectionTitle}
+            <TableCell {...props}
+                className={cx({selected: selectedSections.includes(sectiontitle) }, classes.body)}
+                onClick={toggleSection(sectiontitle)}>
+                <b>{sectiontitle}</b>
+                {sectiontitle && <p style={{ fontSize: "small", margin: 0 }}>{`Term ${term}`}</p>}
             </TableCell>
         );
     }

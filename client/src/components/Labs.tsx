@@ -6,9 +6,9 @@ import { CourseSection, filterNotLectures } from "../util/testScheduler";
 
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-import InputLabel from "@material-ui/core/InputLabel";
+import { withStyles } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import MuiSelect from "@material-ui/core/Select";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 
@@ -31,31 +31,31 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     }
   };
 
+  const Select = withStyles({
+    select: {
+      padding: ".5rem 1rem"
+    }
+  })(MuiSelect);
+
   return (
     <Section>
       <Title title="5. Add Lab Sections"></Title>
-      <div style={{ display: "flex" }}>
-        <div style={{ flex: 2 }}>
-          <ScheduleGrid />
-        </div>
-        <div style={{ flex: 1 }}>
-          {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
-            const currNotLectureSections = notLectureSections[notLectureSectionTitle];
-            return (
-              <div key={i}>
-                  <InputLabel>{notLectureSectionTitle}</InputLabel>
-                  <Select
-                    value={selected[notLectureSectionTitle]}
-                  >
-                    {currNotLectureSections.map((section, j) => (
-                      <MenuItem key={j} value={section.sectiontitle} onClick={handleClick(notLectureSectionTitle, section)}>{section.sectiontitle}</MenuItem>
-                    ))}
-                  </Select>
-              </div>
-            );
-          })}
-        </div>
+      <div style={{ margin: "1rem"}}>
+        {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
+          const currNotLectureSections = notLectureSections[notLectureSectionTitle];
+          return (
+            <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
+                <span style={{ marginRight: ".5rem"}}>{notLectureSectionTitle}</span>
+                <Select value={selected[notLectureSectionTitle]} variant="outlined">
+                  {currNotLectureSections.map((section, j) => (
+                    <MenuItem key={j} value={section.sectiontitle} onClick={handleClick(notLectureSectionTitle, section)}>{section.sectiontitle}</MenuItem>
+                  ))}
+                </Select>
+            </div>
+          );
+        })}
       </div>
+      <ScheduleGrid />
     </Section>
   );
 }
