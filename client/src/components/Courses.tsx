@@ -107,21 +107,23 @@ function Courses({
     const department = partition[0].toUpperCase();
     const courseNumber = partition[1];
     const correctedCourse = department + " " + courseNumber;
-    const response = await axios.get(
-      `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
-    );
 
-    if (response.data.length === 0) {
-      setMessage(MESSAGE.COURSE_NOT_EXIST);
-    } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
-      setCoursesToRedux([...(coursesAdded as string[]), correctedCourse]);
-      const courseSections: CourseObjectProps[] = response.data;
-      addSectionsToRedux(
-        sections ? sections.concat(courseSections) : courseSections
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
       );
-      setMessage(MESSAGE.COURSE_ADD_SUCC);
-    } else {
-      setMessage(MESSAGE.COURSE_ALREADY_ADDED);
+      if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
+        setCoursesToRedux([...(coursesAdded as string[]), correctedCourse]);
+        const courseSections: CourseObjectProps[] = response.data;
+        addSectionsToRedux(
+          sections ? sections.concat(courseSections) : courseSections
+        );
+        setMessage(MESSAGE.COURSE_ADD_SUCC);
+      } else {
+        setMessage(MESSAGE.COURSE_ALREADY_ADDED);
+      }
+    } catch (e) {
+      setMessage(MESSAGE.COURSE_NOT_EXIST);
     }
     setOpen(true);
   };
