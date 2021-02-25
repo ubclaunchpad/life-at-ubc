@@ -71,7 +71,7 @@ export const filterNotLectures = (courseSections: CourseSection[]): any => {
  * @returns {boolean} returns false if a section's type is any of unwantedTypes
  */
 export const filterActivityTypes = (courseSection: CourseSection): boolean => {
-    const activity = courseSection["activity"];
+    const { activity, starttime, endtime } = courseSection;
     const unwantedTypes = [
         "Waiting List",
         "Tutorial",
@@ -79,7 +79,7 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
         "Discussion",
         "Workshop"
     ];
-    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
+    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType) && Boolean(starttime && endtime);
 };
 
 /**
@@ -119,13 +119,13 @@ export const mapDayIndexToString = (num: number): string => {
  * @returns {boolean} returns false if a section's type is any of unwantedTypes
  */
 export const filterActivityTypesNotLecture = (courseSection: any) => {
-    const activity = courseSection["activity"];
+    const { activity, starttime, endtime } = courseSection;
     const unwantedTypes = [
         "Waiting List",
         "Web-Oriented Course",
         "Lecture"
     ];
-    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
+    return !unwantedTypes.some((unwantedType: string) => activity === unwantedType) && Boolean(starttime && endtime);
 };
 
 /**
@@ -169,7 +169,7 @@ export const backTrackOnlyLectures = (
     result: CourseSection[][] = [],
     curr: CourseSection[] = [],
     index: number = 0): CourseSection[][] => {
-    if (curr.length === max) {
+    if (curr.length && curr.length === max) {
         result.push(curr);
     } else {
         while (index < n) {
