@@ -19,6 +19,7 @@ export interface HomeReducerProps {
   days: number[];
   selectedSchedule: CourseSection[];
   selectedSections: string[];
+  latestState: number;
 }
 
 const initialState: HomeReducerProps = {
@@ -29,6 +30,7 @@ const initialState: HomeReducerProps = {
   term: "1",
   selectedSchedule: [],
   selectedSections: [],
+  latestState: 0,
 };
 
 export const HomeReducer = (
@@ -38,38 +40,35 @@ export const HomeReducer = (
   var latestState;
   switch (action.type) {
     case SWITCHCOMPONENT: {
-      if (action.index > state.latestState + 1 && action.index <= 2) {
-        // console.log(action.index, state.latestState);
+      console.log(action.index, state.latestState, (state.latestState === 0 && action.index === 1));
+      if ((action.index > state.latestState + 1 && action.index <= 5) || (state.latestState === 0 && action.index === 1)) {
         return state;
       }
       return { ...state, componentIndex: action.index };
     }
     case ADDCOURSESECTIONS: {
-      latestState = 1 <= state.latestState ? state.latestState : 1;
+      latestState = 1 <= state.latestState ? state.latestState : 2;
       return { ...state, sections: action.sections, latestState: latestState };
     }
     case SELECTTERM: {
-      latestState = 0 <= state.latestState ? state.latestState : 0;
+      latestState = 1 <= state.latestState ? state.latestState : 1;
       return { ...state, term: action.term , latestState: latestState };
     }
     case SELECTDAYS: {
-      return { ...state, days: action.days };
-    }
-    case SELECTDAYS: {
-      return { ...state, days: action.days };
-    }
-    case SELECTDAYS: {
-      return { ...state, days: action.days };
+      latestState = 2 <= state.latestState ? state.latestState : 2;
+      return { ...state, days: action.days , latestState: latestState };
     }
     case SETCOURSES: {
-      return { ...state, coursesAdded: action.courses };
+      latestState = 1 <= state.latestState ? state.latestState : 1;
+      return { ...state, coursesAdded: action.courses , latestState: latestState };
     }
     case SETSELECTEDSCHEDULE: {
       latestState = 3 <= state.latestState ? state.latestState : 3;
       return { ...state, selectedSchedule: action.selectedSchedule, latestState: latestState };
     }
     case SETSELECTEDSECTIONS: {
-      return { ...state, selectedSections: action.selectedSections };
+      latestState = 3 <= state.latestState ? state.latestState : 3;
+      return { ...state, selectedSections: action.selectedSections , latestState: latestState };
     }
     default:
       return state;
