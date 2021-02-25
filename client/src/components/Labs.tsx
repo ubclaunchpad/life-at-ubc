@@ -44,7 +44,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
         {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
           const currNotLectureSections = notLectureSections[notLectureSectionTitle];
           return (
-            <div key={i} style={{ textAlign: "left" }}>
+            <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
                 <span style={{ marginRight: ".5rem"}}>{notLectureSectionTitle}</span>
                 <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (

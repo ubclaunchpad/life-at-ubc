@@ -123,7 +123,8 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
     const unwantedTypes = [
         "Waiting List",
         "Web-Oriented Course",
-        "Lecture"
+        "Lecture",
+        "Thesis"
     ];
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType) && Boolean(starttime && endtime);
 };
