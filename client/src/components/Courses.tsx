@@ -109,12 +109,14 @@ function Courses({
     const correctedCourse = department + " " + courseNumber;
 
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
       );
-      if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
+      if (data.length === 0) {
+        setMessage(MESSAGE.COURSE_NOT_EXIST);
+      } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
         setCoursesToRedux([...(coursesAdded as string[]), correctedCourse]);
-        const courseSections: CourseObjectProps[] = response.data;
+        const courseSections: CourseObjectProps[] = data;
         addSectionsToRedux(
           sections ? sections.concat(courseSections) : courseSections
         );
