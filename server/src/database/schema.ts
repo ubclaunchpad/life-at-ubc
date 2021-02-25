@@ -14,6 +14,17 @@ export const CoReq = `CREATE TABLE CoReq (
     CoReqText TEXT
 );`;
 
+export const Course = `CREATE TABLE Course (
+    CourseTitle VARCHAR(255),
+    CourseDept VARCHAR(255),
+    CourseNumber VARCHAR(255),
+    Description TEXT,
+    Credits INT,
+    PreReqText TEXT,
+    CoReqText TEXT,
+    Sections json
+);`;
+
 export const CourseSection = `CREATE TABLE CourseSection (
     CourseTitle VARCHAR(255),
     CourseDept VARCHAR(255),

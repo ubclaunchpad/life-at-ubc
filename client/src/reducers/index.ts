@@ -8,13 +8,3 @@ export interface RootState {
 export default combineReducers({
   HomeReducer,
 });
-
-// export const configureStore = (): Store<RootState> => {
-//   const middlewares: Middleware[] = [];
-//   const middleWareEnhancer = applyMiddleware(...middlewares);
-//   const store = createStore(
-//     rootReducer,
-//     composeWithDevTools(middleWareEnhancer)
-//   );
-//   return store;
-// };

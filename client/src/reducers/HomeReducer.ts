@@ -2,13 +2,12 @@ import { CourseObjectProps } from "../components/Courses";
 import {
   HomeActions,
   SWITCHCOMPONENT,
-  ADDCOURSE,
   ADDCOURSESECTIONS,
   SELECTTERM,
   SELECTDAYS,
-  SETVALIDSCHEDULES,
+  SETCOURSES,
   SETSELECTEDSCHEDULE,
-  DELETCOURSE,
+  SETSELECTEDSECTIONS,
 } from "../actions/HomeActions";
 import { CourseSection } from "../util/testScheduler";
 
@@ -18,9 +17,8 @@ export interface HomeReducerProps {
   sections: CourseObjectProps[];
   term: string;
   days: number[];
-  schedules: CourseSection[][];
   selectedSchedule: CourseSection[];
-  latestState: number;
+  selectedSections: string[];
 }
 
 const initialState: HomeReducerProps = {
@@ -29,9 +27,8 @@ const initialState: HomeReducerProps = {
   sections: [],
   days: [],
   term: "1",
-  schedules: [],
   selectedSchedule: [],
-  latestState: 0,
+  selectedSections: [],
 };
 
 export const HomeReducer = (
@@ -47,10 +44,6 @@ export const HomeReducer = (
       }
       return { ...state, componentIndex: action.index };
     }
-    case ADDCOURSE: {
-      latestState = 1 <= state.latestState ? state.latestState : 1;
-      return { ...state, coursesAdded: action.courses, latestState: latestState };
-    }
     case ADDCOURSESECTIONS: {
       latestState = 1 <= state.latestState ? state.latestState : 1;
       return { ...state, sections: action.sections, latestState: latestState };
@@ -65,17 +58,18 @@ export const HomeReducer = (
     case SELECTDAYS: {
       return { ...state, days: action.days };
     }
-    case SETVALIDSCHEDULES: {
-      latestState = 3 <= state.latestState ? state.latestState : 3;
-      return { ...state, schedules: action.schedules, latestState: latestState };
+    case SELECTDAYS: {
+      return { ...state, days: action.days };
+    }
+    case SETCOURSES: {
+      return { ...state, coursesAdded: action.courses };
     }
     case SETSELECTEDSCHEDULE: {
       latestState = 3 <= state.latestState ? state.latestState : 3;
       return { ...state, selectedSchedule: action.selectedSchedule, latestState: latestState };
     }
-    case DELETCOURSE: {
-      latestState = 1 <= state.latestState ? state.latestState : 1;
-      return { ...state, coursesAdded: action.courses, latestState: latestState };
+    case SETSELECTEDSECTIONS: {
+      return { ...state, selectedSections: action.selectedSections };
     }
     default:
       return state;

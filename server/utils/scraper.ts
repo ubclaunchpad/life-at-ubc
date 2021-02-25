@@ -111,7 +111,6 @@ let getReqs = async (page: Page): Promise<any> => {
         });
 
     // regex to determine if the html contains pre-req or coreq
-    // sorry this is kind of ugly
     if (/Pre-req/.test(thirdChildHTML)) {
         preReqs = thirdChildHTML.match(courseCodeRegex);
 
@@ -170,96 +169,6 @@ let getDescCreds = async (page: Page): Promise<[string, string]> => {
     }
 
     return [desc, creds];
-};
-
-/**
- * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
- * @param {string} url URL string to a UBC Course Schedule course page
- * @param {Browser} browser the working (top-level) browser instance
- * @returns {Promise<Course>} a promise for a Course object
- */
-let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
-    // to benchmark page opening times, since it's the biggest bottleneck for scraper currently
-    const startTime = process.hrtime();
-
-    let coursePage: Page = await browser.newPage();
-    await pageConfig(coursePage);
-    await coursePage.goto(url);
-
-    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-    log.debug(`Opening course page: ${elapsedSeconds}s`);
-
-    let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
-    let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
-
-    let [ desc, creds ] = await getDescCreds(coursePage);
-
-    let { preReq, preReqText, coReq, coReq_text} = await getReqs(coursePage);
-
-    let courseData: Course = {
-        courseTitle: courseTitle,
-        courseCode: courseCode,
-        description: desc,
-        credits: creds,
-        preReqs: preReq,
-        preReqText: preReqText,
-        coReqs: coReq,
-        coReqText: coReq_text,
-        sections: []
-    };
-
-    let tableRows: ElementHandle[] = await coursePage.$$(".table.table-striped.section-summary > tbody > tr");
-    let isMultiRow = false;
-    for (let i = 0; i < tableRows.length - 1; i++) {
-        // pushes new section information every time the current <tr> has a non-null title column
-        // for every <tr> with a null title, we just add a new TermTime to the last section pushed
-
-        if (isMultiRow) {
-            let rowTimeInfo = {
-                term: await getInnerHTML(tableRows[i], "td:nth-child(4)"),
-                day: await getInnerHTML(tableRows[i], "td:nth-child(6)"),
-                start: await getInnerHTML(tableRows[i], "td:nth-child(7)"),
-                end: await getInnerHTML(tableRows[i], "td:nth-child(8)")
-            };
-
-            courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
-        }
-
-        let nextRowTitle: string | null = await tableRows[i + 1].$("td:nth-child(2)")
-            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
-            .catch((err: any) => {
-                // unable to find a title in the next row
-                return null;
-            });
-
-        let thisRowTitle: string | null = await tableRows[i].$("td:nth-child(2)")
-            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
-            .catch((err: any) => {
-                // unable to find a title in the next row
-                return null;
-            });
-
-        isMultiRow = (nextRowTitle == null);
-
-        if (thisRowTitle) {
-            courseData.sections.push(await formatSectionInfo(tableRows[i], browser));
-        }
-    }
-    if (!isMultiRow) {
-        courseData.sections.push(await formatSectionInfo(tableRows[tableRows.length - 1], browser));
-    } else {
-        let rowTimeInfo = {
-            term: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(4)"),
-            day: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(6)"),
-            start: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(7)"),
-            end: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(8)")
-        };
-
-        courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
-    }
-
-    await coursePage.close();
-    return courseData;
 };
 
 /**
@@ -372,6 +281,104 @@ let pageConfig = async (page: Page) => {
     });
 };
 
+/**
+ * Given a URL to a course listing, gets course information. [Example URL](https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=AANB&course=504)
+ * @param {string} url URL string to a UBC Course Schedule course page
+ * @param {Browser} browser the working (top-level) browser instance
+ * @returns {Promise<Course>} a promise for a Course object
+ */
+let getCourseInfo = async (url: string, browser: Browser): Promise<Course> => {
+    // to benchmark page opening times, since it's the biggest bottleneck for scraper currently
+    const startTime = process.hrtime();
+
+    let coursePage: Page = await browser.newPage();
+    await pageConfig(coursePage);
+    await coursePage.goto(url);
+
+    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+    log.debug(`Opening course page: ${elapsedSeconds}s`);
+
+    let courseCode: string = await getInnerHTML(coursePage, ".breadcrumb.expand > li:nth-child(4)");
+    let courseTitle: string = await getInnerHTML(coursePage, ".content.expand > h4");
+
+    let [ desc, creds ] = await getDescCreds(coursePage);
+
+    let { preReq, preReqText, coReq, coReqText } = await getReqs(coursePage);
+
+    let courseData: Course = {
+        courseTitle: courseTitle,
+        courseCode: courseCode,
+        description: desc,
+        credits: creds,
+        preReqs: preReq,
+        preReqText: preReqText,
+        coReqs: coReq,
+        coReqText: coReqText,
+        sections: []
+    };
+
+    let tableRows: ElementHandle[] = await coursePage.$$(".table.table-striped.section-summary > tbody > tr");
+    let isMultiRow = false;
+    for (let i = 0; i < tableRows.length - 1; i++) {
+        // pushes new section information every time the current <tr> has a non-null title column
+        // for every <tr> with a null title, we just add a new TermTime to the last section pushed
+
+        if (isMultiRow) {
+            let rowTimeInfo = {
+                term: await getInnerHTML(tableRows[i], "td:nth-child(4)"),
+                day: await getInnerHTML(tableRows[i], "td:nth-child(6)"),
+                start: await getInnerHTML(tableRows[i], "td:nth-child(7)"),
+                end: await getInnerHTML(tableRows[i], "td:nth-child(8)")
+            };
+
+            courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
+        }
+
+        let nextRowTitle: string | null = await tableRows[i + 1].$("td:nth-child(2)")
+            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
+            .catch((err: any) => {
+                // unable to find a title in the next row
+                return null;
+            });
+
+        let thisRowTitle: string | null = await tableRows[i].$("td:nth-child(2)")
+            .then((elm: any) => elm.$eval("a", (a: any) => a.innerHTML))
+            .catch((err: any) => {
+                // unable to find a title in the next row
+                return null;
+            });
+
+        isMultiRow = (nextRowTitle == null);
+
+        if (thisRowTitle) {
+            courseData.sections.push(await formatSectionInfo(tableRows[i], browser));
+        }
+    }
+    if (!isMultiRow) {
+        courseData.sections.push(await formatSectionInfo(tableRows[tableRows.length - 1], browser));
+    } else {
+        let rowTimeInfo = {
+            term: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(4)"),
+            day: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(6)"),
+            start: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(7)"),
+            end: await getInnerHTML(tableRows[tableRows.length - 1], "td:nth-child(8)")
+        };
+
+        courseData.sections[courseData.sections.length - 1].timeInfo.push(rowTimeInfo);
+    }
+
+    await coursePage.close();
+    return courseData;
+};
+
+let handleCourseInfo = async (courseUrl: string, index: number, length: number, browser: Browser, output: Course[], testing: boolean) => {
+    const courseStartTime = process.hrtime();
+    let courseInfo = await getCourseInfo(courseUrl, browser);
+    output.push(courseInfo);
+    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
+    log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
+    log.debug(`Pushed ${courseInfo.courseCode} (${index} of ${length} ${testing ? "sections" : ""})`);
+};
 
 /**
  * Scrapes the entire UBC Course Schedule and writes the information of all course sections to disk.
@@ -412,23 +419,13 @@ let scraper = async (subjectTest?: number) => {
         if (subjectTest !== undefined && subjectTest < 237 && subjectTest >= 0) {
             let courseUrls: string[] = await getCourseUrls(subjectUrls[subjectTest], browser);
             for (let i = 0; i < courseUrls.length; i++) {
-                const courseStartTime = process.hrtime();
-                let courseInfo = await getCourseInfo(courseUrls[i], browser);
-                data.push(courseInfo);
-                const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
-                log.debug(`Pushed ${courseInfo.courseCode} (${i} of ${courseUrls.length})`);
+                await handleCourseInfo(courseUrls[i], i, courseUrls.length, browser, data, true);
             }
         } else if (subjectTest === undefined) {
             for (let i = 0; i < subjectUrls.length; i++) {
                 let courseUrls: string[] = await getCourseUrls(subjectUrls[i], browser);
                 for (let j = 0; j < courseUrls.length; j++) {
-                    const courseStartTime = process.hrtime();
-                    let courseInfo = await getCourseInfo(courseUrls[j], browser);
-                    data.push(courseInfo);
-                    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(courseStartTime));
-                    log.debug(`getCourseInfo: build ${elapsedSeconds}s`);
-                    log.debug(`Pushed ${courseInfo.courseCode} (${j + 1} of ${courseUrls.length} sections)`);
+                    await handleCourseInfo(courseUrls[j], j + 1, courseUrls.length, browser, data, true);
                 }
                 log.debug(`Pushed ${data[i].courseCode.substr(0, 4)} (${i + 1} of ${subjectUrls.length} courses)`);
             }
@@ -441,9 +438,6 @@ let scraper = async (subjectTest?: number) => {
                 if (err) return log.error(err);
                 log.info(`Finished scraping, wrote to ${outputPath}.`);
             });
-
-            // update db
-            // axios.post("webhook url", data); <-- post request to trigger front-end build script
         } else {
             log.warn("Possible error, nothing written to disk.");
         }

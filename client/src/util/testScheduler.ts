@@ -17,10 +17,26 @@ export interface CourseSection {
     endtime: string;
 }
 
-export const generateSchedules = (courses: CourseSection[], restrictedDays: number[] = []): CourseSection[][] => {
+export const generateSchedules = (
+    courses: CourseSection[],
+    restrictedDays: number[] = [],
+    selectedSections: string[] = []): CourseSection[][] => {
     const lectures = filterLectures(courses);
     const schedules = generateCourseScheduleOnlyLectures(lectures, restrictedDays);
-    return schedules;
+    return filterSchedules(schedules, selectedSections);
+};
+
+/**
+ * Given an array of schedules, filter out schedules that does not contain all selected sections
+ * @param {CourseSection[][]} schedules array of schedules based on course selection and restrictions
+ * @param {string[]} selected array of selected sections which must be included in the schedule
+ * @returns {CourseSection[][]} An array of schedules that contain all selected sections
+ */
+export const filterSchedules = (schedules: CourseSection[][], selected: string[]): CourseSection[][] => {
+    return schedules.filter((schedule: CourseSection[]) => {
+        const set = new Set(schedule.map(({ sectiontitle }) => sectiontitle));
+        return selected.every((section) => set.has(section));
+    });
 };
 
 /**
@@ -33,7 +49,6 @@ export const filterLectures = (courseSections: CourseSection[]): CourseSection[]
     const lectures = courseSections.filter(filterActivityTypes);
     return lectures;
 };
-
 
 /**
  * Given an array of course sections, filter out non Web-Oriented sections (no labs, waiting lists etc)
@@ -61,7 +76,8 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
         "Waiting List",
         "Tutorial",
         "Laboratory",
-        "Discussion"
+        "Discussion",
+        "Workshop"
     ];
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
@@ -73,7 +89,6 @@ export const filterActivityTypes = (courseSection: CourseSection): boolean => {
  */
 export const filterRestrictedDays = (combinations: CourseSection[][], restrictedDays: string[]): CourseSection[][] => {
     let newCombinations =  combinations.filter((combination: CourseSection[]) => {
-        let validCombination = true;
         for (let section of combination ) {
             const sectionDays: string[] = section["day"].split(" ");
             for (let restrictedDay of sectionDays) {
@@ -113,7 +128,6 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
     return !unwantedTypes.some((unwantedType: string) => activity === unwantedType);
 };
 
-
 /**
  * Given an array of unique course sections (lectures), generates all valid combinations
  * Valid means each course is represented exactly once in the schedule AND there are no overlaps with times (currently not yet filtering for overlaps)
@@ -122,10 +136,9 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
  */
 export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], restrictedDays: number[]): CourseSection[][] => {
     const uniqueCourses = countUniqueCourses(courses);
-    let allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length - 1, courses);
-    log.info(allCombinations, "allCombinations");
-    let filteredCombinations = filterCombinations(allCombinations, restrictedDays);
-    log.info(filteredCombinations, "filteredCombination");
+    const allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length, courses);
+    const filteredCombinations = filterCombinations(allCombinations, restrictedDays);
+    log.info(filteredCombinations);
     return filteredCombinations;
 };
 
@@ -135,16 +148,8 @@ export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], res
  * @returns {number} Number of unique courses in courses array
  */
 export const countUniqueCourses = (courses: CourseSection[]): number => {
-    let coursesMap: {[key: string]: number} = {};
-    for (const course of courses) {
-        const deptNumber = `${course["coursedept"]}${course["coursenumber"]}`;
-        if (coursesMap[deptNumber]) {
-            coursesMap[deptNumber]++;
-        } else {
-            coursesMap[deptNumber] = 1;
-        }
-    }
-    return Object.keys(coursesMap).length;
+    const uniqueCourses = new Set(courses.map(({ coursedept, coursenumber }) => `${coursedept}${coursenumber}`));
+    return uniqueCourses.size;
 };
 
 /**
@@ -157,16 +162,21 @@ export const countUniqueCourses = (courses: CourseSection[]): number => {
  * @param {number} index index for choosing courses in courses array
  * @returns {result} An array of CourseSection[] to be returned
  */
-export const backTrackOnlyLectures = (max: number, n: number, courses: CourseSection[], result: CourseSection[][] = [], curr: CourseSection[] = [], index: number = 0): CourseSection[][] => {
+export const backTrackOnlyLectures = (
+    max: number,
+    n: number,
+    courses: CourseSection[],
+    result: CourseSection[][] = [],
+    curr: CourseSection[] = [],
+    index: number = 0): CourseSection[][] => {
     if (curr.length === max) {
         result.push(curr);
-        return [];
     } else {
-        while (index <= n) {
-            backTrackOnlyLectures(max, n, courses, result, [...curr, courses[index]], ++index);
+        while (index < n) {
+            backTrackOnlyLectures(max, n, courses, result, [...curr, courses[index]], index++);
         }
-        return result;
     }
+    return result;
 };
 
 /**
@@ -178,9 +188,7 @@ export const backTrackOnlyLectures = (max: number, n: number, courses: CourseSec
 export const filterCombinations = (combinations: CourseSection[][], restrictedDays: number[]): CourseSection[][] => {
     // TODO: Other filters can go here
     let filteredMissingCourses = filterCombinationsWithMissingCourses(combinations);
-    log.info(filteredMissingCourses);
     let filteredDayRestrictedCourses = filterRestrictedDays(filteredMissingCourses, restrictedDays.map(mapDayIndexToString));
-    log.info(filteredDayRestrictedCourses, "filterDayRestrictions");
     return filterCombinationsWithTimeOverlaps(filteredDayRestrictedCourses);
 };
 
@@ -190,7 +198,7 @@ export const filterCombinations = (combinations: CourseSection[][], restrictedDa
  * @returns {CourseSection[][]} returns filtered version of combinations (eg. filter our combinations which dont contain every course)
  */
 export const filterCombinationsWithMissingCourses = (combinations: CourseSection[][]): CourseSection[][] => {
-    return combinations.filter((combination: CourseSection[]) => filterHelperMissingCourses(combination));
+    return combinations.filter(filterHelperMissingCourses);
 };
 
 /**
@@ -230,42 +238,31 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
-            let firstCourseTimeExists: boolean = combination[i]["starttime"] !== undefined && combination[i]["endtime"] !== undefined;
-            let secondCourseTimeExists: boolean = combination[j]["starttime"] !== undefined && combination[j]["endtime"] !== undefined;
+            let firstCourseTimeExists: boolean = Boolean(combination[i]["starttime"] && combination[i]["endtime"]);
+            let secondCourseTimeExists: boolean = Boolean(combination[j]["starttime"] && combination[j]["endtime"]);
             const firstDay = combination[i].day;
             const secondDay = combination[j].day;
 
             if (firstCourseTimeExists && secondCourseTimeExists) {
                 if (firstDay !== secondDay) continue;
-                let firstCourseTimeStart = combination[i]["starttime"];
-                let momentFirstCourseTimeStart = dayjs(`05-17-2018 ${firstCourseTimeStart}`, "MM-DD-YYYY hh:mm a");
-
-                let firstCourseEnd = combination[i]["endtime"];
-                let momentFirstCourseTimeEnd = dayjs(`05-17-2018 ${firstCourseEnd}`, "MM-DD-YYYY hh:mm a");
-
-                let secondCourseStart = combination[j]["starttime"];
-                let momentSecondCourseTimeStart = dayjs(`05-17-2018 ${secondCourseStart}`, "MM-DD-YYYY hh:mm a");
-
-                let secondCourseEnd = combination[j]["endtime"];
-                let momentSecondCourseTimeEnd = dayjs(`05-17-2018 ${secondCourseEnd}`, "MM-DD-YYYY hh:mm a");
+                let firstCourseTimeStart = dayjs(`05-17-2018 ${combination[i]["starttime"]}`, "MM-DD-YYYY hh:mm a");
+                let firstCourseTimeEnd = dayjs(`05-17-2018 ${combination[i]["endtime"]}`, "MM-DD-YYYY hh:mm a");
+                let secondCourseTimeStart = dayjs(`05-17-2018 ${combination[j]["starttime"]}`, "MM-DD-YYYY hh:mm a");
+                let secondCourseTimeEnd = dayjs(`05-17-2018 ${combination[j]["endtime"]}`, "MM-DD-YYYY hh:mm a");
 
                 // If start times are the same, they overlap
-                if (momentFirstCourseTimeStart.isSame(momentSecondCourseTimeStart)) {
+                if (firstCourseTimeStart.isSame(secondCourseTimeStart)) {
                     return false;
                 }
 
                 // If start time of course 1 is after start time of second, check if if start time of course 1 is before end time of course 2
-                if (momentFirstCourseTimeStart.isAfter(momentSecondCourseTimeStart)) {
-                    if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeEnd)) {
-                        return false;
-                    }
+                if (firstCourseTimeStart.isAfter(secondCourseTimeStart) && firstCourseTimeStart.isBefore(secondCourseTimeEnd)) {
+                    return false;
                 }
 
                 // If start time of course 1 is before start time of second, check if if end time of course 1 is after start time of course 2
-                if (momentFirstCourseTimeStart.isBefore(momentSecondCourseTimeStart)) {
-                    if (momentFirstCourseTimeEnd.isAfter(momentSecondCourseTimeStart)) {
-                        return false;
-                    }
+                if (firstCourseTimeStart.isBefore(secondCourseTimeStart) && firstCourseTimeEnd.isAfter(secondCourseTimeStart)) {
+                    return false;
                 }
             }
         }

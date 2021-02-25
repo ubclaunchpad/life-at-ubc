@@ -11,7 +11,7 @@ const router = express.Router();
  * Sample api endpoint for getting all rows in coursesection table
  * When endpoint is hit, call back function imported from controllers is triggered
  */
-router.get("/sections", getSections);
+// router.get("/sections", getSections);
 
 /**
  * Sample api endpoint for getting a specific course within coursesection table
