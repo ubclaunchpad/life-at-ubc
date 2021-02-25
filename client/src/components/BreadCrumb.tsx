@@ -7,6 +7,8 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
+var latestState = 0;
+
 const steps = [
   { step: 0, title: "Home" },
   { step: 1, title: "Courses" },
@@ -28,6 +30,7 @@ const Link = ({ title, ...props }: any) => (
 const StyledLink = styled(Link)`
   cursor: pointer;
   font-weight: ${({ selected }) => (selected ? 600 : 300)};
+  opacity: ${({ grayed }) => (grayed ? 0.3 : 1)};
 `;
 
 interface BreadcrumbProps {
@@ -43,6 +46,7 @@ function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
           <StyledLink
             key={i}
             selected={step === index}
+            grayed={index !== undefined && step > latestState}
             onClick={() => handleClick(step)}
             {...props}
             data-test="link"
@@ -54,6 +58,9 @@ function Breadcrumb({ index, handleClick }: BreadcrumbProps) {
 }
 
 const mapStateToProps = (state: RootState) => {
+  if (state.HomeReducer.componentIndex >= latestState) {
+    latestState = state.HomeReducer.componentIndex;
+  }
   return {
     index: state.HomeReducer.componentIndex,
   };
