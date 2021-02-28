@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import MuiAlert from "@material-ui/lab/Alert";
 import MuiPagination from "@material-ui/lab/Pagination";
-import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import { RootState } from "../reducers/index";
@@ -14,8 +13,8 @@ import {
   SETSELECTEDSCHEDULE,
   SetSelectedSchedule,
 } from "../actions/HomeActions";
-import search from "../assets/search.svg";
 import check from "../assets/check.svg";
+import error from "../assets/error.svg";
 import { MESSAGE } from "../util/constants";
 interface LectureProps {
   coursesAdded: string[];
@@ -24,6 +23,13 @@ interface LectureProps {
   selectedSections: string[];
   setSelectedSchedule?: any;
 }
+
+const List = styled.ul`
+  width: 350px;
+  text-align: left;
+  margin: auto;
+  list-style: none;
+`;
 
 function Lectures({
   coursesAdded,
@@ -57,18 +63,11 @@ function Lectures({
     <li><CheckIcon />{text}</li>
   );
 
-  const List = styled.ul`
-    width: 320px;
-    text-align: left;
-    margin: auto;
-    list-style: none;
-  `;
-
   const NoResultFound = () => {
     return (
       <div>
-        <img src={search} alt="no result" style={{ margin: "100px auto 0", display: "block", width: "2rem" }} />
-        <h3 style={{ textAlign: "center", fontSize: 16 }}>{MESSAGE.NO_RESULT_FOUND}</h3>
+        <img src={error} alt="no result" style={{ margin: "auto", display: "block", width: 150 }} />
+        <h3 style={{ textAlign: "center", fontSize: "1rem", fontWeight: 400 }}>{MESSAGE.NO_RESULT_FOUND}</h3>
         <List>
           <ListItem text="You have not selected any courses" />
           <ListItem text="Your preferences are too strict" />
@@ -109,10 +108,10 @@ function Lectures({
 };
 
   return (
-    <Section>
+    <>
       <Title title="4. Select Lectures to Lock Them"></Title>
       {schedules.length ? <Schedule /> : <NoResultFound />}
-    </Section>
+    </>
   );
 }
 

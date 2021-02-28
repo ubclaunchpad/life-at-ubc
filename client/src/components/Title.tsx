@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-const StyledTitle = styled.div`
-  font-size: 30px;
-  margin-bottom: 30px;
+const StyledTitle = styled.h1`
+  font-weight: 300;
 `;
 
 interface TitleProps {

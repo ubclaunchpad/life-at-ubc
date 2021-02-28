@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import DegNav from "./pages/DegNav";
@@ -23,20 +24,25 @@ export const store = createStore(
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+    fontFamily: ["Rubik", "sans-serif"].join(","),
   },
   palette: {
     background: {
-      default: "#FCFAF8",
+      default: "#fcfaf8",
     },
     primary: {
       main: "#000",
     },
     secondary: {
-      main: "#FF8669",
+      main: "#ff698b", // #ff8669
     },
   },
 });
+
+const Main = styled.div`
+  max-width: 1000px;
+  margin: auto;
+`;
 
 function App() {
   return (
@@ -45,14 +51,16 @@ function App() {
         <CssBaseline />
         <StylesProvider injectFirst>
           <BrowserRouter>
-            <Header></Header>
-            <Route exact path="/" component={() => <HomePage></HomePage>} />
-            <Route exact path="/degnav" component={() => <DegNav></DegNav>} />
-            <Route
-              exact
-              path="/allcourses"
-              component={() => <AllCourses></AllCourses>}
-            />
+            <Main>
+              <Header />
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/degnav" component={DegNav} />
+              <Route
+                exact
+                path="/allcourses"
+                component={AllCourses}
+              />
+            </Main>
           </BrowserRouter>
         </StylesProvider>
       </ThemeProvider>

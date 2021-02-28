@@ -6,7 +6,6 @@ import {
   AddCourseSections, ADDCOURSESECTIONS,
 } from "../actions/HomeActions";
 import styled from "styled-components";
-import Section from "./Section";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -33,19 +32,16 @@ const Wrapper = styled.div`
 `;
 
 const AddCourseSection = styled.div`
-  display: inline-block;
-  height: 100px;
-  flex: 3;
-  margin-right: 20px;
+  flex: 1;
 `;
 
-const CourseList = styled.div`
-  display: inline-block;
-  height: 262px;
+const CourseList = styled(List)`
   border: 1px solid #c4c4c4;
-  border-radius: 10px;
-  flex: 3;
+  border-radius: 4px;
+  flex: 1;
+  margin-top: 8px;
   overflow: scroll;
+  padding: 0;
 `;
 
 export interface CourseObjectProps {
@@ -64,8 +60,8 @@ export interface CourseObjectProps {
 
 interface CoursesProps {
   term?: string;
-  sections?: CourseObjectProps[];
-  coursesAdded?: string[];
+  sections: CourseObjectProps[];
+  coursesAdded: string[];
   addSectionsToRedux: (sections: CourseObjectProps[]) => void;
   setCoursesToRedux: (courses: string[]) => void;
 }
@@ -80,7 +76,6 @@ function Courses({
   // snackbar:
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-
   const [input, setInput] = useState("");
 
   const handleSnackBarClose = () => {
@@ -91,41 +86,48 @@ function Courses({
     setInput(e.target.value);
   };
 
+  const addCourse = async (course: string): Promise<{ courseTitle: string; courseSections: CourseObjectProps[]; }> => {
+    const partition = course.split(" ");
+    if (partition.length !== 2) {
+      throw new Error(MESSAGE.INVALID_FORMAT);
+    }
+
+    const department = partition[0].toUpperCase();
+    const courseNumber = partition[1];
+    const courseTitle = department + " " + courseNumber;
+
+    const { data: courseSections } = await axios.get(
+      `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
+    );
+    if (courseSections.length === 0) {
+      throw new Error(MESSAGE.COURSE_NOT_EXIST);
+    } else if (coursesAdded.includes(courseTitle)) {
+      throw new Error(MESSAGE.COURSE_ALREADY_ADDED);
+    } else {
+      return { courseTitle, courseSections };
+    }
+  };
+
   const handleAddBtnClick = async () => {
     if (input.length === 0) {
       setMessage(MESSAGE.EMPTY_INPUT);
       setOpen(true);
       return;
     }
-    const partition = input.split(" ");
-    if (partition.length !== 2) {
-      setMessage(MESSAGE.INVALID_FORMAT);
-      setOpen(true);
-      return;
-    }
-
-    const department = partition[0].toUpperCase();
-    const courseNumber = partition[1];
-    const correctedCourse = department + " " + courseNumber;
-
+    const courses = input.split(/,\s*/);
+    const coursesToAdd: string[] = [];
+    const sectionsToAdd: CourseObjectProps[] = [];
     try {
-      const { data } = await axios.get(
-        `${API_BASE_URL}/api/section/${term}/${department}/${courseNumber}`
-      );
-      if (data.length === 0) {
-        setMessage(MESSAGE.COURSE_NOT_EXIST);
-      } else if (coursesAdded && !coursesAdded.includes(correctedCourse)) {
-        setCoursesToRedux([...(coursesAdded as string[]), correctedCourse]);
-        const courseSections: CourseObjectProps[] = data;
-        addSectionsToRedux(
-          sections ? sections.concat(courseSections) : courseSections
-        );
+      await Promise.all(courses.map(async (course) => {
+        const { courseTitle, courseSections } = await addCourse(course);
+        coursesToAdd.push(courseTitle);
+        sectionsToAdd.push(...courseSections);
         setMessage(MESSAGE.COURSE_ADD_SUCC);
-      } else {
-        setMessage(MESSAGE.COURSE_ALREADY_ADDED);
-      }
+      }));
+      setCoursesToRedux(coursesToAdd);
+      addSectionsToRedux(sectionsToAdd);
     } catch (e) {
-      setMessage(MESSAGE.COURSE_NOT_EXIST);
+      setMessage(e.message);
     }
     setOpen(true);
   };
@@ -147,16 +149,18 @@ function Courses({
   };
 
   return (
-    <Section>
+    <>
       <Title title="2. Add Courses"></Title>
       <Wrapper>
         <AddCourseSection>
-          <span style={{ fontSize: 30 }}>Course:</span>
           <TextField
             id="outlined-textarea"
+            placeholder="e.g. CPSC 310, CPSC 320"
+            helperText="Start typing in courses you wish to take this term"
             variant="outlined"
             onChange={handleChange}
-            style={{ width: 250, height: 50, marginLeft: 10 }}
+            margin="dense"
+            style={{ marginLeft: "1rem" }}
           />
           <Button
             variant="contained"
@@ -168,37 +172,30 @@ function Courses({
               color: "white",
             }}
             onClick={handleAddBtnClick}
+            disableElevation
           >
             Add
           </Button>
         </AddCourseSection>
         <CourseList>
-          {coursesAdded && coursesAdded.length > 0
-            ? coursesAdded.map((course, index) => {
-                return (
-                  <List
-                    style={{ borderBottom: "1px solid #eee" }}
-                    key={index}
-                    dense={false}
+          {coursesAdded.map((course, index) => {
+            return (
+              <ListItem key={index} style={{ borderBottom: "1px solid #eee" }}>
+                <ListItemText primary={course} />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => {
+                      handleDltBtnClick(course);
+                    }}
                   >
-                    <ListItem>
-                      <ListItemText primary={course} />
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => {
-                            handleDltBtnClick(course);
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  </List>
-                );
-              })
-            : null}
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            );
+          })}
         </CourseList>
       </Wrapper>
       <Snackbar
@@ -208,7 +205,7 @@ function Courses({
         message={message}
         key="topcenter"
       />
-    </Section>
+    </>
   );
 }
 
@@ -222,10 +219,10 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setCoursesToRedux(coursesAdded: string[]) {
+    setCoursesToRedux(courses: string[]) {
       const action: SetCourses = {
         type: SETCOURSES,
-        courses: coursesAdded,
+        courses,
       };
       dispatch(action);
     },
