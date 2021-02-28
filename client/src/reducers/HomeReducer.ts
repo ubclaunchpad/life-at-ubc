@@ -1,7 +1,6 @@
 import { CourseObjectProps } from "../components/Courses";
 import {
   HomeActions,
-  SWITCHCOMPONENT,
   ADDCOURSESECTIONS,
   SELECTTERM,
   SELECTDAYS,
@@ -12,7 +11,6 @@ import {
 import { CourseSection } from "../util/testScheduler";
 
 export interface HomeReducerProps {
-  componentIndex: number;
   coursesAdded: string[];
   sections: CourseObjectProps[];
   term: string;
@@ -22,7 +20,6 @@ export interface HomeReducerProps {
 }
 
 const initialState: HomeReducerProps = {
-  componentIndex: 0,
   coursesAdded: [],
   sections: [],
   days: [],
@@ -36,9 +33,6 @@ export const HomeReducer = (
   action: HomeActions
 ): HomeReducerProps => {
   switch (action.type) {
-    case SWITCHCOMPONENT: {
-      return { ...state, componentIndex: action.index };
-    }
     case ADDCOURSESECTIONS: {
       return { ...state, sections: action.sections };
     }

@@ -2,7 +2,6 @@ import { CourseObjectProps } from "../components/Courses";
 import { CourseSection } from "../util/testScheduler";
 
 export const SELECTTERM = "select_term";
-export const SWITCHCOMPONENT = "switch_component";
 export const ADDCOURSESECTIONS = "add_course_sections";
 export const SELECTDAYS = "select_days";
 export const SETCOURSES = "set_courses";
@@ -12,11 +11,6 @@ export const SETSELECTEDSECTIONS = "set_selected_sections";
 export interface SelectTerm {
   type: typeof SELECTTERM;
   term: string;
-}
-
-export interface Switch {
-  type: typeof SWITCHCOMPONENT;
-  index: number;
 }
 
 export interface AddCourseSections {
@@ -45,7 +39,6 @@ export interface SetSelectedSections {
 }
 
 export type HomeActions =
-  | Switch
   | AddCourseSections
   | SelectTerm
   | SelectDays

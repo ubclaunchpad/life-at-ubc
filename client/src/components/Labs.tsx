@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import { CourseSection, filterNotLectures } from "../util/testScheduler";
 
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
 import { Dispatch } from "redux";
@@ -38,7 +37,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
   })(MuiSelect);
 
   return (
-    <Section>
+    <>
       <Title title="5. Add Lab Sections"></Title>
       <div style={{ margin: "1rem"}}>
         {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
@@ -56,7 +55,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
         })}
       </div>
       <ScheduleGrid />
-    </Section>
+    </>
   );
 }
 
