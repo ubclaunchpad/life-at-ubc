@@ -3,7 +3,7 @@ import Title from "./Title";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   SetCourses, SETCOURSES,
-  AddCourseSections, ADDCOURSESECTIONS,
+  SetSections, SETSECTIONS,
 } from "../actions/HomeActions";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
@@ -62,7 +62,7 @@ interface CoursesProps {
   term?: string;
   sections: CourseObjectProps[];
   coursesAdded: string[];
-  addSectionsToRedux: (sections: CourseObjectProps[]) => void;
+  setSectionsToRedux: (sections: CourseObjectProps[]) => void;
   setCoursesToRedux: (courses: string[]) => void;
 }
 
@@ -70,7 +70,7 @@ function Courses({
   term,
   sections,
   coursesAdded,
-  addSectionsToRedux,
+  setSectionsToRedux,
   setCoursesToRedux,
 }: CoursesProps) {
   // snackbar:
@@ -102,7 +102,7 @@ function Courses({
     if (courseSections.length === 0) {
       throw new Error(MESSAGE.COURSE_NOT_EXIST);
     } else if (coursesAdded.includes(courseTitle)) {
-      throw new Error(MESSAGE.COURSE_ALREADY_ADDED);
+      throw new Error(`${MESSAGE.COURSE_ALREADY_ADDED}: ${courseTitle}`);
     } else {
       return { courseTitle, courseSections };
     }
@@ -115,17 +115,15 @@ function Courses({
       return;
     }
     const courses = input.split(/,\s*/);
-    const coursesToAdd: string[] = [];
-    const sectionsToAdd: CourseObjectProps[] = [];
     try {
       await Promise.all(courses.map(async (course) => {
         const { courseTitle, courseSections } = await addCourse(course);
-        coursesToAdd.push(courseTitle);
-        sectionsToAdd.push(...courseSections);
-        setMessage(MESSAGE.COURSE_ADD_SUCC);
+        coursesAdded.push(courseTitle);
+        sections.push(...courseSections);
       }));
-      setCoursesToRedux(coursesToAdd);
-      addSectionsToRedux(sectionsToAdd);
+      setMessage(MESSAGE.COURSE_ADD_SUCC);
+      setCoursesToRedux(coursesAdded);
+      setSectionsToRedux(sections);
     } catch (e) {
       setMessage(e.message);
     }
@@ -144,7 +142,7 @@ function Courses({
             section.coursenumber !== courseNumber
         )
       : [];
-    addSectionsToRedux(sectionsAfterDeletion);
+    setSectionsToRedux(sectionsAfterDeletion);
     setCoursesToRedux(coursesAfterDeletion);
   };
 
@@ -226,9 +224,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       };
       dispatch(action);
     },
-    addSectionsToRedux(sections: CourseObjectProps[]) {
-      const action: AddCourseSections = {
-        type: ADDCOURSESECTIONS,
+    setSectionsToRedux(sections: CourseObjectProps[]) {
+      const action: SetSections = {
+        type: SETSECTIONS,
         sections,
       };
       dispatch(action);

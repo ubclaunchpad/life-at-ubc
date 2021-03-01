@@ -239,35 +239,47 @@ export const filterHelperTimeOverlaps = (combination: CourseSection[]): boolean 
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < combination.length; i++) {
         for (let j = i + 1; j < combination.length; j++) {
-            let firstCourseTimeExists: boolean = Boolean(combination[i]["starttime"] && combination[i]["endtime"]);
-            let secondCourseTimeExists: boolean = Boolean(combination[j]["starttime"] && combination[j]["endtime"]);
-            const firstDay = combination[i].day;
-            const secondDay = combination[j].day;
-
-            if (firstCourseTimeExists && secondCourseTimeExists) {
-                if (firstDay !== secondDay) continue;
-                let firstCourseTimeStart = dayjs(`05-17-2018 ${combination[i]["starttime"]}`, "MM-DD-YYYY hh:mm a");
-                let firstCourseTimeEnd = dayjs(`05-17-2018 ${combination[i]["endtime"]}`, "MM-DD-YYYY hh:mm a");
-                let secondCourseTimeStart = dayjs(`05-17-2018 ${combination[j]["starttime"]}`, "MM-DD-YYYY hh:mm a");
-                let secondCourseTimeEnd = dayjs(`05-17-2018 ${combination[j]["endtime"]}`, "MM-DD-YYYY hh:mm a");
-
-                // If start times are the same, they overlap
-                if (firstCourseTimeStart.isSame(secondCourseTimeStart)) {
-                    return false;
-                }
-
-                // If start time of course 1 is after start time of second, check if if start time of course 1 is before end time of course 2
-                if (firstCourseTimeStart.isAfter(secondCourseTimeStart) && firstCourseTimeStart.isBefore(secondCourseTimeEnd)) {
-                    return false;
-                }
-
-                // If start time of course 1 is before start time of second, check if if end time of course 1 is after start time of course 2
-                if (firstCourseTimeStart.isBefore(secondCourseTimeStart) && firstCourseTimeEnd.isAfter(secondCourseTimeStart)) {
-                    return false;
-                }
-            }
+            if (isOverlapping(combination[i], combination[j])) return false;
         }
-
     }
     return true;
+};
+
+/**
+ * Determine if two sections overlap
+ * @param {CourseSection} first a course section
+ * @param {CourseSection} second a course section
+ * @returns {boolean} returns true if two sections overlap, false otherwise
+ */
+export const isOverlapping = (first: CourseSection, second: CourseSection): boolean => {
+    const firstCourseTimeExists: boolean = Boolean(first.day && first.starttime && first.endtime);
+    const secondCourseTimeExists: boolean = Boolean(second.day && second.starttime && second.endtime);
+
+    if (firstCourseTimeExists && secondCourseTimeExists) {
+        const firstDays = first.day.split(" ");
+        const secondDays = new Set(second.day.split(" "));
+        const daysOverlap = firstDays.some((day) => secondDays.has(day));
+        if (!daysOverlap) return false;
+
+        const firstCourseTimeStart = dayjs(`05-17-2018 ${first.starttime}`, "MM-DD-YYYY hh:mm a");
+        const firstCourseTimeEnd = dayjs(`05-17-2018 ${first.endtime}`, "MM-DD-YYYY hh:mm a");
+        const secondCourseTimeStart = dayjs(`05-17-2018 ${second.starttime}`, "MM-DD-YYYY hh:mm a");
+        const secondCourseTimeEnd = dayjs(`05-17-2018 ${second.endtime}`, "MM-DD-YYYY hh:mm a");
+
+        // If start times are the same, they overlap
+        if (firstCourseTimeStart.isSame(secondCourseTimeStart)) {
+            return true;
+        }
+
+        // If start time of course 1 is after start time of second, check if if start time of course 1 is before end time of course 2
+        if (firstCourseTimeStart.isAfter(secondCourseTimeStart) && firstCourseTimeStart.isBefore(secondCourseTimeEnd)) {
+            return true;
+        }
+
+        // If start time of course 1 is before start time of second, check if if end time of course 1 is after start time of course 2
+        if (firstCourseTimeStart.isBefore(secondCourseTimeStart) && firstCourseTimeEnd.isAfter(secondCourseTimeStart)) {
+            return true;
+        }
+    }
+    return false;
 };

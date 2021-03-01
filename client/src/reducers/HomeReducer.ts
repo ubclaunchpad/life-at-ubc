@@ -1,7 +1,7 @@
 import { CourseObjectProps } from "../components/Courses";
 import {
   HomeActions,
-  ADDCOURSESECTIONS,
+  SETSECTIONS,
   SELECTTERM,
   SELECTDAYS,
   SETCOURSES,
@@ -33,7 +33,7 @@ export const HomeReducer = (
   action: HomeActions
 ): HomeReducerProps => {
   switch (action.type) {
-    case ADDCOURSESECTIONS: {
+    case SETSECTIONS: {
       return { ...state, sections: action.sections };
     }
     case SELECTTERM: {
