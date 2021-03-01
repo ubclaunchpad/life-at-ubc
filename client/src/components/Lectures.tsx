@@ -90,7 +90,7 @@ function Lectures({
   })(MuiAlert);
 
   const Schedule = () => {
-    const timetable: Set<string> = new Set(schedules[selected].map(({coursedept, coursenumber}) => `${coursedept} ${coursenumber}`));
+    const timetable: Set<string> = new Set(schedules[selected]?.map(({coursedept, coursenumber}) => `${coursedept} ${coursenumber}`));
     return (
     <>
       {schedules[selected]?.length !== numCourses && <Alert severity="warning" variant="outlined">
