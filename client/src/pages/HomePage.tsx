@@ -72,20 +72,6 @@ const useQontoStepIconStyles = makeStyles((theme) => ({
   },
 }));
 
-const QontoStepIcon = ({ active, completed }: any) => {
-  const classes = useQontoStepIconStyles();
-
-  return (
-    <div
-      className={clsx(classes.root, {
-        [classes.active]: active,
-      })}
-    >
-      {completed ? <CheckIcon className={classes.completed} /> : <div className={classes.circle} />}
-    </div>
-  );
-};
-
 const Button = withStyles({
   root: {
     color: "white",
@@ -112,6 +98,19 @@ function HomePage() {
     }
   })(MuiStepper);
 
+  const QontoStepIcon = ({ active, completed, icon }: any) => {
+    const classes = useQontoStepIconStyles();
+    return (
+      <div
+        className={clsx(classes.root, {
+          [classes.active]: active,
+        })}
+      >
+        {completed ? <CheckIcon className={classes.completed} onClick={() => setStep(icon)}/> : <div className={classes.circle} />}
+      </div>
+    );
+  };
+
   const handleBack = () => {
     setStep((prev) => prev - 1);
   };
@@ -123,7 +122,7 @@ function HomePage() {
       <Stepper activeStep={step} connector={<QontoConnector />} alternativeLabel>
         {steps.map((label, i) => (
           <Step key={i}>
-            <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
+            <StepLabel StepIconComponent={QontoStepIcon} StepIconProps={{ icon: i }}>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
