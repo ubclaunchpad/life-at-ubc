@@ -45,8 +45,8 @@ const populateDb = () => {
         courses.forEach((course: any) => {
             const { courseTitle, courseCode, description, credits, preReqText, coReqText, preReqs = [], coReqs = [], sections = [] } = course;
             const [ courseDept, courseNumber ] = courseCode.split(" ");
-            coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqText, coReqsToStore));
-            preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqText, preReqsToStore));
+            // coReqs.forEach((coReq: any) => handleReq(courseDept, courseNumber, coReq, coReqText, coReqsToStore));
+            // preReqs.forEach((preReq: any) => handleReq(courseDept, courseNumber, preReq, preReqText, preReqsToStore));
             const sectionJson = JSON.stringify(sections);
             coursesToStore.push([
                 courseTitle, courseDept,
