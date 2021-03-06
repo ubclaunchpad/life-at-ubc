@@ -13,7 +13,7 @@ const expressLogger = expressPino(log);
 const PORT = process.env.PORT || 5000;
 // asterisks in order are: minute hour day-of-month month day-of-week
 // the below means that the script runs at 12 am every 1st of the month
-const crontab = "30 15 5 * *";
+const crontab = "33 21 5 * *";
 
 const app = express();
 app.use(bodyParser.json());
@@ -50,4 +50,4 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 // testDb();
-setupDb(true);
+setupDb(false);

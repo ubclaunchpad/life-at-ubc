@@ -28,36 +28,36 @@ const createDb = async () => {
 };
 
 const populateDb = () => {
-    readFile(src, { encoding: "utf8" }, async (err: any, data: any) => {
+    // readFile(src, { encoding: "utf8" }, async (err: any, data: any) => {
 
-        if (err) {
-            log.error(`error ${err}`);
-            return;
-        }
+    //     if (err) {
+    //         log.error(`error ${err}`);
+    //         return;
+    //     }
 
-        const courses = JSON.parse(data);
-        log.info(`${courses.length} courses`);
-        const coursesToStore: any[] = [];
-        courses.forEach((course: any) => {
-            const { courseTitle, courseCode, description, credits, preReqText, coReqText, preReqs = [], coReqs = [], sections = [] } = course;
-            const [ courseDept, courseNumber ] = courseCode.split(" ");
-            const sectionJson = JSON.stringify(sections);
-            coursesToStore.push([
-                courseTitle, courseDept,
-                courseNumber, description,
-                credits, preReqText,
-                coReqText, sectionJson
-            ]);
-        });
-        try {
-            log.info(`Found ${coursesToStore.length} courses.`);
-            coursesToStore.forEach(insertCourse);
-            const { rows: sections } = await db.query(`SELECT * FROM Course`);
-            log.info(`Inserted ${sections.length} courses.`);
-        } catch (e) {
-            log.error(`error ${e}`);
-        }
-    });
+    //     const courses = JSON.parse(data);
+    //     log.info(`${courses.length} courses`);
+    //     const coursesToStore: any[] = [];
+    //     courses.forEach((course: any) => {
+    //         const { courseTitle, courseCode, description, credits, preReqText, coReqText, preReqs = [], coReqs = [], sections = [] } = course;
+    //         const [ courseDept, courseNumber ] = courseCode.split(" ");
+    //         const sectionJson = JSON.stringify(sections);
+    //         coursesToStore.push([
+    //             courseTitle, courseDept,
+    //             courseNumber, description,
+    //             credits, preReqText,
+    //             coReqText, sectionJson
+    //         ]);
+    //     });
+    //     try {
+    //         log.info(`Found ${coursesToStore.length} courses.`);
+    //         coursesToStore.forEach(insertCourse);
+    //         const { rows: sections } = await db.query(`SELECT * FROM Course`);
+    //         log.info(`Inserted ${sections.length} courses.`);
+    //     } catch (e) {
+    //         log.error(`error ${e}`);
+    //     }
+    // });
 };
 
 
