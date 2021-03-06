@@ -1,4 +1,3 @@
-import { CourseObjectProps } from "../components/Courses";
 import {
   HomeActions,
   SETSECTIONS,
@@ -12,7 +11,7 @@ import { CourseSection } from "../util/testScheduler";
 
 export interface HomeReducerProps {
   coursesAdded: string[];
-  sections: CourseObjectProps[];
+  sections: CourseSection[];
   term: string;
   days: number[];
   selectedSchedule: CourseSection[];

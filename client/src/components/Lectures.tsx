@@ -7,7 +7,7 @@ import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
-import { generateSchedules, CourseSection } from "../util/testScheduler";
+import { generateSchedules, getUniqueCourses, CourseSection } from "../util/testScheduler";
 import { Dispatch } from "redux";
 import {
   SETSELECTEDSCHEDULE,
@@ -90,7 +90,7 @@ function Lectures({
   })(MuiAlert);
 
   const Schedule = () => {
-    const timetable: Set<string> = new Set(schedules[selected]?.map(({coursedept, coursenumber}) => `${coursedept} ${coursenumber}`));
+    const [timetable] = getUniqueCourses(schedules[selected]);
     return (
     <>
       {schedules[selected]?.length !== numCourses && <Alert severity="warning" variant="outlined">

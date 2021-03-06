@@ -1,4 +1,3 @@
-import { CourseObjectProps } from "../components/Courses";
 import { CourseSection } from "../util/testScheduler";
 
 export const SELECTTERM = "select_term";
@@ -15,7 +14,7 @@ export interface SelectTerm {
 
 export interface SetSections {
   type: typeof SETSECTIONS;
-  sections: CourseObjectProps[];
+  sections: CourseSection[];
 }
 
 export interface SelectDays {

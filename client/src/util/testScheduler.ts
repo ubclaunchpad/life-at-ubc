@@ -136,8 +136,8 @@ export const filterActivityTypesNotLecture = (courseSection: any) => {
  * @returns {CourseSection[]} An array of valid course schedules
  */
 export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], restrictedDays: number[]): CourseSection[][] => {
-    const uniqueCourses = countUniqueCourses(courses);
-    const allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length, courses);
+    const [uniqueCourses] = getUniqueCourses(courses);
+    const allCombinations = backTrackOnlyLectures(uniqueCourses.size, courses.length, courses);
     const filteredCombinations = filterCombinations(allCombinations, restrictedDays);
     log.info(filteredCombinations);
     return filteredCombinations;
@@ -146,11 +146,21 @@ export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], res
 /**
  * Given an array of course sections counts the number of unique courses
  * @param {CourseSection[]} courses array of course sections
- * @returns {number} Number of unique courses in courses array
+ * @returns {CourseSection[]} List of unique courses in courses array
  */
-export const countUniqueCourses = (courses: CourseSection[]): number => {
-    const uniqueCourses = new Set(courses.map(({ coursedept, coursenumber }) => `${coursedept}${coursenumber}`));
-    return uniqueCourses.size;
+export const getUniqueCourses = (courses: CourseSection[]): [Set<string>, CourseSection[]] => {
+    const uniqueCourses = Object.fromEntries(courses.map((course) => [`${course.coursedept} ${course.coursenumber}`, course]));
+    return [new Set(Object.keys(uniqueCourses)), Object.values(uniqueCourses)];
+};
+
+/**
+ * Given an array of course sections counts the number of unique sections
+ * @param {CourseSection[]} courses array of course sections
+ * @returns {CourseSection[]} List of unique sections in courses array
+ */
+export const getUniqueSections = (courses: CourseSection[]): [Set<string>, CourseSection[]] => {
+    const uniqueSections = Object.fromEntries(courses.map((course) => [course.sectiontitle, course]));
+    return [new Set(Object.keys(uniqueSections)), Object.values(uniqueSections)];
 };
 
 /**

@@ -67,6 +67,7 @@ const useQontoStepIconStyles = makeStyles((theme) => ({
   },
   completed: {
     color: theme.palette.secondary.main,
+    cursor: "pointer",
     zIndex: 1,
     fontSize: 18,
   },

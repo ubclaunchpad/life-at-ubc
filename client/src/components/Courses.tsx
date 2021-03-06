@@ -19,6 +19,7 @@ import axios from "axios";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import { CourseSection, getUniqueSections } from "../util/testScheduler";
 
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
@@ -44,25 +45,11 @@ const CourseList = styled(List)`
   padding: 0;
 `;
 
-export interface CourseObjectProps {
-  coursetitle: string;
-  coursedept: string;
-  coursenumber: string;
-  sectiontitle: string;
-  status: string;
-  activity: string;
-  prof: string;
-  term: string;
-  day: string;
-  starttime: string;
-  endtime: string;
-}
-
 interface CoursesProps {
   term?: string;
-  sections: CourseObjectProps[];
+  sections: CourseSection[];
   coursesAdded: string[];
-  setSectionsToRedux: (sections: CourseObjectProps[]) => void;
+  setSectionsToRedux: (sections: CourseSection[]) => void;
   setCoursesToRedux: (courses: string[]) => void;
 }
 
@@ -86,7 +73,7 @@ function Courses({
     setInput(e.target.value);
   };
 
-  const addCourse = async (course: string): Promise<{ courseTitle: string; courseSections: CourseObjectProps[]; }> => {
+  const addCourse = async (course: string): Promise<{ courseTitle: string; courseSections: CourseSection[]; }> => {
     const partition = course.split(" ");
     if (partition.length !== 2) {
       throw new Error(MESSAGE.INVALID_FORMAT);
@@ -118,8 +105,9 @@ function Courses({
     try {
       await Promise.all(courses.map(async (course) => {
         const { courseTitle, courseSections } = await addCourse(course);
+        const [_, uniqueSections] = getUniqueSections(courseSections);
         coursesAdded.push(courseTitle);
-        sections.push(...courseSections);
+        sections.push(...uniqueSections);
       }));
       setMessage(MESSAGE.COURSE_ADD_SUCC);
       setCoursesToRedux(coursesAdded);
@@ -224,7 +212,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       };
       dispatch(action);
     },
-    setSectionsToRedux(sections: CourseObjectProps[]) {
+    setSectionsToRedux(sections: CourseSection[]) {
       const action: SetSections = {
         type: SETSECTIONS,
         sections,
