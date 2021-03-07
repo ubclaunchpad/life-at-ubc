@@ -50,4 +50,5 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 // testDb();
+log.info(`test`);
 setupDb(true);
