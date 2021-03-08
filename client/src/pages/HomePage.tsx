@@ -98,7 +98,6 @@ const Button = withStyles({
 
 function HomePage() {
   const [step, setStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState(new Set<number>());
   const MainSection = () => {
     const Content = contents[step];
     return (
@@ -114,10 +113,6 @@ function HomePage() {
     }
   })(MuiStepper);
 
-  // const isCompleted = (currentStep: number) => {
-  //   return completed.has(currentStep);
-  // };
-
   const handleBack = () => {
     setStep((prev) => prev - 1);
   };
@@ -126,16 +121,9 @@ function HomePage() {
     setStep((prev) => prev + 1);
   };
 
-
-  //   const newCompleted = new Set(completed);
-  //   newCompleted.add(step);
-  //   setCompleted(newCompleted);
-  // };
-
-  const handleSkip = (skipstep: number) => () => {
-    // if (skipstep === 0 || completed.has(skipstep - 1)) {
-    if (skipstep === 0) {
-      setStep(skipstep);
+  const handleSkip = (to: number) => () => {
+    if (to < step) {
+      setStep(to);
     }
   };
 
