@@ -98,6 +98,7 @@ const Button = withStyles({
 
 function HomePage() {
   const [step, setStep] = React.useState(0);
+  const [completed, setCompleted] = React.useState(new Set<number>());
   const MainSection = () => {
     const Content = contents[step];
     return (
