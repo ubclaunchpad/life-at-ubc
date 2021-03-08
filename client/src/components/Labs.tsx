@@ -66,7 +66,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
       backgroundColor: "#383838",
       color: "white",
       margin: 2.5,
-      padding: "2.5px 5px",
+      padding: "5px 10px",
     }
   })(MuiPopover);
 
