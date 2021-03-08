@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Section from "./Section";
 import Title from "./Title";
 import Button from "./Button";
 import { RootState } from "../reducers/index";
@@ -51,7 +50,7 @@ function Restrictions({
   }, [days]);
 
   return (
-    <Section>
+    <>
       <Title title="3. Add Restrictions"></Title>
       <Title title="What days do you not want to go to school?"></Title>
       <ButtonGroup>
@@ -69,7 +68,7 @@ function Restrictions({
           );
         })}
       </ButtonGroup>
-    </Section>
+    </>
   );
 }
 
