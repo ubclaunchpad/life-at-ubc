@@ -72,6 +72,8 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleSnackBarClose = () => setOpen(false);
+
   const handlePopoverOpen = (event: any) => {
     const { top, left, height } = event.currentTarget.getBoundingClientRect();
     setPosition({ top: top + height, left });
@@ -138,7 +140,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleSnackBarClose}
         message={message}
         key="topcenter"
       />

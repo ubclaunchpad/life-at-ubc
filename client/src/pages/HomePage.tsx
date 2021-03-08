@@ -14,6 +14,7 @@ import Restrictions from "../components/Restrictions";
 import Lectures from "../components/Lectures";
 import Labs from "../components/Labs";
 import Generate from "../components/Generate";
+import { StepButton } from "@material-ui/core";
 
 const contents = [Home, Courses, Restrictions, Lectures, Labs, Generate];
 const steps = ["Choose term", "Add courses", "Add restrictions", "Select lectures", "Select labs/tutorials", "Generate schedule"];
@@ -67,11 +68,24 @@ const useQontoStepIconStyles = makeStyles((theme) => ({
   },
   completed: {
     color: theme.palette.secondary.main,
-    cursor: "pointer",
     zIndex: 1,
     fontSize: 18,
   },
 }));
+
+const QontoStepIcon = ({ active, completed }: any) => {
+  const classes = useQontoStepIconStyles();
+
+  return (
+    <div
+      className={clsx(classes.root, {
+        [classes.active]: active,
+      })}
+    >
+      {completed ? <CheckIcon className={classes.completed} /> : <div className={classes.circle} />}
+    </div>
+  );
+};
 
 const Button = withStyles({
   root: {
@@ -99,31 +113,30 @@ function HomePage() {
     }
   })(MuiStepper);
 
-  const QontoStepIcon = ({ active, completed, icon }: any) => {
-    const classes = useQontoStepIconStyles();
-    return (
-      <div
-        className={clsx(classes.root, {
-          [classes.active]: active,
-        })}
-      >
-        {completed ? <CheckIcon className={classes.completed} onClick={() => setStep(icon)}/> : <div className={classes.circle} />}
-      </div>
-    );
-  };
-
   const handleBack = () => {
     setStep((prev) => prev - 1);
   };
+
   const handleNext = () => {
     setStep((prev) => prev + 1);
   };
+
+  const handleSkip = (to: number) => () => {
+    if (to < step) {
+      setStep(to);
+    }
+  };
+
   return (
     <Section>
       <Stepper activeStep={step} connector={<QontoConnector />} alternativeLabel>
         {steps.map((label, i) => (
           <Step key={i}>
-            <StepLabel StepIconComponent={QontoStepIcon} StepIconProps={{ icon: i }}>{label}</StepLabel>
+            <StepButton disableRipple onClick={handleSkip(i)}>
+              <StepLabel StepIconComponent={QontoStepIcon}>
+                {label}
+              </StepLabel>
+            </StepButton>
           </Step>
         ))}
       </Stepper>
