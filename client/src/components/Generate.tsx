@@ -17,7 +17,7 @@ function Generate({ selectedSchedule }: GenerateProps) {
     setShareLink(`sharelink/${JSON.stringify(selectedSchedule)}`);
   };
   return (
-    <Section>
+    <>
       <Title title="Your Individualized Schedule"></Title>
       <ScheduleGrid></ScheduleGrid>
       <Button variant="contained" color="secondary" onClick={handleSave}>Save</Button>
@@ -33,4 +33,3 @@ const mapStateToProps = (state: RootState) => {
 };
 
 export default connect(mapStateToProps)(Generate);
-

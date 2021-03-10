@@ -1,6 +1,5 @@
 import React from "react";
 import cx from "classnames";
-import Section from "./Section";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -54,9 +53,6 @@ function addCourse(rows: any, day: any, term: string, startTime: number, endTime
 }
 
 const useStyles = makeStyles({
-    container: {
-        // maxHeight: 440,
-    },
     body: {
         "boxSizing": "border-box",
         "width": 200,
@@ -102,7 +98,7 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
             <TableCell {...props}
                 className={cx({selected: selectedSections.includes(sectiontitle) }, classes.body)}
                 onClick={toggleSection(sectiontitle)}>
-                <b>{sectiontitle}</b>
+                <b style={{ fontWeight: 500 }}>{sectiontitle}</b>
                 {sectiontitle && <p style={{ fontSize: "small", margin: 0 }}>{`Term ${term}`}</p>}
             </TableCell>
         );
@@ -142,7 +138,7 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
 
     function ScheduleTable() {
         return (
-            <TableContainer component={Paper} className={classes.container}>
+            <TableContainer component={Paper}>
                 <Table size="small" stickyHeader aria-label="course schedule">
                     <ScheduleHead />
                     <ScheduleBody />
@@ -152,9 +148,7 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
     }
 
     return (
-        <Section>
-            <ScheduleTable />
-        </Section>
+        <ScheduleTable />
     );
 }
 
