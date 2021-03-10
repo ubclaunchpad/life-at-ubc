@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Section from "./Section";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import Button from "@material-ui/core/Button";
@@ -22,7 +21,7 @@ function Generate({ selectedSchedule }: GenerateProps) {
       <ScheduleGrid></ScheduleGrid>
       <Button variant="contained" color="secondary" onClick={handleSave}>Save</Button>
       <p>{shareLink}</p>
-    </Section>
+    </>
   );
 }
 
