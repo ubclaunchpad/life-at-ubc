@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
+import MuiPopover from "@material-ui/core/Popover";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 
@@ -20,8 +21,14 @@ interface LabsProps {
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [selected, setSelected] = useState(Object.fromEntries(Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])));
-  const handleSnackBarClose = () => setOpen(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [timeslot, setTimeslot] = useState("");
+  const [selected, setSelected] = useState(
+    Object.fromEntries(
+      Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])
+    )
+  );
+
   const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
     const nextSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
     if (selectedSection.sectiontitle !== selected[sectionTitle]) {
@@ -42,6 +49,32 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     }
   })(MuiSelect);
 
+  const Popover = withStyles({
+    paper: {
+      backgroundColor: "#383838",
+      color: "white",
+      margin: 2.5,
+      padding: "5px 10px",
+    }
+  })(MuiPopover);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleSnackBarClose = () => setOpen(false);
+
+  const handlePopoverOpen = (event: any) => {
+    const { top, left, height } = event.currentTarget.getBoundingClientRect();
+    setPosition({ top: top + height, left: left + 100 });
+    setAnchorEl(event.currentTarget);
+    setTimeslot(event.currentTarget.id);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const popOpen = Boolean(anchorEl);
+
   return (
     <>
       <Title title="5. Add Lab Sections"></Title>
@@ -53,12 +86,40 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                 <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
                 <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (
-                    <MenuItem key={j} value={section.sectiontitle} onClick={handleClick(notLectureSectionTitle, section)}>{section.sectiontitle}</MenuItem>
+                    <MenuItem
+                      id={`${section.day}, ${section.starttime} - ${section.endtime}`}
+                      key={j}
+                      value={section.sectiontitle}
+                      onClick={handleClick(notLectureSectionTitle, section)}
+                      onMouseEnter={handlePopoverOpen}
+                      onMouseLeave={handlePopoverClose}
+                    >
+                      {section.sectiontitle}
+                    </MenuItem>
                   ))}
                 </Select>
             </div>
           );
         })}
+        <Popover
+          open={popOpen}
+          anchorEl={anchorEl}
+          anchorReference="anchorPosition"
+          anchorPosition={position}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+          style={{ pointerEvents: "none" }}
+        >
+          {timeslot}
+        </Popover>
       </div>
       <ScheduleGrid />
       <Snackbar
