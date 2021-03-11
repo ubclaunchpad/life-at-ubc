@@ -13,7 +13,7 @@ interface GenerateProps {
 function Generate({ selectedSchedule }: GenerateProps) {
   const [shareLink, setShareLink] = useState("");
   const handleSave = () => {
-    setShareLink(`sharelink/${JSON.stringify(selectedSchedule)}`);
+    setShareLink(`localhost:3000/sharelink/${JSON.stringify(selectedSchedule)}`);
   };
   return (
     <>
