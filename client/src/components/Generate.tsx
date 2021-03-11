@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import Button from "@material-ui/core/Button";
-
+import { CourseSection } from "../util/testScheduler";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 
 interface GenerateProps {
-  selectedSchedule?: any;
+  selectedSchedule: CourseSection[];
 }
 
 function Generate({ selectedSchedule }: GenerateProps) {
