@@ -6,10 +6,12 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
-import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
 import MuiPopover from "@material-ui/core/Popover";
+import Popper from "@material-ui/core/Popper";
+import PopupState, { bindToggle, bindPopper } from "material-ui-popup-state";
+import Fade from "@material-ui/core/Fade";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 import { Button } from "@material-ui/core";
@@ -91,25 +93,21 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                 <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (
                     <MenuItem
+                      id={`${section.day}, ${section.starttime} - ${section.endtime}`}
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
-                      onMouseLeave={handlePopoverClose}
+                      // onMouseOver={handlePopoverOpen}
+                      // onMouseLeave={handlePopoverClose}
                     >
-                      <Button
-                        id={`${section.day}, ${section.starttime} - ${section.endtime}`}
-                        key={j}
-                        onMouseOver={handlePopoverOpen}
-                      >
-                        {section.sectiontitle}
-                      </Button>
+                      {section.sectiontitle + ": " + `${section.day}, ${section.starttime} - ${section.endtime}`}
                     </MenuItem>
                   ))}
                 </Select>
             </div>
           );
         })}
-        <Popover
+        {/* <Popover
           open={popOpen}
           anchorEl={anchorEl}
           anchorReference="anchorPosition"
@@ -127,7 +125,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
           style={{ pointerEvents: "none" }}
         >
           {timeslot}
-        </Popover>
+        </Popover> */}
       </div>
       <ScheduleGrid />
       <Snackbar
