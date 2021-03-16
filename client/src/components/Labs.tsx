@@ -8,13 +8,10 @@ import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
+import Tooltip from "@material-ui/core/Tooltip";
 import MuiPopover from "@material-ui/core/Popover";
-import Popper from "@material-ui/core/Popper";
-import PopupState, { bindToggle, bindPopper } from "material-ui-popup-state";
-import Fade from "@material-ui/core/Fade";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
-import { Button } from "@material-ui/core";
 
 interface LabsProps {
   selectedSchedule: CourseSection[];
@@ -66,20 +63,37 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
 
   const handleSnackBarClose = () => setOpen(false);
 
-  const handlePopoverOpen = (event: any) => {
-    const { top, left, height } = event.currentTarget.getBoundingClientRect();
-    setPosition({ top: top, left: left + 100 });
-    setAnchorEl(event.currentTarget);
-    setTimeslot(event.currentTarget.id);
-    // console.log("opening!", event.currentTarget.id);
+  // const handlePopoverOpen = (event: any) => {
+  //   const { top, left, height } = event.currentTarget.getBoundingClientRect();
+  //   setPosition({ top: top, left: left + 100 });
+  //   setAnchorEl(event.currentTarget);
+  //   setTimeslot(event.currentTarget.id);
+  //   // console.log("opening!", event.currentTarget.id);
+  // };
+
+  // const handlePopoverClose = () => {
+  //   setAnchorEl(null);
+  //   // console.log("closing!");
+  // };
+
+  // const popOpen = Boolean(anchorEl);
+
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [isOver, setIsOver] = useState(false);
+
+  const handleTooltip = (bool: boolean) => {
+    setTooltipOpen(bool);
   };
 
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    // console.log("closing!");
+  const onEnter = () => {
+    setIsOver(true);
+    setTooltipOpen(true);
   };
 
-  const popOpen = Boolean(anchorEl);
+  const onLeave = () => {
+    setIsOver(false);
+    setTooltipOpen(false);
+  };
 
   return (
     <>
@@ -90,17 +104,29 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
           return (
             <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
                 <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
-                <Select value={selected[notLectureSectionTitle]} variant="outlined">
+                <Select
+                  value={selected[notLectureSectionTitle]}
+                  variant="outlined"
+                >
                   {currNotLectureSections.map((section, j) => (
                     <MenuItem
                       id={`${section.day}, ${section.starttime} - ${section.endtime}`}
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
-                      // onMouseOver={handlePopoverOpen}
-                      // onMouseLeave={handlePopoverClose}
+                      onMouseEnter={() => handleTooltip(true)}
+                      onMouseLeave={() => handleTooltip(false)}
                     >
-                      {section.sectiontitle + ": " + `${section.day}, ${section.starttime} - ${section.endtime}`}
+                      <Tooltip
+                        open={isOver}
+                        title={`${section.day}, ${section.starttime} - ${section.endtime}`}
+                        placement="right"
+                        arrow
+                      >
+                        <div onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                          {section.sectiontitle}
+                        </div>
+                      </Tooltip>
                     </MenuItem>
                   ))}
                 </Select>
