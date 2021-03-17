@@ -12,6 +12,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MuiPopover from "@material-ui/core/Popover";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
+import { filterableColumnsSelector } from "@material-ui/data-grid";
 
 interface LabsProps {
   selectedSchedule: CourseSection[];
@@ -83,16 +84,19 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
 
   const handleTooltip = (bool: boolean) => {
     setTooltipOpen(bool);
+    if (bool) {
+      onEnter();
+    } else {
+      onLeave();
+    }
   };
 
   const onEnter = () => {
     setIsOver(true);
-    setTooltipOpen(true);
   };
 
   const onLeave = () => {
     setIsOver(false);
-    setTooltipOpen(false);
   };
 
   return (
@@ -110,22 +114,25 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                 >
                   {currNotLectureSections.map((section, j) => (
                     <MenuItem
-                      id={`${section.day}, ${section.starttime} - ${section.endtime}`}
+                      id={`{j}`}
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
+                      // onMouseEnter={onEnter} onMouseLeave={onLeave}
                       onMouseEnter={() => handleTooltip(true)}
                       onMouseLeave={() => handleTooltip(false)}
                     >
                       <Tooltip
-                        open={isOver}
+                        id={`{j}`}
+                        open={tooltipOpen && !isOver}
                         title={`${section.day}, ${section.starttime} - ${section.endtime}`}
                         placement="right"
                         arrow
+                        disableHoverListener
                       >
-                        <div onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                        <label>
                           {section.sectiontitle}
-                        </div>
+                        </label>
                       </Tooltip>
                     </MenuItem>
                   ))}
