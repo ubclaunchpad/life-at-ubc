@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Link as BaseLink } from "react-router-dom";
 import logo from "../assets/logo.svg";
 
 const StyledHeader = styled.div`
@@ -15,16 +16,32 @@ const StyledHeader = styled.div`
     margin-left: 1rem;
     text-transform: uppercase;
   }
+  a {
+    text-decoration: none;
+  }
   img.logo {
     width: 32px;
   }
 `;
 
+const Link = styled(BaseLink)`
+    text-decoration: none;
+    &:focus, &:hover, &:visited, &:link, &:active {
+        text-decoration: none;
+    }
+`;
+
 function Header() {
   return (
     <StyledHeader>
-      <img src={logo} className="logo" alt="logo" />
-      <h1>Courseload</h1>
+      <Link to="/">
+        <img src={logo} className="logo" alt="logo" />
+        <h1>Courseload</h1>
+      </Link>
+      <>
+        <Link to="/about">About</Link>
+        <Link to="/team">Team</Link>
+      </>
     </StyledHeader>
   );
 }
