@@ -4,13 +4,26 @@ import {Request, Response} from "express";
 
 const log = parentLogger.child({ module: "router/savedschedule" });
 
-interface CourseSchedule {
-    ScheduleId: number;
-    Sections: any;
-}
 
 export const getSchedule = async (req: Request, res: Response) => {
     log.info("GET api/savedschedules");
+    let scheduleid = req.params.id;
+    const query =
+    `SELECT * FROM savedschedules 
+    WHERE scheduleid=$1`;
+    const values = [scheduleid];
+    try {
+        const { rows } = await db.query(query, values);
+        if (rows.length > 0) {
+            res.status(200).json(rows[0].sections);
+        } else {
+            res.status(404).send("Schedule not found");
+        }
+    } catch (e) {
+        res.status(400).json({
+            message: e.message
+        });
+    }
 };
 
 export const saveSchedule = async (req: Request, res: Response) => {
@@ -22,8 +35,12 @@ export const saveSchedule = async (req: Request, res: Response) => {
     const values = [schedule];
     try {
         const result = await db.query(query, values);
-        res.json(result);
+        const scheduleid = result.rows[0].scheduleid;
+        log.info(`SCHEDULE ID ` + scheduleid);
+        res.status(200).send(JSON.stringify(scheduleid));
     } catch (e) {
-        log.info(e);
+        res.status(400).json({
+            message: e.message
+        });
     }
 };

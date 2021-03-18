@@ -8,22 +8,29 @@ import {
 import { useParams } from "react-router-dom";
 import ScheduleGrid from "./ScheduleGrid";
 import { CourseSection } from "../util/testScheduler";
+import axios from "axios";
+import { API_BASE_URL } from "./Courses";
 
 interface ShareLinkProps {
     setSelectedSchedule: (schedule: CourseSection[]) => void;
 }
 
 interface Params {
-    selectedSchedule?: string | undefined;
+    scheduleid: string;
 }
 
 function ShareLink({setSelectedSchedule}: ShareLinkProps) {
-    const { selectedSchedule } = useParams<Params>();
+    const { scheduleid } = useParams<Params>();
 
     useEffect(() => {
-        let correctlyTypedSchedule = selectedSchedule && JSON.parse(selectedSchedule);
-        setSelectedSchedule(correctlyTypedSchedule);
+        getSchedule();
     }, []);
+
+    const getSchedule = async () => {
+      const res = await axios.get(`${API_BASE_URL}/api/savedschedules/${scheduleid}`);
+      const schedule = res.data;
+      setSelectedSchedule(schedule);
+    };
 
     return (
         <>

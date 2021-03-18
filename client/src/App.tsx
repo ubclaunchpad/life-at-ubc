@@ -61,7 +61,7 @@ function App() {
                 path="/allcourses"
                 component={AllCourses}
               />
-              <Route path="/sharelink/:selectedSchedule" component={ShareLink} />
+              <Route path="/sharelink/:scheduleid" component={ShareLink} />
             </Main>
           </BrowserRouter>
         </StylesProvider>
