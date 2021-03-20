@@ -3,8 +3,7 @@ import styled from "styled-components";
 
 const StyledButton = styled.div<ButtonProps>`
   height: 45px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin: .5rem;
   border: 1px solid #747474;
   border-radius: 12px;
   text-align: center;
