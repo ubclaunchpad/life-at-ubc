@@ -7,6 +7,11 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import axios from "axios";
 import { API_BASE_URL } from "./Courses";
+import styled from "styled-components";
+
+const StyledButton = styled(Button)`
+  margin-top: 0.5em;
+`;
 
 interface GenerateProps {
   selectedSchedule: CourseSection[];
@@ -30,8 +35,8 @@ function Generate({ selectedSchedule }: GenerateProps) {
     <>
       <Title title="Your Individualized Schedule"></Title>
       <ScheduleGrid></ScheduleGrid>
-      <Button variant="contained" color="secondary" onClick={handleSave}>Save</Button>
-      <p>{shareLink}</p>
+      <StyledButton variant="contained" onClick={handleSave}>Generate Shareable Link</StyledButton>
+      <Title title={shareLink.length > 0 ? `Link: ${shareLink}` : ""}></Title>
     </>
   );
 }
