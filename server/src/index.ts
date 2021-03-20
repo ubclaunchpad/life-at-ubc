@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import db from "./database/db";
 import expressPino from "express-pino-logger";
 import parentLogger from "../utils/logger";
@@ -16,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 const crontab = "33 21 5 * *";
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
