@@ -59,7 +59,7 @@ export const team = [
       login: "yehee",
       blog: "https://yehee.github.io",
       htmlURL: "https://github.com/yehee",
-      name: "Alice",
+      name: "Alice Kim",
       role: "Developer"
   },
   {
@@ -75,7 +75,7 @@ export const team = [
       login: "kvgagan98",
       blog: "",
       htmlURL: "https://github.com/kvgagan98",
-      name: "Gagan",
+      name: "Gagan Kanisetty",
       role: "Developer"
   },
   {
