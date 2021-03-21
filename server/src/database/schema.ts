@@ -38,3 +38,8 @@ export const CourseSection = `CREATE TABLE CourseSection (
     StartTime VARCHAR(255),
     EndTime VARCHAR(255)
 );`;
+
+export const SavedSchedules = `CREATE TABLE SavedSchedules (
+    ScheduleId INT GENERATED ALWAYS AS IDENTITY,
+    Sections json
+);`;

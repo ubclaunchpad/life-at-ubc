@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Header from "./components/Header";
+import ShareLink from "./components/ShareLink";
 import HomePage from "./pages/HomePage";
 import DegNav from "./pages/DegNav";
 import AllCourses from "./pages/AllCourses";
@@ -60,6 +61,7 @@ function App() {
                 path="/allcourses"
                 component={AllCourses}
               />
+              <Route path="/sharelink/:scheduleid" component={ShareLink} />
             </Main>
           </BrowserRouter>
         </StylesProvider>

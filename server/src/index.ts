@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import bodyParser from "body-parser";
 import db from "./database/db";
 import expressPino from "express-pino-logger";
@@ -16,10 +17,12 @@ const PORT = process.env.PORT || 5000;
 const crontab = "33 21 5 * *";
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: false}));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
@@ -50,5 +53,8 @@ async function testDb() {
 
 // If docker isn't set up yet, this should error if you dont have postgres installed
 // testDb();
-log.info(`test`);
-setupDb(true);
+try {
+    setupDb(true);
+} catch (e) {
+    log.error(`error ${e}`);
+}
