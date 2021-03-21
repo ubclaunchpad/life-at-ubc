@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Header from "./components/Header";
+import ShareLink from "./components/ShareLink";
 import HomePage from "./pages/HomePage";
 import TeamPage from "./pages/TeamPage";
 import DegNav from "./pages/DegNav";
@@ -54,6 +55,7 @@ function App() {
           <BrowserRouter>
             <Main>
               <Header />
+              <Route path="/sharelink/:scheduleid" component={ShareLink} />
               <Route exact path="/courses" component={AllCourses} />
               <Route exact path="/degnav" component={DegNav} />
               <Route exact path="/team" component={TeamPage} />

@@ -1,7 +1,7 @@
 import { readFile } from "fs";
 import parentLogger from "../../utils/logger";
 import db from "./db";
-import { PreReq, CoReq, Course } from "./schema";
+import { PreReq, CoReq, Course, SavedSchedules } from "./schema";
 
 const log = parentLogger.child({ module: "router" });
 const src = "./utils/output.json";
@@ -24,7 +24,13 @@ export const setupDb = async (update: boolean) => {
 const dropDb = () => db.query(`DROP TABLE IF EXISTS PreReq, CoReq, Course, CourseSection;`);
 
 const createDb = async () => {
+    let { rows: tables } = await getTables();
+    tables = tables.map((table) => table.table_name);
     await db.query(Course);
+    if (!tables.includes("savedschedules")) {
+        log.info("Creating SavedSchedules table");
+        await db.query(SavedSchedules);
+    }
 };
 
 const populateDb = () => {
