@@ -6,23 +6,25 @@ services:
         volumes:
             - data:/var/lib/db
         ports:
-            - ${DB_PORT}:${DB_PORT}
+            - ${LOCAL_PORT}:${LOCAL_PORT}
         environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_USER=${DB_USER}
-            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_PASSWORD=${LOCAL_PASSWORD}
+            - POSTGRES_USER=${LOCAL_USER}
+            - POSTGRES_DB=${LOCAL_DB}
 
     server:
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile.local
         container_name: server
         volumes: 
             - ./:/app
         environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_USER=${DB_USER}
-            - POSTGRES_DB=${DB_DATABASE}
-            - POSTGRES_HOST=${DB_HOST}
-            - POSTGRES_PORT=${DB_PORT}
+            - POSTGRES_PASSWORD=${LOCAL_PASSWORD}
+            - POSTGRES_USER=${LOCAL_USER}
+            - POSTGRES_DB=${LOCAL_DB}
+            - POSTGRES_HOST=${LOCAL_HOST}
+            - POSTGRES_PORT=${LOCAL_PORT}
         ports:
             - 5000:5000
         depends_on:

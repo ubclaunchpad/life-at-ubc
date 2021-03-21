@@ -158,16 +158,15 @@ function Courses({
             variant="outlined"
             onChange={handleChange}
             margin="dense"
-            style={{ marginLeft: "1rem" }}
           />
           <Button
             variant="contained"
             color="secondary"
             style={{
               display: "block",
-              marginTop: 164,
-              marginLeft: 360,
+              margin: "5rem 1rem 0 24.5rem",
               color: "white",
+              width: 69.5
             }}
             onClick={handleAddBtnClick}
             disableElevation

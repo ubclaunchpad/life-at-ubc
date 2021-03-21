@@ -17,7 +17,7 @@ import Generate from "../components/Generate";
 import { StepButton } from "@material-ui/core";
 
 const contents = [Home, Courses, Restrictions, Lectures, Labs, Generate];
-const steps = ["Choose term", "Add courses", "Add restrictions", "Select lectures", "Select labs/tutorials", "Generate schedule"];
+const steps = ["Term", "Courses", "Restrictions", "Lectures", "Labs/Tutorials", "Schedule"];
 
 const Section = styled.div`
   font-family: 'Rubik', sans-serif;
