@@ -19,7 +19,7 @@ interface GenerateProps {
 
 export const CLIENT_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://course-load.netlify.app/"
+    ? "https://course-load.netlify.app"
     : "http://localhost:3000";
 
 function Generate({ selectedSchedule }: GenerateProps) {
