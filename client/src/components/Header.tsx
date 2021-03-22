@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link as BaseLink } from "react-router-dom";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/MenuRounded";
 import logo from "../assets/logo.svg";
 
-const StyledHeader = styled.div`
+const NavBar = styled.div`
   @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@400;600;900&family=Source+Sans+Pro:wght@300;400;600&family=Rubik:wght@300;400;500;600;700;800;900&display=swap");
   font-family: "Rubik", sans-serif;
-  margin: 2rem;
+  padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  .hamburger {
+    display: none;
+  }
   .logo {
     display: flex;
     h1 {
@@ -22,6 +28,14 @@ const StyledHeader = styled.div`
     }
     img {
       width: 32px;
+    }
+  }
+  @media (max-width: 425px) {
+    nav {
+      display: none;
+    }
+    .hamburger {
+      display: block;
     }
   }
 `;
@@ -37,23 +51,43 @@ const Link = styled(BaseLink)`
     color: #4A5EA3;
   }
   &:focus, &:hover, &:visited, &:link, &:active {
-      text-decoration: none;
+    text-decoration: none;
+  }
+  @media (max-width: 425px) {
+    text-align: center;
+    display: block;
+    padding: .5rem;
   }
 `;
 
 function Header() {
+  const mobile = useMediaQuery("(max-width:425px)");
+  const [open, setOpen] = useState(false);
+  const toggle = () => setOpen((prev: boolean) => !prev);
   return (
-    <StyledHeader>
-      <Link to="/" className="logo" >
-        <img src={logo} alt="logo" />
-        <h1>Courseload</h1>
-      </Link>
-      <div>
-        {/* TODO: revisit later */}
-        {/* <Link to="/about">About</Link> */}
-        <Link to="/team">Team</Link>
-      </div>
-    </StyledHeader>
+    <>
+      <NavBar>
+        <Link to="/" className="logo" >
+          <img src={logo} alt="logo" />
+          <h1>Courseload</h1>
+        </Link>
+        <nav className="bar">
+          {/* TODO: revisit later */}
+          {/* <Link to="/about">About</Link> */}
+          <Link to="/schedule">Schedule</Link>
+          <Link to="/team">Team</Link>
+        </nav>
+        <IconButton className="hamburger" aria-label="menu" onClick={toggle}>
+          <MenuIcon/>
+        </IconButton>
+      </NavBar>
+      {mobile && open && (
+        <nav className="list">
+          <Link to="/schedule">Schedule</Link>
+          <Link to="/team">Team</Link>
+        </nav>
+      )}
+    </>
   );
 }
 
