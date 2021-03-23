@@ -19,7 +19,6 @@ import { SETSELECTEDSECTIONS, SetSelectedSections } from "../actions/HomeActions
 const lectureTypes = new Set(["Waiting List", "Web-Oriented Course", "Lecture"]);
 
 const Section = styled.div`
-    max-width: 1000px;
     margin: auto;
 `;
 

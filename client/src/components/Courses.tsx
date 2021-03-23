@@ -32,7 +32,12 @@ const Wrapper = styled.div`
 `;
 
 const AddCourseSection = styled.div`
+  display: inline-flex;
+  flex-direction: column;
   flex: 1;
+  min-height: 20vw;
+  justify-content: space-between;
+  margin-right: 1rem;
 `;
 
 const CourseList = styled(List)`
@@ -163,10 +168,11 @@ function Courses({
             variant="contained"
             color="secondary"
             style={{
+              alignSelf: "flex-end",
               display: "block",
-              margin: "5rem 1rem 0 24.5rem",
               color: "white",
-              width: 69.5
+              float: "right",
+              width: 69.5,
             }}
             onClick={handleAddBtnClick}
             disableElevation

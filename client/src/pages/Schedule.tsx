@@ -98,10 +98,10 @@ const Button = withStyles({
 
 function Schedule() {
   const [step, setStep] = React.useState(0);
-  const MainSection = () => {
+  const Main = () => {
     const Content = contents[step];
     return (
-      <div style={{ margin: "2rem auto" }}>
+      <div style={{ margin: "2rem auto", maxWidth: 1000 }}>
         <Content />
       </div>
     );
@@ -140,7 +140,7 @@ function Schedule() {
           </Step>
         ))}
       </Stepper>
-      <MainSection />
+      <Main />
       {step > 0 && <Button onClick={handleBack} disabled={step === 0} text="Back"/>}
       {step < steps.length - 1 && <Button onClick={handleNext} disabled={step === steps.length - 1} text="Next" />}
     </Section>

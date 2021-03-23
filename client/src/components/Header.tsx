@@ -13,9 +13,6 @@ const NavBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  .hamburger {
-    display: none;
-  }
   .logo {
     display: flex;
     h1 {
@@ -33,9 +30,6 @@ const NavBar = styled.div`
   @media (max-width: 425px) {
     nav {
       display: none;
-    }
-    .hamburger {
-      display: block;
     }
   }
 `;
@@ -60,6 +54,12 @@ const Link = styled(BaseLink)`
   }
 `;
 
+const Hamburger = ({ toggle }: any) => (
+  <IconButton aria-label="menu" onClick={toggle}>
+    <MenuIcon/>
+  </IconButton>
+);
+
 function Header() {
   const mobile = useMediaQuery("(max-width:425px)");
   const [open, setOpen] = useState(false);
@@ -72,14 +72,10 @@ function Header() {
           <h1>Courseload</h1>
         </Link>
         <nav className="bar">
-          {/* TODO: revisit later */}
-          {/* <Link to="/about">About</Link> */}
           <Link to="/schedule">Schedule</Link>
           <Link to="/team">Team</Link>
         </nav>
-        <IconButton className="hamburger" aria-label="menu" onClick={toggle}>
-          <MenuIcon/>
-        </IconButton>
+        {mobile && <Hamburger toggle={toggle} />}
       </NavBar>
       {mobile && open && (
         <nav className="list">
