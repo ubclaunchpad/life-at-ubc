@@ -1,5 +1,6 @@
 import React from "react";
 import cx from "classnames";
+import styled from "styled-components";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -16,6 +17,10 @@ import { connect } from "react-redux";
 import { SETSELECTEDSECTIONS, SetSelectedSections } from "../actions/HomeActions";
 
 const lectureTypes = new Set(["Waiting List", "Web-Oriented Course", "Lecture"]);
+
+const Section = styled.div`
+    margin: auto;
+`;
 
 function makerows(start: number, end: number) {
     const rows: any[] = [];
@@ -138,12 +143,14 @@ function ScheduleGrid({ schedule, selectedSchedule, selectedSections, setSelecte
 
     function ScheduleTable() {
         return (
-            <TableContainer component={Paper}>
-                <Table size="small" stickyHeader aria-label="course schedule">
-                    <ScheduleHead />
-                    <ScheduleBody />
-                </Table>
-            </TableContainer>
+            <Section>
+                <TableContainer component={Paper}>
+                    <Table size="small" stickyHeader aria-label="course schedule">
+                        <ScheduleHead />
+                        <ScheduleBody />
+                    </Table>
+                </TableContainer>
+            </Section>
         );
     }
 
