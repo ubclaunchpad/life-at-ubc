@@ -61,43 +61,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
   })(MuiPopover);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-
   const handleSnackBarClose = () => setOpen(false);
-
-  // const handlePopoverOpen = (event: any) => {
-  //   const { top, left, height } = event.currentTarget.getBoundingClientRect();
-  //   setPosition({ top: top, left: left + 100 });
-  //   setAnchorEl(event.currentTarget);
-  //   setTimeslot(event.currentTarget.id);
-  //   // console.log("opening!", event.currentTarget.id);
-  // };
-
-  // const handlePopoverClose = () => {
-  //   setAnchorEl(null);
-  //   // console.log("closing!");
-  // };
-
-  // const popOpen = Boolean(anchorEl);
-
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [isOver, setIsOver] = useState(false);
-
-  const handleTooltip = (bool: boolean) => {
-    setTooltipOpen(bool);
-    if (bool) {
-      onEnter();
-    } else {
-      onLeave();
-    }
-  };
-
-  const onEnter = () => {
-    setIsOver(true);
-  };
-
-  const onLeave = () => {
-    setIsOver(false);
-  };
 
   return (
     <>
@@ -118,22 +82,8 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
-                      // onMouseEnter={onEnter} onMouseLeave={onLeave}
-                      onMouseEnter={() => handleTooltip(true)}
-                      onMouseLeave={() => handleTooltip(false)}
                     >
-                      <Tooltip
-                        id={`{j}`}
-                        open={tooltipOpen && !isOver}
-                        title={`${section.day}, ${section.starttime} - ${section.endtime}`}
-                        placement="right"
-                        arrow
-                        disableHoverListener
-                      >
-                        <label>
-                          {section.sectiontitle}
-                        </label>
-                      </Tooltip>
+                      {section.sectiontitle.substring(9, section.sectiontitle.length) + `: ${section.day}, ${section.starttime} - ${section.endtime}`}
                     </MenuItem>
                   ))}
                 </Select>
