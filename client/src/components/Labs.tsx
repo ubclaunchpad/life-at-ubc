@@ -83,7 +83,8 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
                     >
-                      {section.sectiontitle.substring(9, section.sectiontitle.length) + `: ${section.day}, ${section.starttime} - ${section.endtime}`}
+                      {section.sectiontitle.substring(9, section.sectiontitle.length) +
+                        `: ${section.day}, ${section.starttime} - ${section.endtime}`}
                     </MenuItem>
                   ))}
                 </Select>
