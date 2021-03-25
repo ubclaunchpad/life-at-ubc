@@ -3,16 +3,15 @@ import styled from "styled-components";
 
 const StyledButton = styled.div<ButtonProps>`
   height: 45px;
-  margin-left: 20px;
-  margin-right: 20px;
-  border: 1px solid #747474;
+  margin: .5rem;
+  border: 1px solid ${(props) => (props.selected ? "#ff698b" : "#747474")};
   border-radius: 12px;
   text-align: center;
   line-height: 45px;
   cursor: pointer;
   flex: 1;
-  background: ${(props) => (props.selected ? "#747474" : "none")};
-  color: ${(props) => (props.selected ? "#fff" : "black")};
+  background: ${(props) => (props.selected ? "#ffdfe6" : "none")};
+  color: ${(props) => (props.selected ? "#ff698b" : "black")};
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;

@@ -31,6 +31,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     )
   );
 
+  const handleSnackBarClose = () => setOpen(false);
   const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
     const nextSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
     if (selectedSection.sectiontitle !== selected[sectionTitle]) {
@@ -61,8 +62,6 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
   })(MuiPopover);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleSnackBarClose = () => setOpen(false);
 
   // const handlePopoverOpen = (event: any) => {
   //   const { top, left, height } = event.currentTarget.getBoundingClientRect();
@@ -108,10 +107,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
           return (
             <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
                 <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
-                <Select
-                  value={selected[notLectureSectionTitle]}
-                  variant="outlined"
-                >
+                <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (
                     <MenuItem
                       id={`{j}`}

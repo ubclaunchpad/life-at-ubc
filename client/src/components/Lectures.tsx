@@ -25,7 +25,7 @@ interface LectureProps {
 }
 
 const List = styled.ul`
-  width: 350px;
+  width: fit-content;
   text-align: left;
   margin: auto;
   list-style: none;
@@ -66,8 +66,8 @@ function Lectures({
   const NoResultFound = () => {
     return (
       <div>
-        <img src={error} alt="no result" style={{ margin: "auto", display: "block", width: 150 }} />
-        <h3 style={{ textAlign: "center", fontSize: "1rem", fontWeight: 400 }}>{MESSAGE.NO_RESULT_FOUND}</h3>
+        <img src={error} alt="no result" style={{ margin: "3rem auto", display: "block", width: 150 }} />
+        <h3 style={{ textAlign: "center", fontWeight: 400 }}>{MESSAGE.NO_RESULT_FOUND}</h3>
         <List>
           <ListItem text="You have not selected any courses" />
           <ListItem text="Your preferences are too strict" />

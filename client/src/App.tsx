@@ -1,7 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import Header from "./components/Header";
+import ShareLink from "./components/ShareLink";
 import HomePage from "./pages/HomePage";
+import TeamPage from "./pages/TeamPage";
+import Schedule from "./pages/Schedule";
 import DegNav from "./pages/DegNav";
 import AllCourses from "./pages/AllCourses";
 import { BrowserRouter, Route } from "react-router-dom";
@@ -16,6 +19,7 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import background from "./assets/background.svg";
 
 export const store = createStore(
   reducers,
@@ -40,7 +44,9 @@ const theme = createMuiTheme({
 });
 
 const Main = styled.div`
-  max-width: 1000px;
+  background: url("${background}");
+  background-size: cover;
+  min-height: 100vh;
   margin: auto;
 `;
 
@@ -53,13 +59,12 @@ function App() {
           <BrowserRouter>
             <Main>
               <Header />
-              <Route exact path="/" component={HomePage} />
+              <Route path="/sharelink/:scheduleid" component={ShareLink} />
+              <Route exact path="/schedule" component={Schedule} />
+              <Route exact path="/courses" component={AllCourses} />
               <Route exact path="/degnav" component={DegNav} />
-              <Route
-                exact
-                path="/allcourses"
-                component={AllCourses}
-              />
+              <Route exact path="/team" component={TeamPage} />
+              <Route exact path="/" component={HomePage} />
             </Main>
           </BrowserRouter>
         </StylesProvider>

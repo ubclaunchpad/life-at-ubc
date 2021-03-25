@@ -20,7 +20,7 @@ import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
-const API_BASE_URL =
+export const API_BASE_URL =
   process.env.NODE_ENV === "production"
     ? "https://course-load-ubc.herokuapp.com"
     : "http://localhost:5000";
@@ -32,7 +32,12 @@ const Wrapper = styled.div`
 `;
 
 const AddCourseSection = styled.div`
+  display: inline-flex;
+  flex-direction: column;
   flex: 1;
+  min-height: 20vw;
+  justify-content: space-between;
+  margin-right: 1rem;
 `;
 
 const CourseList = styled(List)`
@@ -158,16 +163,16 @@ function Courses({
             variant="outlined"
             onChange={handleChange}
             margin="dense"
-            style={{ marginLeft: "1rem" }}
           />
           <Button
             variant="contained"
             color="secondary"
             style={{
+              alignSelf: "flex-end",
               display: "block",
-              marginTop: 164,
-              marginLeft: 360,
               color: "white",
+              float: "right",
+              width: 69.5,
             }}
             onClick={handleAddBtnClick}
             disableElevation
