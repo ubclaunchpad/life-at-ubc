@@ -28,15 +28,15 @@ app.use((req, res, next) => {
 app.use(expressLogger);
 app.use("/", baseRouter);
 
-cron.schedule(crontab, () => {
-    scraper().then(() => {
-        log.info("Updating database.");
-        setupDb(true);
-    });
-}, {
-    scheduled: true,
-    timezone: "America/Los_Angeles"
-});
+// cron.schedule(crontab, () => {
+//     scraper().then(() => {
+//         log.info("Updating database.");
+//         setupDb(true);
+//     });
+// }, {
+//     scheduled: true,
+//     timezone: "America/Los_Angeles"
+// });
 
 app.listen(PORT, () => {
     log.info(`Server running on port ${PORT}`);
