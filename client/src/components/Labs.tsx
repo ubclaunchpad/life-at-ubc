@@ -8,11 +8,8 @@ import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
-import Tooltip from "@material-ui/core/Tooltip";
-import MuiPopover from "@material-ui/core/Popover";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
-import { filterableColumnsSelector } from "@material-ui/data-grid";
 
 interface LabsProps {
   selectedSchedule: CourseSection[];
@@ -23,14 +20,12 @@ interface LabsProps {
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [timeslot, setTimeslot] = useState("");
   const [selected, setSelected] = useState(
     Object.fromEntries(
       Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])
     )
   );
-
+  
   const handleSnackBarClose = () => setOpen(false);
   const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
     const nextSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
@@ -52,52 +47,6 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
     }
   })(MuiSelect);
 
-  const Popover = withStyles({
-    paper: {
-      backgroundColor: "#383838",
-      color: "white",
-      margin: 2.5,
-      padding: "5px 10px",
-    }
-  })(MuiPopover);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  // const handlePopoverOpen = (event: any) => {
-  //   const { top, left, height } = event.currentTarget.getBoundingClientRect();
-  //   setPosition({ top: top, left: left + 100 });
-  //   setAnchorEl(event.currentTarget);
-  //   setTimeslot(event.currentTarget.id);
-  //   // console.log("opening!", event.currentTarget.id);
-  // };
-
-  // const handlePopoverClose = () => {
-  //   setAnchorEl(null);
-  //   // console.log("closing!");
-  // };
-
-  // const popOpen = Boolean(anchorEl);
-
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [isOver, setIsOver] = useState(false);
-
-  const handleTooltip = (bool: boolean) => {
-    setTooltipOpen(bool);
-    if (bool) {
-      onEnter();
-    } else {
-      onLeave();
-    }
-  };
-
-  const onEnter = () => {
-    setIsOver(true);
-  };
-
-  const onLeave = () => {
-    setIsOver(false);
-  };
-
   return (
     <>
       <Title title="5. Add Lab Sections"></Title>
@@ -114,47 +63,15 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
-                      // onMouseEnter={onEnter} onMouseLeave={onLeave}
-                      onMouseEnter={() => handleTooltip(true)}
-                      onMouseLeave={() => handleTooltip(false)}
                     >
-                      <Tooltip
-                        id={`{j}`}
-                        open={tooltipOpen && !isOver}
-                        title={`${section.day}, ${section.starttime} - ${section.endtime}`}
-                        placement="right"
-                        arrow
-                        disableHoverListener
-                      >
-                        <label>
-                          {section.sectiontitle}
-                        </label>
-                      </Tooltip>
+                      {section.sectiontitle.substring(9, section.sectiontitle.length) +
+                        `: ${section.day}, ${section.starttime} - ${section.endtime}`}
                     </MenuItem>
                   ))}
                 </Select>
             </div>
           );
         })}
-        {/* <Popover
-          open={popOpen}
-          anchorEl={anchorEl}
-          anchorReference="anchorPosition"
-          anchorPosition={position}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          onClose={handlePopoverClose}
-          disableRestoreFocus
-          style={{ pointerEvents: "none" }}
-        >
-          {timeslot}
-        </Popover> */}
       </div>
       <ScheduleGrid />
       <Snackbar
