@@ -2,12 +2,22 @@ import daniel from "../assets/Daniel.png";
 import nico from "../assets/Nico.jpeg";
 import sarah from "../assets/Sarah.png";
 
+export const CLIENT_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://course-load.netlify.app"
+    : "http://localhost:3000";
+
+export const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://course-load-ubc.herokuapp.com"
+    : "http://localhost:5000";
+
 export const MESSAGE = {
   EMPTY_INPUT: "Empty input",
   INVALID_FORMAT: "Invalid format",
-  COURSE_NOT_EXIST: "Course does not exist",
+  COURSE_NOT_EXIST: "One or more courses is not offered in this term",
   COURSE_ADD_SUCC: "Course added successfully",
-  COURSE_ALREADY_ADDED: "This course has been added already",
+  COURSE_ALREADY_ADDED: "One or more courses has been added already",
   NO_RESULT_FOUND: "No result found. It might be because:",
   UNSCHEDULED_COURSE_WARNING: "Warning: Your timetable contains one or more courses that are not shown below",
 };

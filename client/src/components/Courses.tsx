@@ -14,16 +14,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
-import { MESSAGE } from "../util/constants";
-import axios from "axios";
-import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import axios from "axios";
+import { RootState } from "../reducers/index";
+import { MESSAGE, API_BASE_URL } from "../util/constants";
 
-export const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://course-load-ubc.herokuapp.com"
-    : "http://localhost:5000";
 
 const Wrapper = styled.div`
   display: flex;
@@ -107,7 +103,7 @@ function Courses({
     if (courseSections.length === 0) {
       throw new Error(MESSAGE.COURSE_NOT_EXIST);
     } else if (coursesAdded.includes(courseTitle)) {
-      throw new Error(`${MESSAGE.COURSE_ALREADY_ADDED}: ${courseTitle}`);
+      throw new Error(MESSAGE.COURSE_ALREADY_ADDED);
     } else {
       return { courseTitle, courseSections };
     }
@@ -172,7 +168,7 @@ function Courses({
               display: "block",
               color: "white",
               float: "right",
-              width: 69.5,
+              width: 69.0,
             }}
             onClick={handleAddBtnClick}
             disableElevation
@@ -204,6 +200,7 @@ function Courses({
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}
+        autoHideDuration={3000}
         onClose={handleSnackBarClose}
         message={message}
         key="topcenter"

@@ -6,8 +6,8 @@ import styled from "styled-components";
 
 const Section = styled.div`
   font-family: 'Rubik', sans-serif;
-  margin-left: 15vw;
-  margin-top: 15vw;
+  margin-left: 16vw;
+  margin-top: 32vh;
   font-weight: 300;
   h1 {
     margin: 0;
