@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import axios from "axios";
 import {
     SETSELECTEDSCHEDULE,
     SetSelectedSchedule,
-  } from "../actions/HomeActions";
+} from "../actions/HomeActions";
 import { useParams } from "react-router-dom";
 import ScheduleGrid from "./ScheduleGrid";
 import { CourseSection } from "../util/testScheduler";
-import axios from "axios";
-import { API_BASE_URL } from "./Courses";
+import { API_BASE_URL } from "../util/constants";
 
 interface ShareLinkProps {
     setSelectedSchedule: (schedule: CourseSection[]) => void;
@@ -32,11 +32,7 @@ function ShareLink({setSelectedSchedule}: ShareLinkProps) {
       setSelectedSchedule(schedule);
     };
 
-    return (
-        <>
-        <ScheduleGrid></ScheduleGrid>
-        </>
-    );
+    return <ScheduleGrid />;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {

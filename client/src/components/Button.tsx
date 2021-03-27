@@ -10,7 +10,6 @@ const StyledButton = styled.div<ButtonProps>`
   line-height: 45px;
   cursor: pointer;
   flex: 1;
-  background: ${(props) => (props.selected ? "#ffdfe6" : "none")};
   color: ${(props) => (props.selected ? "#ff698b" : "black")};
   -webkit-touch-callout: none;
   -webkit-user-select: none;

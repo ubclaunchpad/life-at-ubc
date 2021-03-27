@@ -20,7 +20,12 @@ interface LabsProps {
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [selected, setSelected] = useState(Object.fromEntries(Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])));
+  const [selected, setSelected] = useState(
+    Object.fromEntries(
+      Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])
+    )
+  );
+
   const handleSnackBarClose = () => setOpen(false);
   const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
     const nextSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
@@ -53,7 +58,13 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                 <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
                 <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (
-                    <MenuItem key={j} value={section.sectiontitle} onClick={handleClick(notLectureSectionTitle, section)}>{section.sectiontitle}</MenuItem>
+                    <MenuItem
+                      key={j}
+                      value={section.sectiontitle}
+                      onClick={handleClick(notLectureSectionTitle, section)}
+                    >
+                      {`${section.sectiontitle.substring(9)}: ${section.day}, ${section.starttime} - ${section.endtime}`}
+                    </MenuItem>
                   ))}
                 </Select>
             </div>

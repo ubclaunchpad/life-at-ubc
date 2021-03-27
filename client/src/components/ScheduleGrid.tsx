@@ -20,6 +20,7 @@ const lectureTypes = new Set(["Waiting List", "Web-Oriented Course", "Lecture"])
 
 const Section = styled.div`
     margin: auto;
+    max-width: 1000px;
 `;
 
 function makerows(start: number, end: number) {
