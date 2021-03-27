@@ -25,7 +25,7 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
       Object.keys(notLectureSections).map((sectiontitle: string) => [sectiontitle, {}])
     )
   );
-  
+
   const handleSnackBarClose = () => setOpen(false);
   const handleClick = (sectionTitle: string, selectedSection: CourseSection) => () => {
     const nextSchedule = selectedSchedule.filter(({ sectiontitle }) => sectiontitle !== selected[sectionTitle]);
@@ -59,13 +59,11 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
                 <Select value={selected[notLectureSectionTitle]} variant="outlined">
                   {currNotLectureSections.map((section, j) => (
                     <MenuItem
-                      id={`{j}`}
                       key={j}
                       value={section.sectiontitle}
                       onClick={handleClick(notLectureSectionTitle, section)}
                     >
-                      {section.sectiontitle.substring(9, section.sectiontitle.length) +
-                        `: ${section.day}, ${section.starttime} - ${section.endtime}`}
+                      {`${section.sectiontitle.substring(9)}: ${section.day}, ${section.starttime} - ${section.endtime}`}
                     </MenuItem>
                   ))}
                 </Select>

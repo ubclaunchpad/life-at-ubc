@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Title from "./Title";
 import ScheduleGrid from "./ScheduleGrid";
 import Button from "@material-ui/core/Button";
