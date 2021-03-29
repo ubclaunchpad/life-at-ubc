@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Title from "./Title";
+import React, { useState, useEffect } from "react";
+import Title from "../components/Title";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   SetCourses, SETCOURSES,
@@ -14,6 +14,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
+import Slide from "@material-ui/core/Slide";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import axios from "axios";
@@ -74,6 +75,7 @@ function Courses({
   setSectionsToRedux,
   setCoursesToRedux,
 }: CoursesProps) {
+  const [loaded, setLoaded] = useState(false);
   // snackbar:
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -146,57 +148,60 @@ function Courses({
     setSectionsToRedux(sectionsAfterDeletion);
     setCoursesToRedux(coursesAfterDeletion);
   };
+  useEffect(() => setLoaded(true), []);
 
   return (
     <>
       <Title title="2. Add Courses"></Title>
-      <Wrapper>
-        <AddCourseSection>
-          <TextField
-            id="outlined-textarea"
-            placeholder="e.g. CPSC 310, CPSC 320"
-            helperText="Start typing in courses you wish to take this term"
-            variant="outlined"
-            onChange={handleChange}
-            margin="dense"
-          />
-          <Button
-            variant="contained"
-            color="secondary"
-            style={{
-              alignSelf: "flex-end",
-              display: "block",
-              color: "white",
-              float: "right",
-              width: 69.0,
-            }}
-            onClick={handleAddBtnClick}
-            disableElevation
-          >
-            Add
-          </Button>
-        </AddCourseSection>
-        <CourseList>
-          {coursesAdded.map((course, index) => {
-            return (
-              <ListItem key={index} style={{ borderBottom: "1px solid #eee" }}>
-                <ListItemText primary={course} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => {
-                      handleDltBtnClick(course);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            );
-          })}
-        </CourseList>
-      </Wrapper>
+      <Slide direction="left" in={loaded}>
+        <Wrapper>
+          <AddCourseSection>
+            <TextField
+              id="outlined-textarea"
+              placeholder="e.g. CPSC 310, CPSC 320"
+              helperText="Start typing in courses you wish to take this term"
+              variant="outlined"
+              onChange={handleChange}
+              margin="dense"
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              style={{
+                alignSelf: "flex-end",
+                display: "block",
+                color: "white",
+                float: "right",
+                width: 69.0,
+              }}
+              onClick={handleAddBtnClick}
+              disableElevation
+            >
+              Add
+            </Button>
+          </AddCourseSection>
+          <CourseList>
+            {coursesAdded.map((course, index) => {
+              return (
+                <ListItem key={index} style={{ borderBottom: "1px solid #eee" }}>
+                  <ListItemText primary={course} />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        handleDltBtnClick(course);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })}
+          </CourseList>
+        </Wrapper>
+      </Slide>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}

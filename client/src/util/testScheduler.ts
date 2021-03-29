@@ -139,7 +139,6 @@ export const generateCourseScheduleOnlyLectures = (courses: CourseSection[], res
     const uniqueCourses = countUniqueCourses(courses);
     const allCombinations = backTrackOnlyLectures(uniqueCourses, courses.length, courses);
     const filteredCombinations = filterCombinations(allCombinations, restrictedDays);
-    log.info(filteredCombinations);
     return filteredCombinations;
 };
 

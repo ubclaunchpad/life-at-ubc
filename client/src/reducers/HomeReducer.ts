@@ -1,4 +1,4 @@
-import { CourseObjectProps } from "../components/Courses";
+import { CourseObjectProps } from "../sections/Courses";
 import {
   HomeActions,
   SETSECTIONS,

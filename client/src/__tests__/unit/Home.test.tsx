@@ -1,6 +1,6 @@
 import React from "react";
 import { mount } from "enzyme";
-import Home from "../../components/Home";
+import Home from "../../sections/Home";
 import { findTestWrapper } from "../../util/findTestWrapper";
 import { Provider } from "react-redux";
 import { store } from "../../App";
