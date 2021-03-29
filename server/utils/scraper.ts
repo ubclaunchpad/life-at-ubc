@@ -269,6 +269,7 @@ let formatSectionInfo = async (elmHandle: ElementHandle, browser: Browser): Prom
  * @param {Page} page The Page to be configured
  */
 let pageConfig = async (page: Page) => {
+    await page.setDefaultNavigationTimeout(0);
     await page.setRequestInterception(true);
     page.on("request", (req) => {
         if (req.resourceType() === "image" ||
