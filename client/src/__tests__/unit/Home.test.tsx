@@ -17,12 +17,6 @@ describe("Home", () => {
     expect(select.exists).toBeTruthy();
   });
 
-  it("renders option porperly", () => {
-    const option = wrapper.find(`[role="button"]`);
-    expect(option.exists).toBeTruthy();
-    expect(option.text()).toEqual("Term 1");
-  });
-
   it("can expand dropdown when option is clicked", () => {
     const option = wrapper.find(`[role="button"]`);
     const expanded = wrapper.find(`[aria-expanded="true"]`);
