@@ -8,12 +8,12 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import CheckIcon from "@material-ui/icons/CheckCircleRounded";
 import clsx from "clsx";
 import styled from "styled-components";
-import Home from "../components/Home";
-import Courses from "../components/Courses";
-import Restrictions from "../components/Restrictions";
-import Lectures from "../components/Lectures";
-import Labs from "../components/Labs";
-import Generate from "../components/Generate";
+import Home from "../sections/Home";
+import Courses from "../sections/Courses";
+import Restrictions from "../sections/Restrictions";
+import Lectures from "../sections/Lectures";
+import Labs from "../sections/Labs";
+import Generate from "../sections/Generate";
 import { StepButton } from "@material-ui/core";
 
 const contents = [Home, Courses, Restrictions, Lectures, Labs, Generate];

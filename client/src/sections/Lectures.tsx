@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Slide from "@material-ui/core/Slide";
 import { withStyles } from "@material-ui/core/styles";
 import MuiAlert from "@material-ui/lab/Alert";
 import MuiPagination from "@material-ui/lab/Pagination";
-import Title from "./Title";
-import ScheduleGrid from "./ScheduleGrid";
+import Title from "../components/Title";
+import ScheduleGrid from "../components/ScheduleGrid";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { generateSchedules, CourseSection } from "../util/testScheduler";
@@ -38,6 +39,7 @@ function Lectures({
   selectedSections,
   setSelectedSchedule,
 }: LectureProps) {
+  const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState(0);
   const handleChange = (e: any, n: number) => {
     setSelectedSchedule(schedules[n - 1]);
@@ -46,6 +48,7 @@ function Lectures({
 
   useEffect(() => {
     setSelectedSchedule(schedules[0] || []);
+    setLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -110,7 +113,11 @@ function Lectures({
   return (
     <>
       <Title title="4. Select Lectures to Lock Them"></Title>
-      {schedules.length ? <Schedule /> : <NoResultFound />}
+      <Slide direction="left" in={loaded}>
+        <div>
+          {schedules.length ? <Schedule /> : <NoResultFound />}
+        </div>
+      </Slide>
     </>
   );
 }

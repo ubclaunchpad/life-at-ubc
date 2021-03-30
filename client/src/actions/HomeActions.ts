@@ -1,4 +1,4 @@
-import { CourseObjectProps } from "../components/Courses";
+import { CourseObjectProps } from "../sections/Courses";
 import { CourseSection } from "../util/testScheduler";
 
 export const SELECTTERM = "select_term";

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Title from "./Title";
-import Button from "./Button";
+import Slide from "@material-ui/core/Slide";
+import Title from "../components/Title";
+import Button from "../components/Button";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -33,6 +34,7 @@ function Restrictions({
   selectedDays,
   updateSelectedDaysToRedux,
 }: RestrictionProps) {
+  const [loaded, setLoaded] = useState(false);
   const [days, setDays] = useState<number[]>(selectedDays ? selectedDays : []);
 
   // when a day is not selected, it becomes selected after being clicked. Vice versa.
@@ -44,7 +46,7 @@ function Restrictions({
       setDays(daysAfterRemoval);
     }
   };
-
+  useEffect(() => setLoaded(true), []);
   useEffect(() => {
     updateSelectedDaysToRedux(days);
   }, [days]);
@@ -52,22 +54,26 @@ function Restrictions({
   return (
     <>
       <Title title="3. Add Restrictions"></Title>
-      <Title title="What days do you not want to go to school?"></Title>
-      <ButtonGroup>
-        {weekDays.map((weekday, index) => {
-          return (
-            <Button
-              key={index}
-              content={weekday}
-              data-test="button"
-              selected={days.includes(index)}
-              onClick={() => {
-                handleBtnClick(index);
-              }}
-            ></Button>
-          );
-        })}
-      </ButtonGroup>
+      <Slide direction="left" in={loaded}>
+        <div>
+          <Title title="What days do you not want to go to school?"></Title>
+          <ButtonGroup>
+            {weekDays.map((weekday, index) => {
+              return (
+                <Button
+                  key={index}
+                  content={weekday}
+                  data-test="button"
+                  selected={days.includes(index)}
+                  onClick={() => {
+                    handleBtnClick(index);
+                  }}
+                ></Button>
+              );
+            })}
+          </ButtonGroup>
+        </div>
+      </Slide>
     </>
   );
 }

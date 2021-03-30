@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import Title from "./Title";
-import ScheduleGrid from "./ScheduleGrid";
+import React, { useState, useEffect } from "react";
+import Title from "../components/Title";
+import ScheduleGrid from "../components/ScheduleGrid";
 import { CourseSection, filterNotLectures, isOverlapping } from "../util/testScheduler";
 import { RootState } from "../reducers/index";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
+import Slide from "@material-ui/core/Slide";
 import { Dispatch } from "redux";
 import { SetSelectedSchedule, SETSELECTEDSCHEDULE } from "../actions/HomeActions";
 
@@ -18,6 +19,7 @@ interface LabsProps {
 }
 
 function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsProps) {
+  const [loaded, setLoaded] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [selected, setSelected] = useState(
@@ -46,32 +48,37 @@ function Labs({selectedSchedule, notLectureSections, setSelectedSchedule}: LabsP
       padding: ".5rem 1rem"
     }
   })(MuiSelect);
+  useEffect(() => setLoaded(true), []);
 
   return (
     <>
-      <Title title="5. Add Lab Sections"></Title>
-      <div style={{ margin: "1rem" }}>
-        {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
-          const currNotLectureSections = notLectureSections[notLectureSectionTitle];
-          return (
-            <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
-                <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
-                <Select value={selected[notLectureSectionTitle]} variant="outlined">
-                  {currNotLectureSections.map((section, j) => (
-                    <MenuItem
-                      key={j}
-                      value={section.sectiontitle}
-                      onClick={handleClick(notLectureSectionTitle, section)}
-                    >
-                      {`${section.sectiontitle.substring(9)}: ${section.day}, ${section.starttime} - ${section.endtime}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-            </div>
-          );
-        })}
-      </div>
-      <ScheduleGrid />
+      <Title title="5. Add Lab Sections"/>
+      <Slide direction="left" in={loaded}>
+        <div>
+          <div style={{ margin: "1rem" }}>
+            {Object.keys(notLectureSections).map((notLectureSectionTitle: string, i) => {
+              const currNotLectureSections = notLectureSections[notLectureSectionTitle];
+              return (
+                <div key={i} style={{ textAlign: "left", margin: ".5rem 0" }}>
+                    <span style={{ marginRight: ".5rem" }}>{notLectureSectionTitle}</span>
+                    <Select value={selected[notLectureSectionTitle]} variant="outlined">
+                      {currNotLectureSections.map((section, j) => (
+                        <MenuItem
+                          key={j}
+                          value={section.sectiontitle}
+                          onClick={handleClick(notLectureSectionTitle, section)}
+                        >
+                          {`${section.sectiontitle.substring(9)}: ${section.day}, ${section.starttime} - ${section.endtime}`}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                </div>
+              );
+            })}
+          </div>
+          <ScheduleGrid />
+        </div>
+      </Slide>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}

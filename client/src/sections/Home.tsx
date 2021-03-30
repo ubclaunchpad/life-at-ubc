@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   createStyles,
   makeStyles,
   withStyles,
   Theme,
 } from "@material-ui/core/styles";
-import Title from "./Title";
+import Title from "../components/Title";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputBase from "@material-ui/core/InputBase";
+import Slide from "@material-ui/core/Slide";
 import { SELECTTERM, SelectTerm } from "../actions/HomeActions";
 import { Dispatch } from "redux";
 import { RootState } from "../reducers/index";
@@ -66,8 +67,8 @@ interface HomeProps {
 }
 
 function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
+  const [loaded, setLoaded] = useState(false);
   const terms = ["Term 1", "Term 2"];
-
   const classes = useStyles();
 
   const handleTermChange = (event: any) => {
@@ -78,10 +79,12 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
     }
   };
 
+  useEffect(() => setLoaded(true), []);
+
   return (
     <>
       <Title title="1. Choose Term"/>
-      <div>
+      <Slide direction="left" in={loaded}>
         <FormControl style={{ width: 430 }} className={classes.margin}>
           <Select
             value={!selectedTerm || selectedTerm === "1" ? 0 : 1}
@@ -100,7 +103,7 @@ function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
             })}
           </Select>
         </FormControl>
-      </div>
+      </Slide>
     </>
   );
 }

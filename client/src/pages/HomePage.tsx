@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
+import Slide from "@material-ui/core/Slide";
 import MuiButton from "@material-ui/core/Button";
 import styled from "styled-components";
 
@@ -48,13 +49,17 @@ const Button = withStyles({
 ));
 
 function HomePage() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => setLoaded(true), []);
   return (
-    <Section>
-      <p className="sm">Welcome to</p>
-      <h1>Courseload</h1>
-      <p className="md">Course scheduling, made easier!</p>
-      <Link to="schedule"><Button text="Get Started"/></Link>
-    </Section>
+    <Slide direction="right" in={loaded} timeout={{ enter: 1000 }}>
+      <Section>
+        <p className="sm">Welcome to</p>
+        <h1>Courseload</h1>
+        <p className="md">Course scheduling, made easier!</p>
+        <Link to="schedule"><Button text="Get Started"/></Link>
+      </Section>
+    </Slide>
   );
 }
 
