@@ -68,7 +68,7 @@ interface HomeProps {
 
 function Home({ selectedTerm, updateTermToRedux }: HomeProps) {
   const [loaded, setLoaded] = useState(false);
-  const terms = ["Term 1", "Term 2"];
+  const terms = ["Summer 2021 Term 1", "Summer 2021 Term 2"];
   const classes = useStyles();
 
   const handleTermChange = (event: any) => {
