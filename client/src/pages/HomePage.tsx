@@ -55,7 +55,7 @@ function HomePage() {
     <Slide direction="right" in={loaded} timeout={{ enter: 1000 }}>
       <Section>
         <p className="sm">Welcome to</p>
-        <h1>Courseload</h1>
+        <h1>Courseload UBC</h1>
         <p className="md">Course scheduling, made easier!</p>
         <Link to="schedule"><Button text="Get Started"/></Link>
       </Section>
